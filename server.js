@@ -9,26 +9,29 @@ class Repository {
   constructor() {
     this.channels = []
     this.videos = {}
-    this.initialize()
-  }
-  initialize() {
-    if (!fs.existsSync('./data/videos.json')) fs.writeFileSync('./data/videos.json', '{}')
-    if (!fs.existsSync('./data/channels.json')) fs.writeFileSync('./data/channels.json', '[]')
+    this.paths = {
+      videos: './data/videos.json',
+      channels: './data/channels.json',
+    }
 
+    if (!fs.existsSync(this.paths.videos)) fs.writeFileSync(this.paths.videos, '{}')
+    if (!fs.existsSync(this.paths.channels)) fs.writeFileSync(this.paths.channels, '[]')
+  
     try {
-      this.videos = JSON.parse(fs.readFileSync('./data/videos.json'))
-      this.channels = JSON.parse(fs.readFileSync('./data/channels.json'))
+      this.videos = JSON.parse(fs.readFileSync(this.paths.videos))
+      this.channels = JSON.parse(fs.readFileSync(this.paths.channels))
     } catch (err) {
       console.error(err)
     }
   }
+
   getChannels () { return this.channels }
   addChannel (name) {
     this.channels.push({name})
     this.saveChannels()
   }
   saveChannels() {
-    fs.writeFileSync('./data/channels.json', JSON.stringify(this.channels, null, 2))
+    fs.writeFileSync(this.paths.channels, JSON.stringify(this.channels, null, 2))
   }
   getVideos () { return this.videos }
   saveChannelVideos(channelName, videos) {
@@ -36,7 +39,7 @@ class Repository {
     this.saveVideos()
   }
   saveVideos() {
-    fs.writeFileSync('./data/videos.json', JSON.stringify(this.videos, null, 2))
+    fs.writeFileSync(this.paths.videos, JSON.stringify(this.videos, null, 2))
   }
 }
 
@@ -55,11 +58,6 @@ if (import.meta.url.endsWith('server.js')) {
   main()
 }
 
-
-
-function channelWithAt(channelName = '') {
-  return channelName.startsWith('@') ? channelName : '@' + channelName
-} 
 
 async function updateAndPersistVideos (repo) {
   const channels = repo.getChannels()
@@ -80,32 +78,39 @@ async function downloadVideo(url, path) {
   }
 }
 
+
 async function getVideosFor(channelName) {
   try {
     const response = await fetch(`https://www.youtube.com/${channelWithAt(channelName)}/videos`)
     const text = await response.text()
     const match = text.match(/var ytInitialData = (.+?);<\/script>/)
     if (!match || !match[1]) return null
+
     const json = JSON.parse(match[1].trim())
     const videoTab = json.contents.twoColumnBrowseResultsRenderer.tabs.find(t => t.tabRenderer.title === 'Video')
     const videoContents = videoTab.tabRenderer.content.richGridRenderer.contents
-    return videoContents
-      .filter(v => {
-        return v.richItemRenderer?.content?.videoRenderer?.title?.runs[0]?.text
-      })
-      .map(v => ({
-        title: v.richItemRenderer.content.videoRenderer.title?.runs[0].text,
-        url: `https://www.youtube.com/watch?v=${v.richItemRenderer.content.videoRenderer.videoId}`, 
-        thumbnail: v.richItemRenderer.content.videoRenderer.thumbnail?.thumbnails[0].url,
-        description: v.richItemRenderer.content.videoRenderer.descriptionSnippet?.runs[0].text,
-        videoId: v.richItemRenderer.content.videoRenderer.videoId,
-        publishedTime: v.richItemRenderer.content.videoRenderer.publishedTimeText.simpleText,
-        viewCount: v.richItemRenderer.content.videoRenderer.viewCountText.simpleText,
-        duration: v.richItemRenderer.content.videoRenderer.lengthText ? v.richItemRenderer.content.videoRenderer.lengthText.simpleText : null,
-      }))
+    return videoContents.map(toInternalVideo).filter(Boolean)
   } catch (error) {
     console.error('Error fetching latest video:', error)
     return null
+  }
+
+  function channelWithAt(channelName = '') {
+    return channelName.startsWith('@') ? channelName : '@' + channelName
+  } 
+
+  function toInternalVideo(v) {
+    if (!v || !v.richItemRenderer) return
+    return {
+      title: v.richItemRenderer.content.videoRenderer.title?.runs[0].text,
+      url: `https://www.youtube.com/watch?v=${v.richItemRenderer.content.videoRenderer.videoId}`, 
+      thumbnail: v.richItemRenderer.content.videoRenderer.thumbnail?.thumbnails[0].url,
+      description: v.richItemRenderer.content.videoRenderer.descriptionSnippet?.runs[0].text,
+      videoId: v.richItemRenderer.content.videoRenderer.videoId,
+      publishedTime: v.richItemRenderer.content.videoRenderer.publishedTimeText.simpleText,
+      viewCount: v.richItemRenderer.content.videoRenderer.viewCountText.simpleText,
+      duration: v.richItemRenderer.content.videoRenderer.lengthText ? v.richItemRenderer.content.videoRenderer.lengthText.simpleText : null,
+    }
   }
 }
 
