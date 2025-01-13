@@ -1,0 +1,127 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>my-yt</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      margin: 20px;
+    }
+    form {
+      margin-bottom: 20px;
+    }
+    ul {
+      list-style-type: none;
+      padding: 0;
+    }
+    li {
+      margin-bottom: 10px;
+    }
+  </style>
+  <style>
+    .videos-container {
+      display: flex;
+      justify-content: space-between;
+      flex-wrap: wrap;
+      gap: 10px;
+      padding: 10px;
+      margin: 0;
+    }
+    .video {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      max-width: 280px;
+      text-align: left;
+      text-decoration: none;
+      color: black;
+      font-weight: bold;
+      padding: 5px;
+      background-color: #f0f0f0;
+      margin: 5px;
+    }
+    .video img {
+      width: 100%;
+      height: auto;
+    }
+    .video span {
+      font-size: 10px;
+      color: #555;
+    }
+    .video a {
+      text-decoration: none;
+      color: black;
+    }
+  </style>
+</head>
+<body>
+  <form id="add-channel-form">
+    <input type="text" id="channel-name" placeholder="Channel Name" required>
+    <button type="submit">Add Channel</button>
+  </form>
+  <div class="channels-container"></div>
+
+  <script>
+    document.getElementById('add-channel-form').addEventListener('submit', async (event) => {
+      event.preventDefault();
+      
+      const channelName = document.getElementById('channel-name').value;
+
+      if (!channelName) return alert('empty channel name');
+
+      try {
+        await fetch('/channels', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ name: channelName })
+        });
+
+        document.getElementById('add-channel-form').reset();
+        updatevideosList();
+      } catch (error) {
+        console.error('Error adding channel:', error);
+      }
+    });
+
+    async function updatevideosList() {
+      try {
+        const response = await fetch('/videos');
+        const latestVideos = await response.json();
+
+        const $channelsContainer = document.querySelector('.channels-container');
+        $channelsContainer.innerHTML = '';
+      
+        for (const [name, videos] of Object.entries(latestVideos)) {
+          const $channelSection = document.createElement('details')
+          // $channelSection.open = true
+          $channelSection.classList.add('channel-details')
+          $channelSection.innerHTML = `<summary>${name}</summary>`
+          const $videosContainer = document.createElement('div');
+          $videosContainer.classList.add('videos-container')
+          $channelSection.appendChild($videosContainer);
+          for (const video of videos) {
+            const $video = document.createElement('div');
+            $video.classList.add('video')
+            $video.innerHTML = `
+              <a href="${video.url}" target="_blank">
+                <img src="${video.thumbnail}"/>
+                <span>${video.publishedTime}</span> | <span>${video.viewCount}</span> | <span>${video.duration || 'N/A'}</span><br/>
+                ${video.title}
+              </a>
+            `
+            $videosContainer.appendChild($video)
+          }
+          $channelsContainer.appendChild($channelSection);
+        }
+      } catch (error) {
+        console.error('Error fetching latest videos:', error);
+      }
+    }
+
+    updatevideosList();
+  </script>
+  
+</body>
+</html>
