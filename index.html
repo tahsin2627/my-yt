@@ -33,7 +33,7 @@
       display: flex;
       flex-wrap: wrap;
       align-items: center;
-      max-width: 280px;
+      width: 280px;
       text-align: left;
       text-decoration: none;
       color: black;
@@ -46,6 +46,9 @@
       width: 100%;
       height: auto;
     }
+    .hide-thumbnails .video img {
+      display: none;
+    }
     .video span {
       font-size: 10px;
       color: #555;
@@ -55,15 +58,90 @@
       color: black;
     }
   </style>
+  <style>
+    body > header {
+      background-color: #f0f0f0;
+      padding: 1em 0.5em;
+    }
+    #settings {
+      position: relative;
+    }
+    #settings #close {
+      position:absolute;
+      top: 0.5rem;
+      right: 0.5rem;
+    }
+    ::backdrop {
+      background-image: linear-gradient(
+        45deg,
+        #fff,
+        #292828
+      );
+      opacity: 0.85;
+    }
+  </style>
 </head>
 <body>
+  <header>
+    <button id="open-settings">Settings</button>
+  </header>
+  
+  <dialog id="settings">
+    <button id="close">X</button>
+    <div>
+      <h5>Settings </h5>
+    </div>
+    <br>
+    <br>
+    <label for="show-thumbnails">
+      Show video thumbnails 
+    </label>
+    <input type="checkbox" id="show-thumbnails"/>
+  </dialog>
+
   <form id="add-channel-form">
     <input type="text" id="channel-name" placeholder="Channel Name" required>
     <button type="submit">Add Channel</button>
   </form>
-  <div class="channels-container"></div>
+
+  <main>
+    <div class="channels-container"></div>
+  </main>
+  
 
   <script>
+    const $settings = document.querySelector("#settings")
+    const $openSettings = document.querySelector("#open-settings")
+    const $closeSettings = document.querySelector("#settings button")
+
+    $openSettings.addEventListener("click", () => {
+      $settings.showModal()
+    })
+
+    $closeSettings.addEventListener("click", () => {
+      $settings.close()
+    })
+
+    const $showThumbnails = document.getElementById('show-thumbnails')
+    const showThumbnailsKey = 'showThumbnails'
+    if (localStorage.getItem(showThumbnailsKey) === 'false') {
+      document.body.classList.add('hide-thumbnails')
+    } else {
+      $showThumbnails.checked = true
+      localStorage.setItem(showThumbnailsKey, 'true')
+    }
+
+    $showThumbnails.addEventListener('click', (event) => {
+      localStorage.setItem(showThumbnailsKey, localStorage.getItem(showThumbnailsKey) === 'true' ? 'false' : 'true')
+      const showThumbnails = localStorage.getItem(showThumbnailsKey) === 'true'
+      
+      if (!showThumbnails) {
+        document.body.classList.add('hide-thumbnails')
+      } else {
+        document.body.classList.remove('hide-thumbnails')
+      }
+    })
+
     document.getElementById('add-channel-form').addEventListener('submit', async (event) => {
       event.preventDefault();
       
