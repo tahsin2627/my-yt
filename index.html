@@ -97,6 +97,12 @@
       Show video thumbnails 
     </label>
     <input type="checkbox" id="show-thumbnails"/>
+    <br>
+    <br>
+    <label for="folded-channels">
+      Folded channels
+    </label>
+    <input type="checkbox" id="folded-channels"/>
   </dialog>
 
   <form id="add-channel-form">
@@ -114,23 +120,39 @@
     const $openSettings = document.querySelector("#open-settings")
     const $closeSettings = document.querySelector("#settings button")
 
-    $openSettings.addEventListener("click", () => {
-      $settings.showModal()
-    })
+    $openSettings.addEventListener("click", () => $settings.showModal())
 
-    $closeSettings.addEventListener("click", () => {
-      $settings.close()
-    })
+    $closeSettings.addEventListener("click", () => $settings.close())
 
     const $showThumbnails = document.getElementById('show-thumbnails')
+    const $foldedChannels = document.getElementById('folded-channels')
     const showThumbnailsKey = 'showThumbnails'
-    if (localStorage.getItem(showThumbnailsKey) === 'false') {
-      document.body.classList.add('hide-thumbnails')
-    } else {
-      $showThumbnails.checked = true
-      localStorage.setItem(showThumbnailsKey, 'true')
+    const foldedChannelsKey = 'foldedChannels'
+    function handleShowThumbnails(showThumbnails) {
+      if (showThumbnails) {
+        document.body.classList.add('hide-thumbnails')
+      } else {
+        $showThumbnails.checked = true
+        localStorage.setItem(showThumbnailsKey, 'true')
+      }
     }
 
+    function handleFoldedChannels (foldedChannels = true) {
+      if (foldedChannels) {
+        // document.body.classList.add('hide-thumbnails')
+        [...document.querySelectorAll('.channels-container details')]
+        .forEach(d => d.open = true)
+      } else {
+        [...document.querySelectorAll('.channels-container details')]
+        .forEach(d => d.open = false)
+        $foldedChannels.checked = true
+        localStorage.setItem(foldedChannelsKey, 'true')
+      }
+    }
+    
+    handleShowThumbnails(localStorage.getItem(showThumbnailsKey) === 'false')
+    handleFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'false')
+    
     $showThumbnails.addEventListener('click', (event) => {
       localStorage.setItem(showThumbnailsKey, localStorage.getItem(showThumbnailsKey) === 'true' ? 'false' : 'true')
       const showThumbnails = localStorage.getItem(showThumbnailsKey) === 'true'
@@ -139,6 +161,18 @@
         document.body.classList.add('hide-thumbnails')
       } else {
         document.body.classList.remove('hide-thumbnails')
+      }
+    })
+    $foldedChannels.addEventListener('click', (event) => {
+      localStorage.setItem(foldedChannelsKey, localStorage.getItem(foldedChannelsKey) === 'true' ? 'false' : 'true')
+      const foldedChannels = localStorage.getItem(foldedChannelsKey) === 'true'
+      
+      if (!foldedChannels) {
+        [...document.querySelectorAll('.channels-container details')]
+        .forEach(d => d.open = true)
+      } else {
+        [...document.querySelectorAll('.channels-container details')]
+        .forEach(d => d.open = false)
       }
     })
 
@@ -173,9 +207,8 @@
       
         for (const [name, videos] of Object.entries(latestVideos)) {
           const $channelSection = document.createElement('details')
-          // $channelSection.open = true
           $channelSection.classList.add('channel-details')
-          $channelSection.innerHTML = `<summary>${name}</summary>`
+          $channelSection.innerHTML = `<summary>${name}</summary><h2>${name}</h2>`
           const $videosContainer = document.createElement('div');
           $videosContainer.classList.add('videos-container')
           $channelSection.appendChild($videosContainer);
@@ -197,9 +230,12 @@
         console.error('Error fetching latest videos:', error);
       }
     }
-
-    updatevideosList();
+    
+    updatevideosList()
+    .then(() => {
+      handleShowThumbnails(localStorage.getItem(showThumbnailsKey) === 'false')
+      handleFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'false')
+    })
   </script>
-  
 </body>
 </html>
