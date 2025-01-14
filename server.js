@@ -4,6 +4,7 @@ import { execa } from 'execa'
 import fs from 'fs'
 
 fs.mkdirSync('./data', { recursive: true })
+fs.mkdirSync('./data/videos', { recursive: true })
   
 class Repository {
   constructor() {
@@ -34,6 +35,9 @@ class Repository {
     fs.writeFileSync(this.paths.channels, JSON.stringify(this.channels, null, 2))
   }
   getVideos () { return this.videos }
+  getVideo(id) {
+    return Object.values(this.videos).flat().find(video => video.id === id) || null
+  }
   saveChannelVideos(channelName, videos) {
     this.videos[channelName] = videos
     this.saveVideos()
@@ -41,12 +45,27 @@ class Repository {
   saveVideos() {
     fs.writeFileSync(this.paths.videos, JSON.stringify(this.videos, null, 2))
   }
+  setVideoDownloaded(id) {
+    const video = this.getVideo(id)
+    console.log('setVideoDownloaded', id, video)
+    if (!video) return
+    this.videos[video.channelName] = this.videos[video.channelName].map(v => {
+      if (v.id === id) return Object.assign(v, {downloaded: true})
+      return v
+    })
+    this.saveVideos()
+  }
 }
 
 async function main ({port = 3000} = {}) {
   const repo = new Repository()
 
   await updateAndPersistVideos(repo)
+
+  fs.readdirSync('./data/videos').forEach(file => {
+    const videoId = file.replace('.mp4', '')
+    repo.setVideoDownloaded(videoId)
+  })
 
   createServer({repo, port})
   .listen(port, () => {
@@ -69,9 +88,10 @@ async function updateAndPersistVideos (repo) {
   console.log('All videos updated')
 }
 
-async function downloadVideo(url, path) {
+async function downloadVideo(id, repo) {
   try {
-    await execa('yt-dlp', [url, '-o', path])
+    await execa({stdio:'inherit'})`yt-dlp -f mp4 ${id} -o ./data/videos/${id}.mp4`
+    repo.setVideoDownloaded(id)
     console.log('Download completed')
   } catch (error) {
     console.error('Error downloading video:', error)
@@ -102,6 +122,7 @@ async function getVideosFor(channelName) {
   function toInternalVideo(v) {
     if (!v || !v.richItemRenderer) return
     return {
+      channelName,
       title: v.richItemRenderer.content.videoRenderer.title?.runs[0].text,
       url: `https://www.youtube.com/watch?v=${v.richItemRenderer.content.videoRenderer.videoId}`, 
       thumbnail: v.richItemRenderer.content.videoRenderer.thumbnail?.thumbnails[0].url,
@@ -144,16 +165,55 @@ function createServer ({repo, port = 3000}) {
         body += chunk.toString()
       })
       req.on('end', () => {
-        const { url, path } = JSON.parse(body)
-        downloadVideo(url, path).then(() => {
-          res.writeHead(200, { 'Content-Type': 'text/plain' })
-          res.end('Download started')
-        }).catch(error => {
-          console.error('Error starting download:', error)
-          res.writeHead(500, { 'Content-Type': 'text/plain' })
-          res.end('Internal Server Error')
-        })
+        const { id } = JSON.parse(body)
+        downloadVideo(id, repo)
+        res.writeHead(200, { 'Content-Type': 'text/plain' })
+        res.end('Download started')
       })
+      return
+    }
+    if (parsedUrl.pathname.match('\/videos\/.*') && req.method === 'GET') {
+      const videoPath = parsedUrl.pathname.replace('/videos/', './data/videos/') + '.mp4'
+      console.log({videoPath})
+      if (!fs.existsSync(videoPath)) {
+        res.writeHead(404, { 'Content-Type': 'text/plain' })
+        res.end('Video not found')
+        return
+      }
+      try {
+        const stats = fs.statSync(videoPath)
+        //https://stackoverflow.com/questions/4360060/video-streaming-with-html-5-via-node-js/29126190#29126190
+        var range = req.headers.range || "";    
+        var total = stats.size;
+        console.log({stats, range, total})
+        if (range) {
+          var parts = range.replace(/bytes=/, "").split("-");
+          var partialstart = parts[0];
+          var partialend = parts[1];
+    
+          var start = parseInt(partialstart, 10);
+          var end = partialend > 0 ? parseInt(partialend, 10) : total-1;
+    
+          var chunksize = (end-start)+1;
+          res.writeHead(206, { 
+            "Content-Range": "bytes " + start + "-" + end + "/" + total, 
+            "Accept-Ranges": "bytes", 
+            "Content-Length": chunksize, 
+            "Content-Type": 'video/mp4' 
+          });
+        } else {
+          res.writeHead(200, { 
+            "Accept-Ranges": "bytes", 
+            "Content-Length": stats.size, 
+            "Content-Type": 'video/mp4' 
+          });
+        }    
+        fs.createReadStream(videoPath).pipe(res)
+      } catch (error) {
+        console.error('error reading file ' + videoPath)
+        res.writeHead(404, { 'Content-Type': 'text/plain' })
+        res.end('Video not found')
+      }
       return
     }
     const indexHtml = await fs.promises.readFile('index.html', 'utf8')

@@ -61,6 +61,10 @@
       text-decoration: none;
       color: black;
     }
+
+    .video .actions {
+      font-size: 0.9rem;
+    }
   </style>
   <style>
     #open-settings {
@@ -91,7 +95,6 @@
       opacity: 0.85;
     }
   </style>
-
   <style>
     body > header {
       /* background-color: #f0f0f0; */
@@ -163,7 +166,6 @@
 
     function handleFoldedChannels (foldedChannels = true) {
       if (foldedChannels) {
-        // document.body.classList.add('hide-thumbnails')
         [...document.querySelectorAll('.channels-container details')]
         .forEach(d => d.open = true)
       } else {
@@ -200,7 +202,7 @@
       }
     })
 
-    document.getElementById('add-channel-form').addEventListener('submit', async (event) => {
+    document.getElementById('add-channel-form').addEventListener('submit', (event) => {
       event.preventDefault()
       
       const channelName = document.getElementById('channel-name').value
@@ -240,11 +242,15 @@
           const $video = document.createElement('div')
           $video.classList.add('video')
           $video.innerHTML = `
-            <a href="${video.url}" target="_blank">
+            <div _href="${video.url}" target="_blank">
               <img src="${video.thumbnail}"/>
               <span>${video.publishedTime}</span> | <span>${video.viewCount}</span> | <span>${video.duration || 'N/A'}</span><br/>
               ${video.title}
-            </a>
+              <div class="actions">
+                ${!video.downloaded ? `<span class="action download" data-video-id="${video.id}">⬇️ Download</span>` : ''}
+                ${video.downloaded ? `<a href="/videos/${video.id}" target="_blank" class="action watch" data-video-id="${video.id}">👀 watch</span>`: ``}
+              </div>
+            </div>
           `
           $videosContainer.appendChild($video)
         }
@@ -263,6 +269,26 @@
     .then(() => {
       handleShowThumbnails(localStorage.getItem(showThumbnailsKey) === 'false')
       handleFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'false')
+    })
+    .then(() => {
+      // handle download video action
+      document.querySelectorAll('.video .actions .action.download').forEach($downloadAction => {
+        $downloadAction.addEventListener('click', (event) => {
+          console.log(`Download video from`)
+          fetch('/download-video', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ id: event.target.dataset.videoId }),
+          })
+          .then(() => {
+            console.log('Download started')
+            alert('Download started')
+          })
+          .catch((error) => {
+            console.error('Error starting download:', error)
+          })
+        })
+      })
     })
   </script>
 </body>
