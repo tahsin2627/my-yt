@@ -47,7 +47,7 @@ class Repository {
   }
   setVideoDownloaded(id) {
     const video = this.getVideo(id)
-    console.log('setVideoDownloaded', id, video)
+    console.log('setVideoDownloaded', id)
     if (!video) return
     this.videos[video.channelName] = this.videos[video.channelName].map(v => {
       if (v.id === id) return Object.assign(v, {downloaded: true})
