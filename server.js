@@ -106,8 +106,8 @@ async function getVideosFor(channelName) {
       url: `https://www.youtube.com/watch?v=${v.richItemRenderer.content.videoRenderer.videoId}`, 
       thumbnail: v.richItemRenderer.content.videoRenderer.thumbnail?.thumbnails[0].url,
       description: v.richItemRenderer.content.videoRenderer.descriptionSnippet?.runs[0].text,
-      videoId: v.richItemRenderer.content.videoRenderer.videoId,
-      publishedTime: v.richItemRenderer.content.videoRenderer.publishedTimeText.simpleText,
+      id: v.richItemRenderer.content.videoRenderer.videoId,
+      publishedTime: v.richItemRenderer.content.videoRenderer.publishedTimeText?.simpleText,
       viewCount: v.richItemRenderer.content.videoRenderer.viewCountText.simpleText,
       duration: v.richItemRenderer.content.videoRenderer.lengthText ? v.richItemRenderer.content.videoRenderer.lengthText.simpleText : null,
     }

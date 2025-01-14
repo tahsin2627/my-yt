@@ -19,6 +19,10 @@
     li {
       margin-bottom: 10px;
     }
+    main {
+      user-select: none;
+      -webkit-user-select: none;
+    }
   </style>
   <style>
     .videos-container {
@@ -203,55 +207,59 @@
 
       if (!channelName) return alert('empty channel name')
 
-      try {
-        await fetch('/channels', {
-          method: 'POST',
-          headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ name: channelName })
-        })
-
+      fetch('/channels', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name: channelName })
+      })
+      .then(() => {
         document.getElementById('add-channel-form').reset()
-        updatevideosList()
-      } catch (error) {
+        updateVideosList()
+      })
+      .catch(error => {
         console.error('Error adding channel:', error)
-      }
+      })
     })
 
-    async function updatevideosList() {
-      try {
-        const response = await fetch('/videos')
-        const latestVideos = await response.json()
+    async function fetchVideosByChannel () {
+      const response = await fetch('/videos')
+      return response.json()
+    }
 
-        const $channelsContainer = document.querySelector('.channels-container')
-        $channelsContainer.innerHTML = ''
-      
-        for (const [name, videos] of Object.entries(latestVideos)) {
-          const $channelSection = document.createElement('details')
-          $channelSection.classList.add('channel-details')
-          $channelSection.innerHTML = `<summary>${name}</summary><h2>${name}</h2>`
-          const $videosContainer = document.createElement('div')
-          $videosContainer.classList.add('videos-container')
-          $channelSection.appendChild($videosContainer)
-          for (const video of videos) {
-            const $video = document.createElement('div')
-            $video.classList.add('video')
-            $video.innerHTML = `
-              <a href="${video.url}" target="_blank">
-                <img src="${video.thumbnail}"/>
-                <span>${video.publishedTime}</span> | <span>${video.viewCount}</span> | <span>${video.duration || 'N/A'}</span><br/>
-                ${video.title}
-              </a>
-            `
-            $videosContainer.appendChild($video)
-          }
-          $channelsContainer.appendChild($channelSection)
+    function showLatestVideos (videosByChannel, $channelsContainer = document.querySelector('.channels-container')) {
+      $channelsContainer.innerHTML = ''
+    
+      for (const [name, videos] of Object.entries(videosByChannel)) {
+        const $channelSection = document.createElement('details')
+        $channelSection.classList.add('channel-details')
+        $channelSection.innerHTML = `<summary>${name}</summary><h2>${name}</h2>`
+        const $videosContainer = document.createElement('div')
+        $videosContainer.classList.add('videos-container')
+        $channelSection.appendChild($videosContainer)
+        for (const video of videos) {
+          const $video = document.createElement('div')
+          $video.classList.add('video')
+          $video.innerHTML = `
+            <a href="${video.url}" target="_blank">
+              <img src="${video.thumbnail}"/>
+              <span>${video.publishedTime}</span> | <span>${video.viewCount}</span> | <span>${video.duration || 'N/A'}</span><br/>
+              ${video.title}
+            </a>
+          `
+          $videosContainer.appendChild($video)
         }
-      } catch (error) {
-        console.error('Error fetching latest videos:', error)
+        $channelsContainer.appendChild($channelSection)
       }
     }
+
+    async function updateVideosList() {
+      return fetchVideosByChannel()
+      .then((videosByChannel) => {
+        showLatestVideos(videosByChannel, document.querySelector('.channels-container'))
+      })
+    }
     
-    updatevideosList()
+    updateVideosList()
     .then(() => {
       handleShowThumbnails(localStorage.getItem(showThumbnailsKey) === 'false')
       handleFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'false')
