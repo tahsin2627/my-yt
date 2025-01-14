@@ -59,9 +59,16 @@
     }
   </style>
   <style>
-    body > header {
-      background-color: #f0f0f0;
-      padding: 1em 0.5em;
+    #open-settings {
+      position: fixed;
+      top: 0;
+      right: 0;
+      display: block;
+      background: white;
+      border: 1px solid lightgrey;
+      border-radius: 4px;
+      font-size: 1rem;
+      padding: 0.5rem;
     }
     #settings {
       position: relative;
@@ -80,11 +87,29 @@
       opacity: 0.85;
     }
   </style>
+
+  <style>
+    body > header {
+      background-color: #f0f0f0;
+      padding: 1em 0.5em;
+      margin-bottom: 3rem;
+    }
+    body > header > * {
+    }
+    body > header #add-channel-form {
+    }
+    
+  </style>
 </head>
 <body>
   <header>
-    <button id="open-settings">Settings</button>
+    <form id="add-channel-form">
+      <input type="text" id="channel-name" placeholder="Channel Name" required>
+      <button type="submit">Add Channel</button>
+    </form>
   </header>
+
+  <button id="open-settings">🔧 Settings</button>
   
   <dialog id="settings">
     <button id="close">X</button>
@@ -104,11 +129,6 @@
     </label>
     <input type="checkbox" id="folded-channels"/>
   </dialog>
-
-  <form id="add-channel-form">
-    <input type="text" id="channel-name" placeholder="Channel Name" required>
-    <button type="submit">Add Channel</button>
-  </form>
 
   <main>
     <div class="channels-container"></div>
@@ -177,43 +197,43 @@
     })
 
     document.getElementById('add-channel-form').addEventListener('submit', async (event) => {
-      event.preventDefault();
+      event.preventDefault()
       
-      const channelName = document.getElementById('channel-name').value;
+      const channelName = document.getElementById('channel-name').value
 
-      if (!channelName) return alert('empty channel name');
+      if (!channelName) return alert('empty channel name')
 
       try {
         await fetch('/channels', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
           body: JSON.stringify({ name: channelName })
-        });
+        })
 
-        document.getElementById('add-channel-form').reset();
-        updatevideosList();
+        document.getElementById('add-channel-form').reset()
+        updatevideosList()
       } catch (error) {
-        console.error('Error adding channel:', error);
+        console.error('Error adding channel:', error)
       }
-    });
+    })
 
     async function updatevideosList() {
       try {
-        const response = await fetch('/videos');
-        const latestVideos = await response.json();
+        const response = await fetch('/videos')
+        const latestVideos = await response.json()
 
-        const $channelsContainer = document.querySelector('.channels-container');
-        $channelsContainer.innerHTML = '';
+        const $channelsContainer = document.querySelector('.channels-container')
+        $channelsContainer.innerHTML = ''
       
         for (const [name, videos] of Object.entries(latestVideos)) {
           const $channelSection = document.createElement('details')
           $channelSection.classList.add('channel-details')
           $channelSection.innerHTML = `<summary>${name}</summary><h2>${name}</h2>`
-          const $videosContainer = document.createElement('div');
+          const $videosContainer = document.createElement('div')
           $videosContainer.classList.add('videos-container')
-          $channelSection.appendChild($videosContainer);
+          $channelSection.appendChild($videosContainer)
           for (const video of videos) {
-            const $video = document.createElement('div');
+            const $video = document.createElement('div')
             $video.classList.add('video')
             $video.innerHTML = `
               <a href="${video.url}" target="_blank">
@@ -224,10 +244,10 @@
             `
             $videosContainer.appendChild($video)
           }
-          $channelsContainer.appendChild($channelSection);
+          $channelsContainer.appendChild($channelSection)
         }
       } catch (error) {
-        console.error('Error fetching latest videos:', error);
+        console.error('Error fetching latest videos:', error)
       }
     }
     
