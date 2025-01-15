@@ -348,42 +348,46 @@
 
       document.querySelectorAll('.video .actions .action.watch')
       .forEach($watchAction => {
-        $watchAction.addEventListener('click', (event) => {
-          event.preventDefault()
-          const videoId = event.target.dataset.videoId
-          $videoPlayer.showModal()
-          $videoPlayer.querySelector('div').innerHTML = `
-            <video autoplay controls width="500">
-              <source src="/videos/${videoId}" type="video/mp4" />
-              <p>
-                Your browser does not support the video tag.
-                Download the video instead <a href="/videos/${videoId}" target="_blank">here</a>
-              </p>
-            </video>
-          `
-        })
+        $watchAction.removeEventListener('click', watchVideoHandler)
+        $watchAction.addEventListener('click', watchVideoHandler)
       })
 
       document.querySelectorAll('.video .actions .action.download')
       .forEach($downloadAction => {
-        $downloadAction.addEventListener('click', (event) => {
-          console.log(`Download video from`)
-          fetch('/download-video', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ id: event.target.dataset.videoId }),
-          })
-          .then(() => {
-            console.log('Download started')
-            alert('Download started')
-          })
-          .catch((error) => {
-            console.error('Error starting download:', error)
-          })
-        })
+        $downloadAction.removeEventListener('click', downloadVideoHandler)
+        $downloadAction.addEventListener('click', downloadVideoHandler)
       })
     }
-    
+    function watchVideoHandler (event) {
+      event.preventDefault()
+      const videoId = event.target.dataset.videoId
+      $videoPlayer.showModal()
+      $videoPlayer.querySelector('div').innerHTML = `
+        <video autoplay controls width="500">
+          <source src="/videos/${videoId}" type="video/mp4" />
+          <p>
+            Your browser does not support the video tag.
+            Download the video instead <a href="/videos/${videoId}" target="_blank">here</a>
+          </p>
+        </video>
+      `
+    }
+
+    function downloadVideoHandler (event) {
+      console.log(`Download video`)
+      alert('Download started')
+      fetch('/download-video', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id: event.target.dataset.videoId }),
+      })
+      .then(() => {
+        console.log('Download started')
+      })
+      .catch((error) => {
+        console.error('Error starting download:', error)
+      })
+    }
   </script>
 </body>
 </html>
