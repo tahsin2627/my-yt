@@ -30,6 +30,7 @@ class Repository {
 
   getChannels () { return this.channels }
   addChannel (name) {
+    console.log('addChannel', name)
     this.channels.push({name})
     this.saveChannels()
   }
@@ -41,6 +42,7 @@ class Repository {
     return Object.values(this.videos).flat().find(video => video.id === id) || null
   }
   saveChannelVideos(channelName, videos) {
+    console.log('saveChannelVideos', channelName, videos.length)
     this.videos[channelName] = videos
     this.saveVideos()
   }
@@ -107,8 +109,9 @@ async function updateAndPersistVideos (repo) {
 
 async function updateAndPersistVideosForChannel(repo, name) {
   const videos = await getVideosFor(name)
-  if (videos) repo.saveChannelVideos(name, videos)
-  console.log('videos for channel updated', name)
+  if (videos) {
+    repo.saveChannelVideos(name, videos)
+  }
   return videos
 }
 
@@ -154,7 +157,7 @@ async function getVideosFor(channelName) {
       id: v.richItemRenderer.content.videoRenderer.videoId,
       publishedTime: v.richItemRenderer.content.videoRenderer.publishedTimeText?.simpleText,
       viewCount: v.richItemRenderer.content.videoRenderer.viewCountText?.simpleText,
-      duration: v.richItemRenderer.content.videoRenderer.lengthText ? v.richItemRenderer.content.videoRenderer.lengthText.simpleText : null,
+      duration: v.richItemRenderer.content.videoRenderer.lengthText?.simpleText,
     }
   }
 }
@@ -196,12 +199,16 @@ function createServer ({repo, port = 3000}) {
       req.on('end', async () => {
         let { name } = JSON.parse(body)
         name = name.trim()
-        console.log('adding channel', name)
-        repo.addChannel(name)
         const videos = await updateAndPersistVideosForChannel(repo, name)
-        broadcastSSE(JSON.stringify({type: 'channel', name, videos}), connections)
-        res.writeHead(201, { 'Content-Type': 'text/plain' })
-        res.end('Channel added')
+        if (Array.isArray(videos)) {
+          repo.addChannel(name)
+          broadcastSSE(JSON.stringify({type: 'channel', name, videos}), connections)
+          res.writeHead(201, { 'Content-Type': 'text/plain' })
+          res.end('Channel added')
+        } else {
+          res.writeHead(404, { 'Content-Type': 'text/plain' })
+          res.end('Channel not found')
+        }
       })
       return
     } 
@@ -216,6 +223,10 @@ function createServer ({repo, port = 3000}) {
         const videos = repo.getVideos()[channelName]
         downloadVideo(id, repo)
         .then(() => {
+          broadcastSSE(JSON.stringify({type: 'channel', name: channelName, videos}), connections)
+        })
+        .catch((error) => {
+          console.error(error)
           broadcastSSE(JSON.stringify({type: 'channel', name: channelName, videos}), connections)
         })
         res.writeHead(200, { 'Content-Type': 'text/plain' })
