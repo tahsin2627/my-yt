@@ -63,6 +63,7 @@ async function main ({port = 3000} = {}) {
   const repo = new Repository()
 
   fs.readdirSync('./data/videos').forEach(file => {
+    if (!file.endsWith('.mp4')) return
     const videoId = file.replace('.mp4', '')
     repo.setVideoDownloaded(videoId)
   })
