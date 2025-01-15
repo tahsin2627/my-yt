@@ -88,6 +88,12 @@ async function updateAndPersistVideos (repo) {
   console.log('All videos updated')
 }
 
+async function updateAndPersistVideosForChannel(repo, name) {
+  const videos = await getVideosFor(name)
+  if (videos) repo.saveChannelVideos(name, videos)
+  console.log('videos for channel updated', name)
+}
+
 async function downloadVideo(id, repo) {
   try {
     await execa({stdio:'inherit'})`yt-dlp -f mp4 ${id} -o ./data/videos/${id}.mp4`
@@ -129,7 +135,7 @@ async function getVideosFor(channelName) {
       description: v.richItemRenderer.content.videoRenderer.descriptionSnippet?.runs[0].text,
       id: v.richItemRenderer.content.videoRenderer.videoId,
       publishedTime: v.richItemRenderer.content.videoRenderer.publishedTimeText?.simpleText,
-      viewCount: v.richItemRenderer.content.videoRenderer.viewCountText.simpleText,
+      viewCount: v.richItemRenderer.content.videoRenderer.viewCountText?.simpleText,
       duration: v.richItemRenderer.content.videoRenderer.lengthText ? v.richItemRenderer.content.videoRenderer.lengthText.simpleText : null,
     }
   }
@@ -153,7 +159,7 @@ function createServer ({repo, port = 3000}) {
         name = name.trim()
         console.log('adding channel', name)
         repo.addChannel(name)
-        await updateAndPersistVideos(repo)
+        await updateAndPersistVideosForChannel(repo, name)
         res.writeHead(201, { 'Content-Type': 'text/plain' })
         res.end('Channel added')
       })
