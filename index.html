@@ -158,24 +158,65 @@
     <input type="checkbox" id="folded-channels"/>
   </dialog>
 
+  <dialog id="video-player">
+    <button id="close">X</button>
+    <div></div>
+  </dialog>
+
   <main>
     <div class="channels-container"></div>
   </main>
   
 
   <script>
-    const $settings = document.querySelector("#settings")
+    const $settings = document.querySelector("dialog#settings")
+    const $videoPlayer = document.querySelector('dialog#video-player')
     const $openSettings = document.querySelector("#open-settings")
-    const $closeSettings = document.querySelector("#settings button")
+    const $closeSettings = $settings.querySelector("button")
+    const $closeVideoPlayer = $videoPlayer.querySelector("button")
 
     $openSettings.addEventListener("click", () => $settings.showModal())
 
     $closeSettings.addEventListener("click", () => $settings.close())
+    $closeVideoPlayer.addEventListener("click", () => $videoPlayer.close())
+
+    $videoPlayer.addEventListener('close', () => {
+      const video = $videoPlayer.querySelector('video')
+      if (video) video.pause()
+    })
 
     const $showThumbnails = document.getElementById('show-thumbnails')
     const $foldedChannels = document.getElementById('folded-channels')
     const showThumbnailsKey = 'showThumbnails'
     const foldedChannelsKey = 'foldedChannels'
+
+    handleShowThumbnails(localStorage.getItem(showThumbnailsKey) === 'false')
+    handleFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'false')
+    
+    $showThumbnails.addEventListener('click', (event) => {
+      localStorage.setItem(showThumbnailsKey, localStorage.getItem(showThumbnailsKey) === 'true' ? 'false' : 'true')
+      const showThumbnails = localStorage.getItem(showThumbnailsKey) === 'true'
+      
+      if (!showThumbnails) {
+        document.body.classList.add('hide-thumbnails')
+      } else {
+        document.body.classList.remove('hide-thumbnails')
+      }
+    })
+    
+    $foldedChannels.addEventListener('click', (event) => {
+      localStorage.setItem(foldedChannelsKey, localStorage.getItem(foldedChannelsKey) === 'true' ? 'false' : 'true')
+      const foldedChannels = localStorage.getItem(foldedChannelsKey) === 'true'
+      
+      if (!foldedChannels) {
+        [...document.querySelectorAll('.channels-container details')]
+        .forEach(d => d.open = true)
+      } else {
+        [...document.querySelectorAll('.channels-container details')]
+        .forEach(d => d.open = false)
+      }
+    })
+
     function handleShowThumbnails(showThumbnails) {
       if (showThumbnails) {
         document.body.classList.add('hide-thumbnails')
@@ -197,32 +238,6 @@
       }
     }
     
-    handleShowThumbnails(localStorage.getItem(showThumbnailsKey) === 'false')
-    handleFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'false')
-    
-    $showThumbnails.addEventListener('click', (event) => {
-      localStorage.setItem(showThumbnailsKey, localStorage.getItem(showThumbnailsKey) === 'true' ? 'false' : 'true')
-      const showThumbnails = localStorage.getItem(showThumbnailsKey) === 'true'
-      
-      if (!showThumbnails) {
-        document.body.classList.add('hide-thumbnails')
-      } else {
-        document.body.classList.remove('hide-thumbnails')
-      }
-    })
-    $foldedChannels.addEventListener('click', (event) => {
-      localStorage.setItem(foldedChannelsKey, localStorage.getItem(foldedChannelsKey) === 'true' ? 'false' : 'true')
-      const foldedChannels = localStorage.getItem(foldedChannelsKey) === 'true'
-      
-      if (!foldedChannels) {
-        [...document.querySelectorAll('.channels-container details')]
-        .forEach(d => d.open = true)
-      } else {
-        [...document.querySelectorAll('.channels-container details')]
-        .forEach(d => d.open = false)
-      }
-    })
-
     document.getElementById('add-channel-form').addEventListener('submit', (event) => {
       event.preventDefault()
 
@@ -261,7 +276,7 @@
       }
     })
 
-    async function fetchVideosByChannel () {
+    async function fetchVideos () {
       const response = await fetch('/videos')
       return response.json()
     }
@@ -297,7 +312,7 @@
     }
 
     async function updateVideosList() {
-      return fetchVideosByChannel()
+      return fetchVideos()
       .then((videosByChannel) => {
         showLatestVideos(videosByChannel, document.querySelector('.channels-container'))
       })
@@ -309,8 +324,27 @@
       handleFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'false')
     })
     .then(() => {
-      // handle download video action
-      document.querySelectorAll('.video .actions .action.download').forEach($downloadAction => {
+      document.querySelectorAll('.video .actions .action.watch')
+      .forEach($watchAction => {
+        $watchAction.addEventListener('click', (event) => {
+          event.preventDefault()
+          const videoId = event.target.dataset.videoId
+          $videoPlayer.showModal()
+          $videoPlayer.querySelector('div').innerHTML = `
+            <video autoplay controls width="500">
+              <source src="/videos/${videoId}" type="video/mp4" />
+              <p>
+                Your browser does not support the video tag.
+                Download the video instead <a href="/videos/${videoId}" target="_blank">here</a>
+              </p>
+            </video>
+          `
+          // window.open(`/videos/${videoId}`, '_blank')
+        })
+      })
+
+      document.querySelectorAll('.video .actions .action.download')
+      .forEach($downloadAction => {
         $downloadAction.addEventListener('click', (event) => {
           console.log(`Download video from`)
           fetch('/download-video', {
