@@ -68,7 +68,8 @@
       height: auto;
     }
     .hide-thumbnails .video img {
-      display: none;
+      display: none !important;
+      visibility: hidden !important;
     }
     .video span {
       font-size: 10px;
@@ -191,11 +192,21 @@
       try {
         const data = JSON.parse(message.data, {})
         console.log(data)
-        if (data.type === 'all') {
-          showLatestVideos(data.videos, document.querySelector('.channels-container'))
+        if (data.type === 'all' && data.videos) {
+          const $channelsContainer = document.querySelector('.channels-container')
+          $channelsContainer.innerHTML = ''
+    
+          for (const [name, videos] of Object.entries(data.videos)) {
+            const $channelSection = document.createElement('details')
+            $channelSection.dataset['channel'] = name
+            $channelSection.classList.add('channel-details')
+            $channelSection.innerHTML = `<summary>${name}</summary><h2>${name}</h2>`
+            $channelSection.appendChild(channelVideosContents(videos))
+            $channelsContainer.appendChild($channelSection)
+          }
           handleNewVideos()
         }
-        if (data.type === 'channel') {
+        if (data.type === 'channel' && data.name && Array.isArray(data.videos)) {
           const $existingChannelSection = document.querySelector(`details[data-channel="${data.name}"]`)
           if ($existingChannelSection) {
             console.log('replacing old channel section', data.name)
@@ -220,50 +231,42 @@
     const $foldedChannels = document.getElementById('folded-channels')
     const showThumbnailsKey = 'showThumbnails'
     const foldedChannelsKey = 'foldedChannels'
-    
+
+    if (!localStorage.getItem(showThumbnailsKey)) localStorage.setItem(showThumbnailsKey, 'true')
+    if (!localStorage.getItem(foldedChannelsKey)) localStorage.setItem(foldedChannelsKey, 'true')
+
+    console.log(localStorage)
+    applyShowThumbnails(localStorage.getItem(showThumbnailsKey) === 'true')
+    applyFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'true')
+
     $showThumbnails.addEventListener('click', (event) => {
       localStorage.setItem(showThumbnailsKey, localStorage.getItem(showThumbnailsKey) === 'true' ? 'false' : 'true')
-      const showThumbnails = localStorage.getItem(showThumbnailsKey) === 'true'
-      
-      if (!showThumbnails) {
-        document.body.classList.add('hide-thumbnails')
-      } else {
-        document.body.classList.remove('hide-thumbnails')
-      }
+      applyShowThumbnails(localStorage.getItem(showThumbnailsKey) === 'true')
     })
     
     $foldedChannels.addEventListener('click', (event) => {
       localStorage.setItem(foldedChannelsKey, localStorage.getItem(foldedChannelsKey) === 'true' ? 'false' : 'true')
-      const foldedChannels = localStorage.getItem(foldedChannelsKey) === 'true'
-      
-      if (!foldedChannels) {
-        [...document.querySelectorAll('.channels-container details')]
-        .forEach(d => d.open = true)
-      } else {
-        [...document.querySelectorAll('.channels-container details')]
-        .forEach(d => d.open = false)
-      }
+      applyFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'true')
     })
 
-    function handleShowThumbnails(showThumbnails) {
+    function applyShowThumbnails(showThumbnails) {
       if (showThumbnails) {
-        document.body.classList.add('hide-thumbnails')
+        document.body.classList.remove('hide-thumbnails')
       } else {
-        $showThumbnails.checked = true
-        localStorage.setItem(showThumbnailsKey, 'true')
+        document.body.classList.add('hide-thumbnails')
       }
+      document.querySelector('#show-thumbnails').checked = showThumbnails
     }
-
-    function handleFoldedChannels (foldedChannels = true) {
+    
+    function applyFoldedChannels (foldedChannels) {
       if (foldedChannels) {
         [...document.querySelectorAll('.channels-container details')]
-        .forEach(d => d.open = true)
+        .forEach(d => d.open = false)
       } else {
         [...document.querySelectorAll('.channels-container details')]
-        .forEach(d => d.open = false)
-        $foldedChannels.checked = true
-        localStorage.setItem(foldedChannelsKey, 'true')
+        .forEach(d => d.open = true)
       }
+      document.querySelector('#folded-channels').checked = foldedChannels
     }
     
     document.getElementById('add-channel-form').addEventListener('submit', (event) => {
@@ -303,11 +306,6 @@
       }
     })
 
-    async function fetchVideos () {
-      const response = await fetch('/videos')
-      return response.json()
-    }
-
     function showLatestVideos (videosByChannel, $channelsContainer = document.querySelector('.channels-container')) {
       $channelsContainer.innerHTML = ''
     
@@ -321,6 +319,7 @@
       }
     }
     function channelVideosContents (videos) {
+      if (!videos) return
       const $videosContainer = document.createElement('div')
       $videosContainer.classList.add('videos-container')
       for (const video of videos) {
@@ -343,9 +342,6 @@
     }
 
     function handleNewVideos () {
-      handleShowThumbnails(localStorage.getItem(showThumbnailsKey) === 'false')
-      handleFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'false')
-
       document.querySelectorAll('.video .actions .action.watch')
       .forEach($watchAction => {
         $watchAction.removeEventListener('click', watchVideoHandler)
@@ -357,6 +353,8 @@
         $downloadAction.removeEventListener('click', downloadVideoHandler)
         $downloadAction.addEventListener('click', downloadVideoHandler)
       })
+
+      // applyFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'true')
     }
     function watchVideoHandler (event) {
       event.preventDefault()
@@ -374,8 +372,9 @@
     }
 
     function downloadVideoHandler (event) {
-      console.log(`Download video`)
-      alert('Download started')
+      const downloadStartedText = '⚡️ Download started'
+      if (event.target.innerText === downloadStartedText) return console.log('already downloading')
+      event.target.innerText = downloadStartedText
       fetch('/download-video', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
