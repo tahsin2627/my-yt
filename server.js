@@ -71,7 +71,7 @@ async function main ({port = 3000} = {}) {
   })
   updateAndPersistVideos(repo)
 
-
+  setInterval(() => updateAndPersistVideos(repo), 1000 * 60 * 5)
   createServer({repo, port})
   .listen(port, () => {
     console.log(`Server running at http://localhost:${port}`)
