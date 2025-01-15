@@ -5,7 +5,9 @@ import fs from 'fs'
 
 fs.mkdirSync('./data', { recursive: true })
 fs.mkdirSync('./data/videos', { recursive: true })
-  
+
+const connections = []
+
 class Repository {
   constructor() {
     this.channels = []
@@ -60,12 +62,12 @@ class Repository {
 async function main ({port = 3000} = {}) {
   const repo = new Repository()
 
-  await updateAndPersistVideos(repo)
-
   fs.readdirSync('./data/videos').forEach(file => {
     const videoId = file.replace('.mp4', '')
     repo.setVideoDownloaded(videoId)
   })
+  updateAndPersistVideos(repo)
+
 
   createServer({repo, port})
   .listen(port, () => {
@@ -80,10 +82,24 @@ if (import.meta.url.endsWith('server.js')) {
 
 async function updateAndPersistVideos (repo) {
   const channels = repo.getChannels()
+  const existingVideos = repo.getVideos()
   for (const channel of channels) {
     console.log('updating videos for', channel.name)
     const videos = await getVideosFor(channel.name)
-    if (videos) repo.saveChannelVideos(channel.name, videos)
+    const existingChannelVideos = existingVideos[channel.name]
+    if (existingChannelVideos) {
+      for (const video of videos) {
+        const existingVideo = existingChannelVideos.find(v => v.id === video.id)
+        if (existingVideo && existingVideo.downloaded) {
+          video.downloaded = existingVideo.downloaded
+          console.log('setting video as downloaded', video.id)
+        }
+      }
+    }
+    if (videos) {
+      repo.saveChannelVideos(channel.name, videos)
+      broadcastSSE(JSON.stringify({type: 'channel', name: channel.name, videos}), connections)
+    }
   }
   console.log('All videos updated')
 }
@@ -92,6 +108,7 @@ async function updateAndPersistVideosForChannel(repo, name) {
   const videos = await getVideosFor(name)
   if (videos) repo.saveChannelVideos(name, videos)
   console.log('videos for channel updated', name)
+  return videos
 }
 
 async function downloadVideo(id, repo) {
@@ -141,6 +158,27 @@ async function getVideosFor(channelName) {
   }
 }
 
+function handleSSE (res, connections = []) {
+  connections.push(res)
+  res.on('close', () => {
+    connections.splice(connections.findIndex(c => res === c), 1)
+  })
+  res.writeHead(200, {
+    'Content-Type': 'text/event-stream',
+    'Cache-Control': 'no-cache',
+    Connection: 'keep-alive'
+  })
+}
+
+function broadcastSSE (data, connections = []) {
+  connections.forEach(connection => {
+    if (!connection) return
+    const id = new Date().toISOString()
+    connection.write('id: ' + id + '\n')
+    connection.write('data: ' + data + '\n\n')
+  })
+}
+
 function createServer ({repo, port = 3000}) {
   return http.createServer(async (req, res) => {
     const parsedUrl = new URL(req.url, `http://${req.headers.host}`)
@@ -159,7 +197,8 @@ function createServer ({repo, port = 3000}) {
         name = name.trim()
         console.log('adding channel', name)
         repo.addChannel(name)
-        await updateAndPersistVideosForChannel(repo, name)
+        const videos = await updateAndPersistVideosForChannel(repo, name)
+        broadcastSSE(JSON.stringify({type: 'channel', name, videos}), connections)
         res.writeHead(201, { 'Content-Type': 'text/plain' })
         res.end('Channel added')
       })
@@ -172,7 +211,12 @@ function createServer ({repo, port = 3000}) {
       })
       req.on('end', () => {
         const { id } = JSON.parse(body)
+        const {channelName} = repo.getVideo(id)
+        const videos = repo.getVideos()[channelName]
         downloadVideo(id, repo)
+        .then(() => {
+          broadcastSSE(JSON.stringify({type: 'channel', name: channelName, videos}), connections)
+        })
         res.writeHead(200, { 'Content-Type': 'text/plain' })
         res.end('Download started')
       })
@@ -220,6 +264,10 @@ function createServer ({repo, port = 3000}) {
         res.end('Video not found')
       }
       return
+    }
+    if (req.headers.accept && req.headers.accept.indexOf('text/event-stream') >= 0) {
+      handleSSE(res, connections)
+      return broadcastSSE(JSON.stringify({type: 'all', videos: repo.getVideos()}), [res])
     }
     const indexHtml = await fs.promises.readFile('index.html', 'utf8')
     res.writeHead(200, { 'Content-Type': 'text/html' })

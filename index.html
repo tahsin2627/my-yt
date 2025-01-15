@@ -184,13 +184,42 @@
       $videoPlayer.querySelector('video')?.pause()
     })
 
+    const eventSource = new window.EventSource('/')
+
+    eventSource.onmessage = (message) => {
+      if (!message || !message.data) return console.error('skipping empty message')
+      try {
+        const data = JSON.parse(message.data, {})
+        console.log(data)
+        if (data.type === 'all') {
+          showLatestVideos(data.videos, document.querySelector('.channels-container'))
+          handleNewVideos()
+        }
+        if (data.type === 'channel') {
+          const $existingChannelSection = document.querySelector(`details[data-channel="${data.name}"]`)
+          if ($existingChannelSection) {
+            console.log('replacing old channel section', data.name)
+            $existingChannelSection.querySelector(`.videos-container`).remove()
+            $existingChannelSection.appendChild(channelVideosContents(data.videos))
+          } else {
+            const $channelSection = document.createElement('details')
+            $channelSection.dataset['channel'] = data.name
+            $channelSection.classList.add('channel-details')
+            $channelSection.innerHTML = `<summary>${data.name}</summary><h2>${data.name}</h2>`
+            $channelSection.appendChild(channelVideosContents(data.videos))
+            document.querySelector('.channels-container').appendChild($channelSection)
+          }
+          handleNewVideos()
+        }
+      } catch (err) {
+        console.error('sse parse error', err)
+      }
+    }
+
     const $showThumbnails = document.getElementById('show-thumbnails')
     const $foldedChannels = document.getElementById('folded-channels')
     const showThumbnailsKey = 'showThumbnails'
     const foldedChannelsKey = 'foldedChannels'
-
-    handleShowThumbnails(localStorage.getItem(showThumbnailsKey) === 'false')
-    handleFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'false')
     
     $showThumbnails.addEventListener('click', (event) => {
       localStorage.setItem(showThumbnailsKey, localStorage.getItem(showThumbnailsKey) === 'true' ? 'false' : 'true')
@@ -257,7 +286,6 @@
       })
       .then(() => {
         document.getElementById('add-channel-form').reset()
-        updateVideosList()
       })
       .catch(error => {
         console.error('Error adding channel:', error)
@@ -285,44 +313,39 @@
     
       for (const [name, videos] of Object.entries(videosByChannel)) {
         const $channelSection = document.createElement('details')
+        $channelSection.dataset['channel'] = name
         $channelSection.classList.add('channel-details')
         $channelSection.innerHTML = `<summary>${name}</summary><h2>${name}</h2>`
-        const $videosContainer = document.createElement('div')
-        $videosContainer.classList.add('videos-container')
-        $channelSection.appendChild($videosContainer)
-        for (const video of videos) {
-          const $video = document.createElement('div')
-          $video.classList.add('video')
-          $video.innerHTML = `
-            <div _href="${video.url}" target="_blank">
-              <img src="${video.thumbnail}"/>
-              <span>${video.publishedTime}</span> | <span>${video.viewCount}</span> | <span>${video.duration || 'N/A'}</span><br/>
-              ${video.title}
-              <div class="actions">
-                ${!video.downloaded ? `<span class="action download" data-video-id="${video.id}">⬇️ Download</span>` : ''}
-                ${video.downloaded ? `<a href="/videos/${video.id}" target="_blank" class="action watch" data-video-id="${video.id}">👀 watch</span>`: ``}
-              </div>
-            </div>
-          `
-          $videosContainer.appendChild($video)
-        }
+        $channelSection.appendChild(channelVideosContents(videos))
         $channelsContainer.appendChild($channelSection)
       }
     }
-
-    async function updateVideosList() {
-      return fetchVideos()
-      .then((videosByChannel) => {
-        showLatestVideos(videosByChannel, document.querySelector('.channels-container'))
-      })
+    function channelVideosContents (videos) {
+      const $videosContainer = document.createElement('div')
+      $videosContainer.classList.add('videos-container')
+      for (const video of videos) {
+        const $video = document.createElement('div')
+        $video.classList.add('video')
+        $video.innerHTML = `
+          <div _href="${video.url}" target="_blank">
+            <img src="${video.thumbnail}"/>
+            <span>${video.publishedTime}</span> | <span>${video.viewCount}</span> | <span>${video.duration || 'N/A'}</span><br/>
+            ${video.title}
+            <div class="actions">
+              ${!video.downloaded ? `<span class="action download" data-video-id="${video.id}">⬇️ Download</span>` : ''}
+              ${video.downloaded ? `<a href="/videos/${video.id}" target="_blank" class="action watch" data-video-id="${video.id}">👀 watch</span>`: ``}
+            </div>
+          </div>
+        `
+        $videosContainer.appendChild($video)
+      }
+      return $videosContainer
     }
-    
-    updateVideosList()
-    .then(() => {
+
+    function handleNewVideos () {
       handleShowThumbnails(localStorage.getItem(showThumbnailsKey) === 'false')
       handleFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'false')
-    })
-    .then(() => {
+
       document.querySelectorAll('.video .actions .action.watch')
       .forEach($watchAction => {
         $watchAction.addEventListener('click', (event) => {
@@ -338,7 +361,6 @@
               </p>
             </video>
           `
-          // window.open(`/videos/${videoId}`, '_blank')
         })
       })
 
@@ -360,7 +382,8 @@
           })
         })
       })
-    })
+    }
+    
   </script>
 </body>
 </html>
