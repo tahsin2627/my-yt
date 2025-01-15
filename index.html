@@ -181,8 +181,7 @@
     $closeVideoPlayer.addEventListener("click", () => $videoPlayer.close())
 
     $videoPlayer.addEventListener('close', () => {
-      const video = $videoPlayer.querySelector('video')
-      if (video) video.pause()
+      $videoPlayer.querySelector('video')?.pause()
     })
 
     const $showThumbnails = document.getElementById('show-thumbnails')

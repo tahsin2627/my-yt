@@ -191,7 +191,6 @@ function createServer ({repo, port = 3000}) {
         //https://stackoverflow.com/questions/4360060/video-streaming-with-html-5-via-node-js/29126190#29126190
         var range = req.headers.range || "";    
         var total = stats.size;
-        console.log({stats, range, total})
         if (range) {
           var parts = range.replace(/bytes=/, "").split("-");
           var partialstart = parts[0];
