@@ -170,42 +170,32 @@
   
 
   <script>
-    const $settings = document.querySelector("dialog#settings")
-    const $videoPlayer = document.querySelector('dialog#video-player')
-    const $openSettings = document.querySelector("#open-settings")
-    const $closeSettings = $settings.querySelector("button")
-    const $closeVideoPlayer = $videoPlayer.querySelector("button")
-
-    $openSettings.addEventListener("click", () => $settings.showModal())
-
-    $closeSettings.addEventListener("click", () => $settings.close())
-    $closeVideoPlayer.addEventListener("click", () => $videoPlayer.close())
-
-    $videoPlayer.addEventListener('close', () => {
-      $videoPlayer.querySelector('video')?.pause()
-    })
-
+    // app: sse updates and renders
     const eventSource = new window.EventSource('/')
+    const $channelsContainer = document.querySelector('.channels-container')
 
+    function appendChannelSectionTo (name, videos, $channelsContainer) {
+      const $channelSection = document.createElement('details')
+      $channelSection.dataset['channel'] = name
+      $channelSection.classList.add('channel-details')
+      $channelSection.innerHTML = `<summary>${name}</summary><h2>${name}</h2>`
+      $channelSection.appendChild(channelVideosContents(videos))
+      $channelsContainer.appendChild($channelSection)
+    }
     eventSource.onmessage = (message) => {
       if (!message || !message.data) return console.error('skipping empty message')
       try {
         const data = JSON.parse(message.data, {})
         console.log(data)
+
         if (data.type === 'all' && data.videos) {
-          const $channelsContainer = document.querySelector('.channels-container')
           $channelsContainer.innerHTML = ''
-    
+
           for (const [name, videos] of Object.entries(data.videos)) {
-            const $channelSection = document.createElement('details')
-            $channelSection.dataset['channel'] = name
-            $channelSection.classList.add('channel-details')
-            $channelSection.innerHTML = `<summary>${name}</summary><h2>${name}</h2>`
-            $channelSection.appendChild(channelVideosContents(videos))
-            $channelsContainer.appendChild($channelSection)
+            appendChannelSectionTo(name, videos, $channelsContainer)
           }
-          handleNewVideos()
         }
+        
         if (data.type === 'channel' && data.name && Array.isArray(data.videos)) {
           const $existingChannelSection = document.querySelector(`details[data-channel="${data.name}"]`)
           if ($existingChannelSection) {
@@ -213,41 +203,54 @@
             $existingChannelSection.querySelector(`.videos-container`).remove()
             $existingChannelSection.appendChild(channelVideosContents(data.videos))
           } else {
-            const $channelSection = document.createElement('details')
-            $channelSection.dataset['channel'] = data.name
-            $channelSection.classList.add('channel-details')
-            $channelSection.innerHTML = `<summary>${data.name}</summary><h2>${data.name}</h2>`
-            $channelSection.appendChild(channelVideosContents(data.videos))
-            document.querySelector('.channels-container').appendChild($channelSection)
+            appendChannelSectionTo(data.name, data.videos, $channelsContainer)
           }
-          handleNewVideos()
         }
+
+        handleNewVideos()
       } catch (err) {
         console.error('sse parse error', err)
       }
     }
 
-    const $showThumbnails = document.getElementById('show-thumbnails')
-    const $foldedChannels = document.getElementById('folded-channels')
+
+
+    // settings modal
+    const $settings = document.querySelector("dialog#settings")
+    const $openSettings = document.querySelector("#open-settings")
+    const $closeSettings = $settings.querySelector("button")
+    $openSettings.addEventListener("click", () => $settings.showModal())
+    $closeSettings.addEventListener("click", () => $settings.close())
+
+    // video player modal
+    const $videoPlayer = document.querySelector('dialog#video-player')
+    const $closeVideoPlayer = $videoPlayer.querySelector("button")
+    $closeVideoPlayer.addEventListener("click", () => $videoPlayer.close())
+    $videoPlayer.addEventListener('close', () => $videoPlayer.querySelector('video')?.pause())
+
+    // settings storage
     const showThumbnailsKey = 'showThumbnails'
     const foldedChannelsKey = 'foldedChannels'
-
+    
     if (!localStorage.getItem(showThumbnailsKey)) localStorage.setItem(showThumbnailsKey, 'true')
     if (!localStorage.getItem(foldedChannelsKey)) localStorage.setItem(foldedChannelsKey, 'true')
-
     console.log(localStorage)
-    applyShowThumbnails(localStorage.getItem(showThumbnailsKey) === 'true')
-    applyFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'true')
-
+  
+    // settings ui
+    const $showThumbnails = document.getElementById('show-thumbnails')
+    const $foldedChannels = document.getElementById('folded-channels')
     $showThumbnails.addEventListener('click', (event) => {
       localStorage.setItem(showThumbnailsKey, localStorage.getItem(showThumbnailsKey) === 'true' ? 'false' : 'true')
       applyShowThumbnails(localStorage.getItem(showThumbnailsKey) === 'true')
     })
-    
     $foldedChannels.addEventListener('click', (event) => {
       localStorage.setItem(foldedChannelsKey, localStorage.getItem(foldedChannelsKey) === 'true' ? 'false' : 'true')
       applyFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'true')
     })
+
+    // apply settings
+    applyShowThumbnails(localStorage.getItem(showThumbnailsKey) === 'true')
+    applyFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'true')
 
     function applyShowThumbnails(showThumbnails) {
       if (showThumbnails) {
@@ -269,7 +272,10 @@
       document.querySelector('#folded-channels').checked = foldedChannels
     }
     
-    document.getElementById('add-channel-form').addEventListener('submit', (event) => {
+    // app: add channel
+    document.getElementById('add-channel-form').addEventListener('submit', addChannelHandler)
+
+    function addChannelHandler(event) {
       event.preventDefault()
 
       const form = event.target
@@ -287,13 +293,10 @@
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name: channelName })
       })
-      .then(() => {
-        document.getElementById('add-channel-form').reset()
-      })
-      .catch(error => {
-        console.error('Error adding channel:', error)
-      })
+      .then(() => document.getElementById('add-channel-form').reset())
+      .catch(error => console.error('Error adding channel:', error))
       .finally(unfreezeForm)
+
       function freezeForm() {
         input.disabled = true
         button.disabled = true
@@ -304,20 +307,8 @@
         button.disabled = false
         loader.classList.remove('show')
       }
-    })
-
-    function showLatestVideos (videosByChannel, $channelsContainer = document.querySelector('.channels-container')) {
-      $channelsContainer.innerHTML = ''
-    
-      for (const [name, videos] of Object.entries(videosByChannel)) {
-        const $channelSection = document.createElement('details')
-        $channelSection.dataset['channel'] = name
-        $channelSection.classList.add('channel-details')
-        $channelSection.innerHTML = `<summary>${name}</summary><h2>${name}</h2>`
-        $channelSection.appendChild(channelVideosContents(videos))
-        $channelsContainer.appendChild($channelSection)
-      }
     }
+
     function channelVideosContents (videos) {
       if (!videos) return
       const $videosContainer = document.createElement('div')
@@ -353,9 +344,8 @@
         $downloadAction.removeEventListener('click', downloadVideoHandler)
         $downloadAction.addEventListener('click', downloadVideoHandler)
       })
-
-      // applyFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'true')
     }
+    
     function watchVideoHandler (event) {
       event.preventDefault()
       const videoId = event.target.dataset.videoId
