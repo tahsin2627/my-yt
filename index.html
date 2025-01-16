@@ -84,6 +84,9 @@
     .video .actions {
       font-size: 0.9rem;
     }
+    .video .actions > * {
+      cursor: pointer;
+    }
   </style>
   <style>
     #open-settings {
@@ -116,15 +119,9 @@
   </style>
   <style>
     body > header {
-      /* background-color: #f0f0f0; */
       padding: 1em 0.5em;
       margin-bottom: 3rem;
     }
-    body > header > * {
-    }
-    body > header #add-channel-form {
-    }
-    
   </style>
 </head>
 <body>
@@ -174,22 +171,12 @@
     // app: sse updates and renders
     const eventSource = new window.EventSource('/')
     const $channelsContainer = document.querySelector('.channels-container')
-    if (!localStorage.getItem('ignore')) localStorage.setItem('ignore', [])
 
-    function appendChannelSectionTo (name, videos, $channelsContainer) {
-      const $channelSection = document.createElement('details')
-      $channelSection.open = localStorage.getItem(foldedChannelsKey) === 'false'
-      $channelSection.dataset['channel'] = name
-      $channelSection.classList.add('channel-details')
-      $channelSection.innerHTML = `<summary>${name}</summary><h2>${name}</h2>`
-      $channelSection.appendChild(channelVideosContents(videos))
-      $channelsContainer.appendChild($channelSection)
-    }
     eventSource.onmessage = (message) => {
       if (!message || !message.data) return console.error('skipping empty message')
       try {
         const data = JSON.parse(message.data, {})
-        console.log(data)
+        console.log('sse message', data)
 
         if (data.type === 'all' && data.videos) {
           $channelsContainer.innerHTML = ''
@@ -215,7 +202,53 @@
       }
     }
 
+    function appendChannelSectionTo (name, videos, $channelsContainer) {
+      const $channelSection = document.createElement('details')
+      $channelSection.open = store.get(store.foldedChannelsKey)
+      $channelSection.dataset['channel'] = name
+      $channelSection.classList.add('channel-details')
+      $channelSection.innerHTML = `<summary>${name}</summary><h2>${name}</h2>`
+      $channelSection.appendChild(channelVideosContents(videos))
+      $channelsContainer.appendChild($channelSection)
+    }
 
+    // store
+    class Store {
+      showThumbnailsKey = 'showThumbnails'
+      foldedChannelsKey = 'foldedChannels'
+      ignoreVideoKey = 'ignoreVideo'
+
+      constructor() {
+        if (!localStorage.getItem(this.ignoreVideoKey)) localStorage.setItem(this.ignoreVideoKey, '[]')
+        if (!localStorage.getItem(this.showThumbnailsKey)) localStorage.setItem(this.showThumbnailsKey, 'true')
+        if (!localStorage.getItem(this.foldedChannelsKey)) localStorage.setItem(this.foldedChannelsKey, 'true')
+      }
+
+      toggle (key) {
+        if (![this.showThumbnailsKey, this.foldedChannelsKey].includes(key)) return console.error('invalid key', key)
+        localStorage.setItem(key, localStorage.getItem(key) === 'true' ? 'false' : 'true')
+      }
+      get(key) {
+        if (![this.showThumbnailsKey, this.foldedChannelsKey, this.ignoreVideoKey].includes(key)) return console.error('invalid key', key)
+        return JSON.parse(localStorage.getItem(key))
+      }
+      set(key, value) {
+        if (typeof value === 'string') {
+          localStorage.setItem(key, value)
+        } else {
+          localStorage.setItem(key, JSON.stringify(value))
+        }
+      }
+      push(key, item) {
+        if (![this.ignoreVideoKey].includes(key)) return console.error('invalid key', key)
+        const list = this.get(key)
+        list.push(item)
+        this.set(key, list)
+        return item
+      }
+    }
+
+    const store = new Store()
 
     // settings modal
     const $settings = document.querySelector("dialog#settings")
@@ -229,30 +262,22 @@
     const $closeVideoPlayer = $videoPlayer.querySelector("button")
     $closeVideoPlayer.addEventListener("click", () => $videoPlayer.close())
     $videoPlayer.addEventListener('close', () => $videoPlayer.querySelector('video')?.pause())
-
-    // settings storage
-    const showThumbnailsKey = 'showThumbnails'
-    const foldedChannelsKey = 'foldedChannels'
-    
-    if (!localStorage.getItem(showThumbnailsKey)) localStorage.setItem(showThumbnailsKey, 'true')
-    if (!localStorage.getItem(foldedChannelsKey)) localStorage.setItem(foldedChannelsKey, 'true')
-    console.log(localStorage)
   
     // settings ui
     const $showThumbnails = document.getElementById('show-thumbnails')
     const $foldedChannels = document.getElementById('folded-channels')
     $showThumbnails.addEventListener('click', (event) => {
-      localStorage.setItem(showThumbnailsKey, localStorage.getItem(showThumbnailsKey) === 'true' ? 'false' : 'true')
-      applyShowThumbnails(localStorage.getItem(showThumbnailsKey) === 'true')
+      store.toggle(store.showThumbnailsKey)
+      applyShowThumbnails(store.get(store.showThumbnailsKey))
     })
     $foldedChannels.addEventListener('click', (event) => {
-      localStorage.setItem(foldedChannelsKey, localStorage.getItem(foldedChannelsKey) === 'true' ? 'false' : 'true')
-      applyFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'true')
+      store.toggle(store.foldedChannelsKey)
+      applyFoldedChannels(store.get(store.foldedChannelsKey))
     })
 
     // apply settings
-    applyShowThumbnails(localStorage.getItem(showThumbnailsKey) === 'true')
-    applyFoldedChannels(localStorage.getItem(foldedChannelsKey) === 'true')
+    applyShowThumbnails(store.get(store.showThumbnailsKey) === 'true')
+    applyFoldedChannels(store.get(store.foldedChannelsKey) === 'true')
 
     function applyShowThumbnails(showThumbnails) {
       if (showThumbnails) {
@@ -313,7 +338,7 @@
 
     function channelVideosContents (videos) {
       if (!videos) return
-      const ignoreList = JSON.parse(localStorage.getItem('ignore') || '[]')
+      const ignoreList = store.get(store.ignoreVideoKey)
       const $videosContainer = document.createElement('div')
       $videosContainer.classList.add('videos-container')
       for (const video of videos) {
@@ -376,9 +401,7 @@
     function ignoreVideoHandler (event) {
       event.preventDefault()
       const videoId = event.target.dataset.videoId
-      const ignoreList = JSON.parse(localStorage.getItem('ignore') || '[]')
-      ignoreList.push(videoId)
-      localStorage.setItem('ignore', JSON.stringify(ignoreList))
+      store.push(store.ignoreVideoKey, videoId)
       event.target.parentNode?.parentNode?.remove()
     }
 
