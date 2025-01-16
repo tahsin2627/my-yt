@@ -72,10 +72,11 @@
       visibility: hidden !important;
     }
     .video span {
-      font-size: 10px;
+      font-size: 12px;
       color: #555;
     }
     .video a {
+      font-size: 12px;
       text-decoration: none;
       color: black;
     }
@@ -173,9 +174,11 @@
     // app: sse updates and renders
     const eventSource = new window.EventSource('/')
     const $channelsContainer = document.querySelector('.channels-container')
+    if (!localStorage.getItem('ignore')) localStorage.setItem('ignore', [])
 
     function appendChannelSectionTo (name, videos, $channelsContainer) {
       const $channelSection = document.createElement('details')
+      $channelSection.open = localStorage.getItem(foldedChannelsKey) === 'false'
       $channelSection.dataset['channel'] = name
       $channelSection.classList.add('channel-details')
       $channelSection.innerHTML = `<summary>${name}</summary><h2>${name}</h2>`
@@ -201,7 +204,6 @@
           if ($existingChannelSection) {
             console.log('replacing old channel section', data.name)
             $existingChannelSection.querySelector(`.videos-container`).replaceWith(channelVideosContents(data.videos))
-            // $existingChannelSection.appendChild(channelVideosContents(data.videos))
           } else {
             appendChannelSectionTo(data.name, data.videos, $channelsContainer)
           }
@@ -311,20 +313,24 @@
 
     function channelVideosContents (videos) {
       if (!videos) return
+      const ignoreList = JSON.parse(localStorage.getItem('ignore') || '[]')
       const $videosContainer = document.createElement('div')
       $videosContainer.classList.add('videos-container')
       for (const video of videos) {
+        if (ignoreList.includes(video.id)) {
+          console.log('ignoring video', video.id)
+          continue
+        } 
         const $video = document.createElement('div')
         $video.classList.add('video')
         $video.innerHTML = `
-          <div _href="${video.url}" target="_blank">
-            <img src="${video.thumbnail}"/>
-            <span>${video.publishedTime}</span> | <span>${video.viewCount}</span> | <span>${video.duration || 'N/A'}</span><br/>
-            ${video.title}
-            <div class="actions">
-              ${!video.downloaded ? `<span tabindex="0"  class="action download" data-video-id="${video.id}">⬇️ Download</span>` : ''}
-              ${video.downloaded ? `<a tabindex="0" href="/videos/${video.id}" target="_blank" class="action watch" data-video-id="${video.id}">👀 watch</a>`: ``}
-            </div>
+          <img src="${video.thumbnail}"/>
+          <span>${video.publishedTime}</span> | <span>${video.viewCount}</span> | <span>${video.duration || 'N/A'}</span><br/>
+          ${video.title}
+          <div class="actions">
+            ${!video.downloaded ? `<span tabindex="0"  class="action download" data-video-id="${video.id}">⬇️ Download</span>` : ''}
+            ${video.downloaded ? `<a tabindex="0" href="/videos/${video.id}" target="_blank" class="action watch" data-video-id="${video.id}">👀 watch</a>`: ``}
+            <span tabindex="0"  class="action ignore" data-video-id="${video.id}">🙈 Ignore</span>
           </div>
         `
         $videosContainer.appendChild($video)
@@ -344,6 +350,12 @@
         $downloadAction.removeEventListener('click', downloadVideoHandler)
         $downloadAction.addEventListener('click', downloadVideoHandler)
       })
+
+      document.querySelectorAll('.video .actions .action.ignore')
+      .forEach($ignoreAction => {
+        $ignoreAction.removeEventListener('click', ignoreVideoHandler)
+        $ignoreAction.addEventListener('click', ignoreVideoHandler)
+      })
     }
     
     function watchVideoHandler (event) {
@@ -359,6 +371,15 @@
           </p>
         </video>
       `
+    }
+
+    function ignoreVideoHandler (event) {
+      event.preventDefault()
+      const videoId = event.target.dataset.videoId
+      const ignoreList = JSON.parse(localStorage.getItem('ignore') || '[]')
+      ignoreList.push(videoId)
+      localStorage.setItem('ignore', JSON.stringify(ignoreList))
+      event.target.parentNode?.parentNode?.remove()
     }
 
     function downloadVideoHandler (event) {
