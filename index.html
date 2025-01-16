@@ -200,8 +200,8 @@
           const $existingChannelSection = document.querySelector(`details[data-channel="${data.name}"]`)
           if ($existingChannelSection) {
             console.log('replacing old channel section', data.name)
-            $existingChannelSection.querySelector(`.videos-container`).remove()
-            $existingChannelSection.appendChild(channelVideosContents(data.videos))
+            $existingChannelSection.querySelector(`.videos-container`).replaceWith(channelVideosContents(data.videos))
+            // $existingChannelSection.appendChild(channelVideosContents(data.videos))
           } else {
             appendChannelSectionTo(data.name, data.videos, $channelsContainer)
           }
@@ -322,8 +322,8 @@
             <span>${video.publishedTime}</span> | <span>${video.viewCount}</span> | <span>${video.duration || 'N/A'}</span><br/>
             ${video.title}
             <div class="actions">
-              ${!video.downloaded ? `<span class="action download" data-video-id="${video.id}">⬇️ Download</span>` : ''}
-              ${video.downloaded ? `<a href="/videos/${video.id}" target="_blank" class="action watch" data-video-id="${video.id}">👀 watch</span>`: ``}
+              ${!video.downloaded ? `<span tabindex="0"  class="action download" data-video-id="${video.id}">⬇️ Download</span>` : ''}
+              ${video.downloaded ? `<a tabindex="0" href="/videos/${video.id}" target="_blank" class="action watch" data-video-id="${video.id}">👀 watch</a>`: ``}
             </div>
           </div>
         `
@@ -362,6 +362,7 @@
     }
 
     function downloadVideoHandler (event) {
+      event.preventDefault()
       const downloadStartedText = '⚡️ Download started'
       if (event.target.innerText === downloadStartedText) return console.log('already downloading')
       event.target.innerText = downloadStartedText
