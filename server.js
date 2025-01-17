@@ -2,6 +2,7 @@ import http from 'http'
 import { URL } from 'url'
 import { execa } from 'execa'
 import fs from 'fs'
+import { exec } from 'child_process'
 
 fs.mkdirSync('./data', { recursive: true })
 fs.mkdirSync('./data/videos', { recursive: true })
@@ -117,7 +118,11 @@ async function updateAndPersistVideosForChannel(repo, name) {
 
 async function downloadVideo(id, repo) {
   try {
-    await execa({stdio:'inherit'})`yt-dlp -f mp4 ${id} -o ./data/videos/${id}.mp4`
+    for await (const line of execa`yt-dlp -f mp4 ${id} -o ./data/videos/${id}.mp4`.iterable()) {
+      broadcastSSE(JSON.stringify({type: 'download-log-line', line}), connections)
+      console.log(line)
+    }
+
     repo.setVideoDownloaded(id)
     console.log('Download completed')
   } catch (error) {
@@ -272,6 +277,7 @@ function createServer ({repo, port = 3000}) {
         fs.createReadStream(videoPath).pipe(res)
       } catch (error) {
         console.error('error reading file ' + videoPath)
+        console.error(error)
         res.writeHead(404, { 'Content-Type': 'text/plain' })
         res.end('Video not found')
       }
