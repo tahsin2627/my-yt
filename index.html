@@ -42,6 +42,12 @@
     }
   </style>
   <style>
+
+    .channel-details.has-new-videos {
+      /* show small indicator near the channel name */
+      background-color: #2d2d2d
+      
+    }
     .videos-container {
       display: flex;
       justify-content: space-around;
@@ -73,7 +79,7 @@
       display: none !important;
       visibility: hidden !important;
       opacity: 0 !important;
-      
+
     }
     .video span {
       font-size: 12px;
@@ -209,12 +215,14 @@
         console.log('sse message', data)
 
         if (data.type === 'download-log-line' && data.line) {
-          const downloadLog = document.querySelector('.download-log .lines');
-          const text = downloadLog.innerText
-          const lines = text.split('\n')
-          if (lines.length > 10) lines.length = 10
-          downloadLog.innerText = lines.join('\n') + '\n' + data.line
-          downloadLog.scrollTop = downloadLog.scrollHeight;
+          const $downloadLog = document.querySelector('.download-log');
+          $downloadLog.open = true;
+          const $downloadLogLines = document.querySelector('.download-log .lines');
+          const text = $downloadLogLines.innerText
+          let lines = text.split('\n')
+          lines = lines.join('\n') + '\n' + data.line
+          $downloadLogLines.innerText = lines
+          $downloadLogLines.scrollTop = $downloadLogLines.scrollHeight;
         }
         
         if (data.type === 'all' && data.videos) {
@@ -223,6 +231,7 @@
           for (const [name, videos] of Object.entries(data.videos)) {
             appendChannelSectionTo(name, videos, $channelsContainer)
           }
+          handleNewVideos(data.videos)
         }
         
         if (data.type === 'channel' && data.name && Array.isArray(data.videos)) {
@@ -233,9 +242,9 @@
           } else {
             appendChannelSectionTo(data.name, data.videos, $channelsContainer)
           }
+          handleNewVideos(data.videos)
         }
 
-        handleNewVideos()
       } catch (err) {
         console.error('sse parse error', err)
       }
@@ -256,11 +265,13 @@
       showThumbnailsKey = 'showThumbnails'
       foldedChannelsKey = 'foldedChannels'
       ignoreVideoKey = 'ignoreVideo'
+      lastVideosKey = 'lastVideos'
 
       constructor() {
         if (!localStorage.getItem(this.ignoreVideoKey)) localStorage.setItem(this.ignoreVideoKey, '[]')
         if (!localStorage.getItem(this.showThumbnailsKey)) localStorage.setItem(this.showThumbnailsKey, 'true')
         if (!localStorage.getItem(this.foldedChannelsKey)) localStorage.setItem(this.foldedChannelsKey, 'true')
+        if (!localStorage.getItem(this.lastVideosKey)) localStorage.setItem(this.lastVideosKey, '{}')
       }
 
       toggle (key) {
@@ -268,7 +279,7 @@
         localStorage.setItem(key, localStorage.getItem(key) === 'true' ? 'false' : 'true')
       }
       get(key) {
-        if (![this.showThumbnailsKey, this.foldedChannelsKey, this.ignoreVideoKey].includes(key)) return console.error('invalid key', key)
+        if (![this.showThumbnailsKey, this.foldedChannelsKey, this.ignoreVideoKey, this.lastVideosKey].includes(key)) return console.error('invalid key', key)
         return JSON.parse(localStorage.getItem(key))
       }
       set(key, value) {
@@ -388,6 +399,7 @@
         } 
         const $video = document.createElement('div')
         $video.classList.add('video')
+        $video.dataset['videoId'] = video.id
         $video.innerHTML = `
           <img src="${video.thumbnail}"/>
           <span>${video.publishedTime}</span> | <span>${video.viewCount}</span> | <span>${video.duration || 'N/A'}</span><br/>
@@ -403,7 +415,7 @@
       return $videosContainer
     }
 
-    function handleNewVideos () {
+    function handleNewVideos (videos) {
       document.querySelectorAll('.video .actions .action.watch')
       .forEach($watchAction => {
         $watchAction.removeEventListener('click', watchVideoHandler)
@@ -421,6 +433,16 @@
         $ignoreAction.removeEventListener('click', ignoreVideoHandler)
         $ignoreAction.addEventListener('click', ignoreVideoHandler)
       })
+      
+      if (typeof videos === 'object' && !Array.isArray(videos)) {
+        const lastVideos = store.get(store.lastVideosKey)
+        for (const [name, vids] of Object.entries(videos)) {
+          if (lastVideos[name] != vids[0]?.id)
+            document.querySelector(`details[data-channel="${name}"]`)?.classList.add('has-new-videos')
+          lastVideos[name] = vids[0]?.id
+        }
+        store.set(store.lastVideosKey, lastVideos)
+      }
     }
     
     function watchVideoHandler (event) {
