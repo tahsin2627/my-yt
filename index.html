@@ -44,8 +44,9 @@
   <style>
     .videos-container {
       display: flex;
-      justify-content: space-between;
+      justify-content: space-around;
       flex-wrap: wrap;
+      align-items: center;
       gap: 10px;
       padding: 10px;
       margin: 0;
@@ -275,9 +276,9 @@
       applyFoldedChannels(store.get(store.foldedChannelsKey))
     })
 
-    // apply settings
-    applyShowThumbnails(store.get(store.showThumbnailsKey) === 'true')
-    applyFoldedChannels(store.get(store.foldedChannelsKey) === 'true')
+    // apply settings                                                                                                                                                          
+    applyShowThumbnails(store.get(store.showThumbnailsKey))
+    applyFoldedChannels(store.get(store.foldedChannelsKey))
 
     function applyShowThumbnails(showThumbnails) {
       if (showThumbnails) {
@@ -289,6 +290,7 @@
     }
     
     function applyFoldedChannels (foldedChannels) {
+      console.log('applyFoldedChannels', foldedChannels)
       if (foldedChannels) {
         [...document.querySelectorAll('.channels-container details')]
         .forEach(d => d.open = false)
