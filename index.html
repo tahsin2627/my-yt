@@ -193,6 +193,10 @@
   </dialog>
 
   <main>
+    <details class="downloaded-videos-container">
+      <summary>Downloaded videos</summary>
+      <div class="videos-container"></div>
+    </details>
     <div class="channels-container"></div>
     <details class="download-log">
       <summary>Download Log</summary>
@@ -210,7 +214,7 @@
       if (!message || !message.data) return console.error('skipping empty message')
       try {
         const data = JSON.parse(message.data, {})
-        console.log('sse message', data)
+        console.log('[sse] message', data)
 
         if (data.type === 'download-log-line' && data.line) {
           const $downloadLog = document.querySelector('.download-log');
@@ -228,6 +232,7 @@
 
           for (const [name, videos] of Object.entries(data.videos)) {
             appendChannelSectionTo(name, videos, $channelsContainer)
+            updateDownloadedVideos(videos)
           }
           handleNewVideos(data.videos)
           window.videos = data.videos
@@ -237,11 +242,11 @@
         if (data.type === 'channel' && data.name && Array.isArray(data.videos)) {
           const $existingChannelSection = document.querySelector(`details[data-channel="${data.name}"]`)
           if ($existingChannelSection) {
-            console.log('replacing old channel section', data.name)
             $existingChannelSection.querySelector(`.videos-container`).replaceWith(channelVideosContents(data.videos))
           } else {
             appendChannelSectionTo(data.name, data.videos, $channelsContainer)
           }
+          updateDownloadedVideos(data.videos)
           window.videos[data.name] = data.videos
           handleNewVideos(data.videos)
         }
@@ -259,6 +264,21 @@
       $channelSection.innerHTML = `<summary>${name}</summary><h2>${name}</h2>`
       $channelSection.appendChild(channelVideosContents(videos))
       $channelsContainer.appendChild($channelSection)
+    }
+
+    function updateDownloadedVideos (videos) {
+      const $downloadedVideosContainer = document.querySelector('details.downloaded-videos-container')
+      const $videosContainer = $downloadedVideosContainer.querySelector('.videos-container')
+      videos.filter(v => v.downloaded).forEach(v => {
+        const $existing = $downloadedVideosContainer.querySelector(`[data-video-id="${v.id}"]`)
+        if ($existing) {
+          const $video = createVideoElement(v)
+          $existing.replaceWith($video)
+          return 
+        }
+        const $video = createVideoElement(v)
+        $videosContainer.appendChild($video)
+      })
     }
 
     // store
@@ -404,23 +424,30 @@
           console.log('ignoring video', video.id)
           continue
         } 
-        const $video = document.createElement('div')
-        $video.classList.add('video')
-        $video.dataset['videoId'] = video.id
-        $video.innerHTML = `
-          <img src="${video.thumbnail}"/>
-          <span>${video.publishedTime}</span> | <span>${video.viewCount}</span> | <span>${video.duration || 'N/A'}</span><br/>
-          ${video.title}
-          <div class="actions">
-            ${!video.downloaded ? `<span tabindex="0"  class="action download" data-video-id="${video.id}">⬇️ Download</span>` : ''}
-            ${video.downloaded ? `<a tabindex="0" href="/videos/${video.id}" target="_blank" class="action watch" data-video-id="${video.id}">👀 watch</a>`: ``}
-            ${!video.summary ? `<span tabindex="0"  class="action summarize" data-video-id="${video.id}">📖 Summarize</span>` : `<span tabindex="0"  class="action show-summary" data-video-id="${video.id}" data-summary="${video.summary}">📖 Show summary</span>`}
-            <span tabindex="0"  class="action ignore" data-video-id="${video.id}">🙈 Ignore</span>
-          </div>
-        `
-        $videosContainer.appendChild($video)
+        $videosContainer.appendChild(createVideoElement(video))
       }
       return $videosContainer
+    }
+
+    function createVideoElement (video) {
+      const $video = document.createElement('div')
+      $video.classList.add('video')
+      $video.dataset['videoId'] = video.id
+      $video.innerHTML = `
+        <img src="${video.thumbnail}"/>
+        <span>${video.publishedTime}</span> | <span>${video.viewCount}</span> | <span>${video.duration || 'N/A'}</span><br/>
+        ${video.title}
+        <div class="actions">
+          ${video.downloaded
+            ? `<a tabindex="0" href="/videos/${video.id}" target="_blank" class="action watch" data-video-id="${video.id}">👀 watch</a>`
+            : `<span tabindex="0"  class="action download" data-video-id="${video.id}">⬇️ Download</span>`}
+          ${!video.summary
+            ? `<span tabindex="0"  class="action summarize" data-video-id="${video.id}">📖 Summarize</span>`
+            : `<span tabindex="0"  class="action show-summary" data-video-id="${video.id}" data-summary="${video.summary}">📖 Summary</span>`}
+          <span tabindex="0"  class="action ignore" data-video-id="${video.id}">🙈 Ignore</span>
+        </div>
+      `
+      return $video
     }
 
     function handleNewVideos (videos) {
@@ -514,6 +541,7 @@
         console.error('Error starting download:', error)
       })
     }
+
     function summarizeVideoHandler (event) {
       event.preventDefault()
       const summaryStartedText = '⚡️ summary started'
@@ -531,6 +559,7 @@
         console.error('Error starting summary:', error)
       })
     }
+
     function showSummaryHandler (event) {
       event.preventDefault()
       const videoId = event.target.dataset.videoId

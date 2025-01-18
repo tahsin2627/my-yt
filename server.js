@@ -172,45 +172,144 @@ async function summarizeVideo(id, repo) {
     */
     const transcriptPath = `./data/videos/${id}-sub.en.srt`
     const transcriptContent = fs.readFileSync(transcriptPath, 'utf-8')
-    const cleanedTranscript = transcriptContent.replace(/\d+\n\d{2}:\d{2}:\d{2},\d{3} --> \d{2}:\d{2}:\d{2},\d{3}\n<font color="white" size=".72c">(.*?)<\/font>/g, '$1\n').replace(/\n+/g, '\n')
+    let cleanedTranscript = transcriptContent.replace(/\d+\n\d{2}:\d{2}:\d{2},\d{3} --> \d{2}:\d{2}:\d{2},\d{3}\n<font color="white" size=".72c">(.*?)<\/font>/g, '$1\n').replace(/\n+/g, '\n')
     repo.setVideoTranscript(id, cleanedTranscript)
     fs.writeFileSync(`./data/videos/${id}-sub.en.txt`, cleanedTranscript)
+    const shortenedText = await shortenTextLMSTUDIO(cleanedTranscript)
     
-    const {response} = await fetchAIResponse(`Summarize the following transcript of a YouTube video, avoid talking about the host and avoid describing the context, keep it short, to the point, and fit it in max 10 paragraphs: \n ${cleanedTranscript}`)
-    console.log(response)
-    repo.setVideoSummary(id, response)
-    
+    const prompt = `Summarize the following transcript, in max 10 paragraphs, your output should just contain the summary, keep it short, succint, to the point: \n\n ${cleanedTranscript}`
+    console.log('prompt', prompt)
+    const summary = await fetchAIResponseLMSTUDIO(prompt)
+    console.log(summary)
+    repo.setVideoSummary(id, summary)
+
     console.log('Download completed')
   } catch (error) {
     console.error('Error downloading video:', error)
   } 
 }
 
-async function fetchAIResponse (prompt) {
-  const url = 'http://localhost:11434/api/generate';
-  const options = {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-      "model": "llama3.2",
-      "prompt": prompt,
-      "stream": false
-    })
-  };
 
+async function fetchAIResponseOLLAMA (prompt) {
   try {
-    const response = await fetch(url, options);
+    const response = await fetch('http://localhost:11434/api/generate', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "model": "llama3.2",
+        "prompt": prompt,
+        "stream": false
+      })
+    })
     if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`);
+      throw new Error(`HTTP error! Status: ${response.status}`)
     }
-    const data = await response.json();
-    // console.log(data);
+    const data = await response.json()
+    // console.log(data)
     return data
   } catch (error) {
-    console.error('Error summarizing text:', error);
+    console.error('Error summarizing text:', error)
   }
+}
+async function fetchAIResponseLMSTUDIO (prompt) {
+  if (prompt.length > 2500) prompt = prompt.substring(0, 2500)
+  try {
+    const response = await fetch('http://localhost:1234/v1/completions', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({
+        "model": "mlx-community/Llama-3.2-3B-Instruct-4bit",
+        "prompt": prompt,
+        "temperature": 0.7,
+        // "max_tokens": 10,
+        "stream": false,
+        // "stop": "\n"
+      })
+    })
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`)
+    }
+    const data = await response.json()
+    console.log(data) 
+    return data.choices[data.choices.length - 1]?.text
+  } catch (error) {
+    console.error('Error summarizing text:', error)
+  }
+}
+
+
+async function shortenTextOLLAMA(text) {
+  // split the text into 1600 character blocks
+  const chunks = []
+  for (let i = 0; i < text.length; i += 5000) {
+    chunks.push(text.substring(i, i + 5000))
+  }
+  const responses = []
+  try {
+    for (const chunk of chunks) {
+      console.log('shortening chunk', chunk.substring(0, 20))
+      const prompt = `shorten the following text: \n ${chunk}`
+      const response = await fetch('http://localhost:11434/api/generate', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "model": "gemma2",
+          "prompt": prompt,
+          "stream": false
+        })
+      })
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`)
+      }
+      const data = await response.json()
+      responses.push(data.response)
+    }
+  } catch (error) {
+    console.error('Error summarizing text:', error)
+  }
+  return responses.join(' \n')
+}
+async function shortenTextLMSTUDIO(text) {
+  // split the text into 1600 character blocks
+  const chunks = []
+  for (let i = 0; i < text.length; i += 1800) {
+    chunks.push(text.substring(i, i + 1800))
+  }
+  const responses = []
+  try {
+    for (const chunk of chunks) {
+      console.log('shortening chunk', chunk.substring(0, 20))
+      const prompt = `shorten the following text: \n ${chunk}`
+      const response = await fetch('http://localhost:1234/v1/completions', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({
+          "model": "mlx-community/Llama-3.2-3B-Instruct-4bit",
+          "prompt": prompt,
+          "temperature": 0.7,
+          // "max_tokens": 10,
+          "stream": false,
+          // "stop": "\n"
+        })
+      })
+      if (!response.ok) {
+        throw new Error(`HTTP error! Status: ${response.status}`)
+      }
+      const data = await response.json()
+      responses.push(data.response)
+    }
+  } catch (error) {
+    console.error('Error summarizing text:', error)
+  }
+  return responses.join(' \n')
 }
 
 
@@ -398,4 +497,5 @@ function createServer ({repo, port = 3000}) {
     res.writeHead(200, { 'Content-Type': 'text/html' })
     res.end(indexHtml)
   })
+
 }
