@@ -230,6 +230,7 @@
             appendChannelSectionTo(name, videos, $channelsContainer)
           }
           handleNewVideos(data.videos)
+          window.videos = data.videos
           applyFoldedChannels(store.get(store.foldedChannelsKey))
         }
         
@@ -241,6 +242,7 @@
           } else {
             appendChannelSectionTo(data.name, data.videos, $channelsContainer)
           }
+          window.videos[data.name] = data.videos
           handleNewVideos(data.videos)
         }
 
@@ -313,7 +315,7 @@
     $videoPlayer.addEventListener('close', () => $videoPlayer.querySelector('video')?.pause())
 
     // summary modal
-    const $summaryModal = document.querySelector('dialog#video-player')
+    const $summaryModal = document.querySelector('dialog#summary')
     const $closeSummary = $summaryModal.querySelector("button")
     $closeSummary.addEventListener("click", () => $summaryModal.close())
     $summaryModal.addEventListener('close', () => {})
@@ -532,8 +534,14 @@
     function showSummaryHandler (event) {
       event.preventDefault()
       const videoId = event.target.dataset.videoId
-      const summary = event.target.dataset.summary
-      console.log(summary)
+      for (const [name, videos] of Object.entries(window.videos)) {
+        const video = videos.find(video => video.id === videoId)
+        if (video) {
+          document.querySelector('dialog#summary').showModal()
+          document.querySelector('dialog#summary div').innerText = video.summary
+          return
+        }
+      }
     }
   </script>
 </body>

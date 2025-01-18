@@ -179,8 +179,7 @@ async function summarizeVideo(id, repo) {
     const {response} = await fetchAIResponse(`Summarize the following transcript of a YouTube video, avoid talking about the host and avoid describing the context, keep it short, to the point, and fit it in max 10 paragraphs: \n ${cleanedTranscript}`)
     console.log(response)
     repo.setVideoSummary(id, response)
-
-    repo.setVideoDownloaded(id)
+    
     console.log('Download completed')
   } catch (error) {
     console.error('Error downloading video:', error)
