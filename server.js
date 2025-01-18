@@ -50,6 +50,26 @@ class Repository {
   saveVideos() {
     fs.writeFileSync(this.paths.videos, JSON.stringify(this.videos, null, 2))
   }
+  setVideoTranscript(id, transcript) {
+    const video = this.getVideo(id)
+    console.log('setVideoTranscript', id, transcript.length)
+    if (!video) return
+    this.videos[video.channelName] = this.videos[video.channelName].map(v => {
+      if (v.id === id) return Object.assign(v, {transcript})
+      return v
+    })
+    this.saveVideos()
+  }
+  setVideoSummary(id, summary) {
+    const video = this.getVideo(id)
+    console.log('setVideoSummary', id, summary.length)
+    if (!video) return
+    this.videos[video.channelName] = this.videos[video.channelName].map(v => {
+      if (v.id === id) return Object.assign(v, {summary})
+      return v
+    })
+    this.saveVideos()
+  }
   setVideoDownloaded(id) {
     const video = this.getVideo(id)
     console.log('setVideoDownloaded', id)
@@ -73,6 +93,7 @@ async function main ({port = 3000} = {}) {
   updateAndPersistVideos(repo)
 
   setInterval(() => updateAndPersistVideos(repo), 1000 * 60 * 5)
+
   createServer({repo, port})
   .listen(port, () => {
     console.log(`Server running at http://localhost:${port}`)
@@ -98,6 +119,8 @@ async function updateAndPersistVideos (repo) {
           video.downloaded = existingVideo.downloaded
           console.log('setting video as downloaded', video.id)
         }
+        // generalize using Object.assign
+        Object.assign(video, existingVideo)
       }
     }
     if (videos) {
@@ -127,6 +150,67 @@ async function downloadVideo(id, repo) {
     console.log('Download completed')
   } catch (error) {
     console.error('Error downloading video:', error)
+  }
+}
+async function summarizeVideo(id, repo) {
+  try {
+    for await (const line of execa`yt-dlp --skip-download --write-subs --write-auto-subs --sub-lang en --sub-format ttml --convert-subs srt --default-search ytsearch ${id} -o ./data/videos/${id}-sub`.iterable()) {
+      broadcastSSE(JSON.stringify({type: 'download-log-line', line}), connections)
+      console.log(line)
+    }
+    /*
+    given the transcript at this location ./data/videos/${id}-sub.en.srt with the following format:
+1
+00:00:07,279 --> 00:00:12,799
+<font color="white" size=".72c">it's friday Welcome back in broad terms here</font>
+
+2
+00:00:10,519 --> 00:00:14,639
+<font color="white" size=".72c">we talk about news we go into more</font>
+    remove all timestamp related text, also the font html tag around the actual text, and the number that identifies each part
+    preserve new lines
+    */
+    const transcriptPath = `./data/videos/${id}-sub.en.srt`
+    const transcriptContent = fs.readFileSync(transcriptPath, 'utf-8')
+    const cleanedTranscript = transcriptContent.replace(/\d+\n\d{2}:\d{2}:\d{2},\d{3} --> \d{2}:\d{2}:\d{2},\d{3}\n<font color="white" size=".72c">(.*?)<\/font>/g, '$1\n').replace(/\n+/g, '\n')
+    repo.setVideoTranscript(id, cleanedTranscript)
+    fs.writeFileSync(`./data/videos/${id}-sub.en.txt`, cleanedTranscript)
+    
+    const {response} = await fetchAIResponse(`Summarize the following transcript of a YouTube video, avoid talking about the host and avoid describing the context, keep it short, to the point, and fit it in max 10 paragraphs: \n ${cleanedTranscript}`)
+    console.log(response)
+    repo.setVideoSummary(id, response)
+
+    repo.setVideoDownloaded(id)
+    console.log('Download completed')
+  } catch (error) {
+    console.error('Error downloading video:', error)
+  } 
+}
+
+async function fetchAIResponse (prompt) {
+  const url = 'http://localhost:11434/api/generate';
+  const options = {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json'
+    },
+    body: JSON.stringify({
+      "model": "llama3.2",
+      "prompt": prompt,
+      "stream": false
+    })
+  };
+
+  try {
+    const response = await fetch(url, options);
+    if (!response.ok) {
+      throw new Error(`HTTP error! Status: ${response.status}`);
+    }
+    const data = await response.json();
+    // console.log(data);
+    return data
+  } catch (error) {
+    console.error('Error summarizing text:', error);
   }
 }
 
@@ -239,6 +323,29 @@ function createServer ({repo, port = 3000}) {
       })
       return
     }
+    if (parsedUrl.pathname === '/summarize-video' && req.method === 'POST') {
+      let body = ''
+      req.on('data', chunk => {
+        body += chunk.toString()
+      })
+      req.on('end', () => {
+        const { id } = JSON.parse(body)
+        const {channelName} = repo.getVideo(id)
+        const videos = repo.getVideos()[channelName]
+
+        summarizeVideo(id, repo)
+        .then(() => {
+          broadcastSSE(JSON.stringify({type: 'channel', name: channelName, videos}), connections)
+        })
+        .catch((error) => {
+          console.error(error)
+          broadcastSSE(JSON.stringify({type: 'channel', name: channelName, videos}), connections)
+        })
+        res.writeHead(200, { 'Content-Type': 'text/plain' })
+        res.end('Download started')
+      })
+      return
+    }
     if (parsedUrl.pathname.match('\/videos\/.*') && req.method === 'GET') {
       const videoPath = parsedUrl.pathname.replace('/videos/', './data/videos/') + '.mp4'
       console.log({videoPath})
@@ -285,7 +392,8 @@ function createServer ({repo, port = 3000}) {
     }
     if (req.headers.accept && req.headers.accept.indexOf('text/event-stream') >= 0) {
       handleSSE(res, connections)
-      return broadcastSSE(JSON.stringify({type: 'all', videos: repo.getVideos()}), [res])
+      broadcastSSE(JSON.stringify({type: 'all', videos: repo.getVideos()}), [res])
+      return 
     }
     const indexHtml = await fs.promises.readFile('index.html', 'utf8')
     res.writeHead(200, { 'Content-Type': 'text/html' })
