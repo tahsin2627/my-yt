@@ -453,7 +453,15 @@ body.dialog-opened {
       $video.classList.add('video')
       $video.dataset['videoId'] = video.id
       $video.innerHTML = `
-        <img src="${video.thumbnail}"/>
+        ${video.downloaded
+        ? `<video controls width="280">
+            <source src="/videos/${video.id}" type="video/mp4" />
+            <p>
+              Your browser does not support the video tag.
+              Download the video instead <a href="/videos/${video.id}" target="_blank">here</a>
+            </p>
+          </video>`
+        : `<img src="${video.thumbnail}"/>`}
         <span>${video.publishedTime}</span> | <span>${video.viewCount}</span> | <span>${video.duration || 'N/A'}</span><br/>
         ${video.title}
         <div class="actions">
