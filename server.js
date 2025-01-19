@@ -34,41 +34,6 @@ if (import.meta.url.endsWith('server.js')) {
   main()
 }
 
-
-async function updateAndPersistVideos (repo) {
-  const channels = repo.getChannels()
-  const existingVideos = repo.getVideos()
-  for (const channel of channels) {
-    console.log('updating videos for', channel.name)
-    const videos = await getVideosFor(channel.name)
-    const existingChannelVideos = existingVideos[channel.name]
-    if (existingChannelVideos) {
-      for (const video of videos) {
-        const existingVideo = existingChannelVideos.find(v => v.id === video.id)
-        if (existingVideo && existingVideo.downloaded) {
-          video.downloaded = existingVideo.downloaded
-          console.log('setting video as downloaded', video.id)
-        }
-        // generalize using Object.assign
-        Object.assign(video, existingVideo)
-      }
-    }
-    if (videos) {
-      repo.saveChannelVideos(channel.name, videos)
-      broadcastSSE(JSON.stringify({type: 'channel', name: channel.name, videos}), connections)
-    }
-  }
-  console.log('All videos updated')
-}
-
-async function updateAndPersistVideosForChannel(repo, name) {
-  const videos = await getVideosFor(name)
-  if (videos) {
-    repo.saveChannelVideos(name, videos)
-  }
-  return videos
-}
-
 function createServer ({repo, port = 3000}) {
   return http.createServer(async (req, res) => {
     const parsedUrl = new URL(req.url, `http://${req.headers.host}`)
@@ -85,7 +50,7 @@ function createServer ({repo, port = 3000}) {
       req.on('end', async () => {
         let { name } = JSON.parse(body)
         name = name.trim()
-        const videos = await updateAndPersistVideosForChannel(repo, name)
+        const videos = await updateAndPersistVideosForChannel(name, repo)
         if (Array.isArray(videos)) {
           repo.addChannel(name)
           broadcastSSE(JSON.stringify({type: 'channel', name, videos}), connections)
@@ -201,4 +166,32 @@ function createServer ({repo, port = 3000}) {
     res.end(indexHtml)
   })
 
+}
+
+async function updateAndPersistVideos (repo) {
+  const channels = repo.getChannels()
+  for (const channel of channels) {
+    updateAndPersistVideosForChannel(channel.name, repo)
+  }
+  console.log('All videos updated')
+}
+
+async function updateAndPersistVideosForChannel(name, repo) {
+  console.log('updating videos for', name)
+  const videos = await getVideosFor(name)
+  if (videos) {
+    videos.map(v => patchVideo(v, repo))
+    repo.saveChannelVideos(name, videos)
+    broadcastSSE(JSON.stringify({type: 'channel', name, videos}), connections)
+  }
+  return videos
+}
+
+function patchVideo(video, repo) {
+  const existingVideos = repo.getVideos()
+  const existingChannelVideos = existingVideos[video.channelName]
+  if (existingChannelVideos) {
+    const existingVideo = existingChannelVideos.find(v => v.id === video.id)
+    Object.assign(video, existingVideo)
+  } 
 }
