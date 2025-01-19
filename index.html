@@ -150,6 +150,28 @@
       padding: 1em 0.5em;
       margin-bottom: 3rem;
     }
+
+    details {
+      padding: 10px; 
+      border: 5px solid #f7f7f7;
+      border-radius: 3px;
+    }
+
+    details {
+      transition: 0.2s background linear;
+    }
+
+    details:hover {
+      /* background: #eaeaea; */
+    }
+
+    details > summary {
+      transition: color 1s;
+    }
+
+    details[open] > summary {
+      color: #171717;
+    }
   </style>
 </head>
 <body>
@@ -264,7 +286,7 @@
       $channelSection.open = store.get(store.foldedChannelsKey)
       $channelSection.dataset['channel'] = name
       $channelSection.classList.add('channel-details')
-      $channelSection.innerHTML = `<summary>${name}</summary><h2>${name}</h2>`
+      $channelSection.innerHTML = `<summary>${name}</summary>`
       $channelSection.appendChild(channelVideosContents(videos))
       $channelsContainer.appendChild($channelSection)
     }
