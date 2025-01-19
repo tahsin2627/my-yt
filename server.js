@@ -2,8 +2,7 @@ import http from 'http'
 import { URL } from 'url'
 import { execa } from 'execa'
 import fs from 'fs'
-import { exec } from 'child_process'
-import { cleanTranscript } from './lib/subtitles-summary.js'
+import { summarizeVideo } from './lib/subtitles-summary.js'
 
 fs.mkdirSync('./data', { recursive: true })
 fs.mkdirSync('./data/videos', { recursive: true })
@@ -153,168 +152,6 @@ async function downloadVideo(id, repo) {
     console.error('Error downloading video:', error)
   }
 }
-async function summarizeVideo(id, repo) {
-  try {
-    for await (const line of execa`yt-dlp --skip-download --write-subs --write-auto-subs --sub-lang en --sub-format ttml --convert-subs srt --default-search ytsearch ${id} -o ./data/videos/${id}-sub`.iterable()) {
-      broadcastSSE(JSON.stringify({type: 'download-log-line', line}), connections)
-      console.log(line)
-    }
-    /*
-    given the transcript at this location ./data/videos/${id}-sub.en.srt with the following format:
-1
-00:00:07,279 --> 00:00:12,799
-<font color="white" size=".72c">it's friday Welcome back in broad terms here</font>
-
-2
-00:00:10,519 --> 00:00:14,639
-<font color="white" size=".72c">we talk about news we go into more</font>
-    remove all timestamp related text, also the font html tag around the actual text, and the number that identifies each part
-    preserve new lines
-    */
-    const transcriptPath = `./data/videos/${id}-sub.en.srt`
-    const transcript = fs.readFileSync(transcriptPath, 'utf-8')
-    let cleanedTranscript = cleanTranscript(transcript)
-    console.log('cleanedTranscript.length', cleanedTranscript.length)
-    // cleanedTranscript = await makeSenseLMSTUDIO(cleanedTranscript)
-    // console.log(cleanedTranscript)
-    repo.setVideoTranscript(id, cleanedTranscript)
-    fs.writeFileSync(`./data/videos/${id}-sub.en.txt`, cleanedTranscript)
-    
-    const prompt = `Summarize the following video transcript, in max 10 sentences, your output should just contain the summary, don't repeat yourself, keep it short, reply with just the summary: \n\n ${cleanedTranscript}`
-    console.log('prompt', prompt)
-    const summary = await fetchAIResponseLMSTUDIO(prompt)
-    console.log('summary', summary)
-    repo.setVideoSummary(id, summary)
-
-    console.log('Download completed')
-  } catch (error) {
-    console.error('Error downloading video:', error)
-  } 
-}
-
-
-async function fetchAIResponseOLLAMA (prompt) {
-  try {
-    const response = await fetch('http://localhost:11434/api/generate', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        "model": "llama3.2",
-        "prompt": prompt,
-        "stream": false
-      })
-    })
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`)
-    }
-    const data = await response.json()
-    // console.log(data)
-    return data
-  } catch (error) {
-    console.error('Error summarizing text:', error)
-  }
-}
-async function fetchAIResponseLMSTUDIO (prompt) {
-  if (prompt.length > 5000) prompt = prompt.substring(0, 5000)
-  try {
-    const response = await fetch('http://localhost:1234/v1/completions', {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json'
-      },
-      body: JSON.stringify({
-        "model": "llama-3.2-3b-instruct",
-        "prompt": prompt,
-        "temperature": 0.7,
-        // "max_tokens": 10,
-        "stream": false,
-        // "stop": "\n"
-      })
-    })
-    if (!response.ok) {
-      throw new Error(`HTTP error! Status: ${response.status}`)
-    }
-    const data = await response.json()
-    console.log(data) 
-    return data.choices[data.choices.length - 1]?.text
-  } catch (error) {
-    console.error('Error summarizing text:', error)
-  }
-}
-
-
-async function shortenTextOLLAMA(text) {
-  // split the text into 1600 character blocks
-  const chunks = []
-  for (let i = 0; i < text.length; i += 5000) {
-    chunks.push(text.substring(i, i + 5000))
-  }
-  const responses = []
-  try {
-    for (const chunk of chunks) {
-      console.log('shortening chunk', chunk.substring(0, 20))
-      const prompt = `shorten the following text: \n ${chunk}`
-      const response = await fetch('http://localhost:11434/api/generate', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          "model": "gemma2",
-          "prompt": prompt,
-          "stream": false
-        })
-      })
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`)
-      }
-      const data = await response.json()
-      responses.push(data.response)
-    }
-  } catch (error) {
-    console.error('Error summarizing text:', error)
-  }
-  return responses.join(' \n')
-}
-async function makeSenseLMSTUDIO(text) {
-  // split the text into 1600 character blocks
-  const chunks = []
-  for (let i = 0; i < text.length; i += 1500) {
-    chunks.push(text.substring(i, i + 1500))
-  }
-  console.log(chunks.length, 'chunks')
-  const responses = []
-  try {
-    for (const chunk of chunks) {
-      console.log('making sense of chunk', chunk.substring(0, 20))
-      const prompt = `rewrite the following youtube video transcript, reply in short form, always reply in plain text, don't repeat yourself, MAXIMUM 10 sentences: \n ${chunk}`
-      const response = await fetch('http://localhost:1234/v1/completions', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-          "model": "llama-3.2-3b-instruct",
-          "prompt": prompt,
-          "temperature": 0.7,
-          "max_tokens": 1000,
-          "stream": false,
-          // "stop": "\n"
-        })
-      })
-      if (!response.ok) {
-        throw new Error(`HTTP error! Status: ${response.status}`)
-      }
-      const data = await response.json()
-      responses.push(data.response)
-    }
-  } catch (error) {
-    console.error('Error summarizing text:', error)
-  }
-  return responses.join(' \n')
-}
 
 
 async function getVideosFor(channelName) {
@@ -435,7 +272,9 @@ function createServer ({repo, port = 3000}) {
         const {channelName} = repo.getVideo(id)
         const videos = repo.getVideos()[channelName]
 
-        summarizeVideo(id, repo)
+        summarizeVideo(id, repo, (line) => {
+          broadcastSSE(JSON.stringify({type: 'download-log-line', line}), connections)
+        })
         .then(() => {
           broadcastSSE(JSON.stringify({type: 'channel', name: channelName, videos}), connections)
         })
