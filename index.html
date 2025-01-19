@@ -141,6 +141,9 @@
       );
       opacity: 0.85;
     }
+body.dialog-opened {
+      overflow: hidden;
+    }
   </style>
   <style>
     body > header {
@@ -355,6 +358,22 @@
     // apply settings                                                                                                                                                          
     applyShowThumbnails(store.get(store.showThumbnailsKey))
     applyFoldedChannels(store.get(store.foldedChannelsKey))
+
+    // observe dialog open/close and prevent body background scroll
+    observeDialogOpenPreventScroll($settings)
+    observeDialogOpenPreventScroll($videoPlayer)
+    observeDialogOpenPreventScroll($summaryModal)
+
+    
+    function observeDialogOpenPreventScroll (dialog) {
+      new MutationObserver((mutationList, observer) => {
+        for (const mutation of mutationList) {
+          if (mutation.type === "attributes" && mutation.attributeName === 'open') {
+            document.body.classList[mutation.target.open ? 'add' : 'remove']('dialog-opened')
+          }
+        }
+      }).observe(dialog, { attributes: true, childList: true, subtree: true })
+    }
 
     function applyShowThumbnails(showThumbnails) {
       if (showThumbnails) {
