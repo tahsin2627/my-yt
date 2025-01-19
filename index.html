@@ -141,7 +141,7 @@
       );
       opacity: 0.85;
     }
-body.dialog-opened {
+    body.dialog-opened {
       overflow: hidden;
     }
   </style>
@@ -330,7 +330,7 @@ body.dialog-opened {
     const $closeSettings = $settings.querySelector("button")
     $openSettings.addEventListener("click", () => $settings.showModal())
     $closeSettings.addEventListener("click", () => $settings.close())
-
+    
     // video player modal
     const $videoPlayer = document.querySelector('dialog#video-player')
     const $closeVideoPlayer = $videoPlayer.querySelector("button")

@@ -3,6 +3,7 @@ import { URL } from 'url'
 import { execa } from 'execa'
 import fs from 'fs'
 import { exec } from 'child_process'
+import { cleanTranscript } from './lib/subtitles-summary.js'
 
 fs.mkdirSync('./data', { recursive: true })
 fs.mkdirSync('./data/videos', { recursive: true })
@@ -171,16 +172,18 @@ async function summarizeVideo(id, repo) {
     preserve new lines
     */
     const transcriptPath = `./data/videos/${id}-sub.en.srt`
-    const transcriptContent = fs.readFileSync(transcriptPath, 'utf-8')
-    let cleanedTranscript = transcriptContent.replace(/\d+\n\d{2}:\d{2}:\d{2},\d{3} --> \d{2}:\d{2}:\d{2},\d{3}\n<font color="white" size=".72c">(.*?)<\/font>/g, '$1\n').replace(/\n+/g, '\n')
+    const transcript = fs.readFileSync(transcriptPath, 'utf-8')
+    let cleanedTranscript = cleanTranscript(transcript)
+    console.log('cleanedTranscript.length', cleanedTranscript.length)
+    // cleanedTranscript = await makeSenseLMSTUDIO(cleanedTranscript)
+    // console.log(cleanedTranscript)
     repo.setVideoTranscript(id, cleanedTranscript)
     fs.writeFileSync(`./data/videos/${id}-sub.en.txt`, cleanedTranscript)
-    const shortenedText = await shortenTextLMSTUDIO(cleanedTranscript)
     
-    const prompt = `Summarize the following transcript, in max 10 paragraphs, your output should just contain the summary, keep it short, succint, to the point: \n\n ${cleanedTranscript}`
+    const prompt = `Summarize the following video transcript, in max 10 sentences, your output should just contain the summary, don't repeat yourself, keep it short, reply with just the summary: \n\n ${cleanedTranscript}`
     console.log('prompt', prompt)
     const summary = await fetchAIResponseLMSTUDIO(prompt)
-    console.log(summary)
+    console.log('summary', summary)
     repo.setVideoSummary(id, summary)
 
     console.log('Download completed')
@@ -214,7 +217,7 @@ async function fetchAIResponseOLLAMA (prompt) {
   }
 }
 async function fetchAIResponseLMSTUDIO (prompt) {
-  if (prompt.length > 2500) prompt = prompt.substring(0, 2500)
+  if (prompt.length > 5000) prompt = prompt.substring(0, 5000)
   try {
     const response = await fetch('http://localhost:1234/v1/completions', {
       method: 'POST',
@@ -222,7 +225,7 @@ async function fetchAIResponseLMSTUDIO (prompt) {
         'Content-Type': 'application/json'
       },
       body: JSON.stringify({
-        "model": "mlx-community/Llama-3.2-3B-Instruct-4bit",
+        "model": "llama-3.2-3b-instruct",
         "prompt": prompt,
         "temperature": 0.7,
         // "max_tokens": 10,
@@ -275,27 +278,28 @@ async function shortenTextOLLAMA(text) {
   }
   return responses.join(' \n')
 }
-async function shortenTextLMSTUDIO(text) {
+async function makeSenseLMSTUDIO(text) {
   // split the text into 1600 character blocks
   const chunks = []
-  for (let i = 0; i < text.length; i += 1800) {
-    chunks.push(text.substring(i, i + 1800))
+  for (let i = 0; i < text.length; i += 1500) {
+    chunks.push(text.substring(i, i + 1500))
   }
+  console.log(chunks.length, 'chunks')
   const responses = []
   try {
     for (const chunk of chunks) {
-      console.log('shortening chunk', chunk.substring(0, 20))
-      const prompt = `shorten the following text: \n ${chunk}`
+      console.log('making sense of chunk', chunk.substring(0, 20))
+      const prompt = `rewrite the following youtube video transcript, reply in short form, always reply in plain text, don't repeat yourself, MAXIMUM 10 sentences: \n ${chunk}`
       const response = await fetch('http://localhost:1234/v1/completions', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json'
         },
         body: JSON.stringify({
-          "model": "mlx-community/Llama-3.2-3B-Instruct-4bit",
+          "model": "llama-3.2-3b-instruct",
           "prompt": prompt,
           "temperature": 0.7,
-          // "max_tokens": 10,
+          "max_tokens": 1000,
           "stream": false,
           // "stop": "\n"
         })
