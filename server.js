@@ -3,84 +3,14 @@ import { URL } from 'url'
 import { execa } from 'execa'
 import fs from 'fs'
 import { summarizeVideo } from './lib/subtitles-summary.js'
+import Repository from './lib/repository.js'
+import { handleSSE, broadcastSSE } from './lib/sse.js'
+import { downloadVideo, getVideosFor } from './lib/youtube.js'
 
 fs.mkdirSync('./data', { recursive: true })
 fs.mkdirSync('./data/videos', { recursive: true })
 
 const connections = []
-
-class Repository {
-  constructor() {
-    this.channels = []
-    this.videos = {}
-    this.paths = {
-      videos: './data/videos.json',
-      channels: './data/channels.json',
-    }
-
-    if (!fs.existsSync(this.paths.videos)) fs.writeFileSync(this.paths.videos, '{}')
-    if (!fs.existsSync(this.paths.channels)) fs.writeFileSync(this.paths.channels, '[]')
-  
-    try {
-      this.videos = JSON.parse(fs.readFileSync(this.paths.videos))
-      this.channels = JSON.parse(fs.readFileSync(this.paths.channels))
-    } catch (err) {
-      console.error(err)
-    }
-  }
-
-  getChannels () { return this.channels }
-  addChannel (name) {
-    console.log('addChannel', name)
-    this.channels.push({name})
-    this.saveChannels()
-  }
-  saveChannels() {
-    fs.writeFileSync(this.paths.channels, JSON.stringify(this.channels, null, 2))
-  }
-  getVideos () { return this.videos }
-  getVideo(id) {
-    return Object.values(this.videos).flat().find(video => video.id === id) || null
-  }
-  saveChannelVideos(channelName, videos) {
-    console.log('saveChannelVideos', channelName, videos.length)
-    this.videos[channelName] = videos
-    this.saveVideos()
-  }
-  saveVideos() {
-    fs.writeFileSync(this.paths.videos, JSON.stringify(this.videos, null, 2))
-  }
-  setVideoTranscript(id, transcript) {
-    const video = this.getVideo(id)
-    console.log('setVideoTranscript', id, transcript.length)
-    if (!video) return
-    this.videos[video.channelName] = this.videos[video.channelName].map(v => {
-      if (v.id === id) return Object.assign(v, {transcript})
-      return v
-    })
-    this.saveVideos()
-  }
-  setVideoSummary(id, summary) {
-    const video = this.getVideo(id)
-    console.log('setVideoSummary', id, summary.length)
-    if (!video) return
-    this.videos[video.channelName] = this.videos[video.channelName].map(v => {
-      if (v.id === id) return Object.assign(v, {summary})
-      return v
-    })
-    this.saveVideos()
-  }
-  setVideoDownloaded(id) {
-    const video = this.getVideo(id)
-    console.log('setVideoDownloaded', id)
-    if (!video) return
-    this.videos[video.channelName] = this.videos[video.channelName].map(v => {
-      if (v.id === id) return Object.assign(v, {downloaded: true})
-      return v
-    })
-    this.saveVideos()
-  }
-}
 
 async function main ({port = 3000} = {}) {
   const repo = new Repository()
@@ -139,78 +69,6 @@ async function updateAndPersistVideosForChannel(repo, name) {
   return videos
 }
 
-async function downloadVideo(id, repo) {
-  try {
-    for await (const line of execa`yt-dlp -f mp4 ${id} -o ./data/videos/${id}.mp4`.iterable()) {
-      broadcastSSE(JSON.stringify({type: 'download-log-line', line}), connections)
-      console.log(line)
-    }
-
-    repo.setVideoDownloaded(id)
-    console.log('Download completed')
-  } catch (error) {
-    console.error('Error downloading video:', error)
-  }
-}
-
-
-async function getVideosFor(channelName) {
-  try {
-    const response = await fetch(`https://www.youtube.com/${channelWithAt(channelName)}/videos`)
-    const text = await response.text()
-    const match = text.match(/var ytInitialData = (.+?);<\/script>/)
-    if (!match || !match[1]) return null
-
-    const json = JSON.parse(match[1].trim())
-    const videoTab = json.contents.twoColumnBrowseResultsRenderer.tabs.find(t => t.tabRenderer.title === 'Video')
-    const videoContents = videoTab.tabRenderer.content.richGridRenderer.contents
-    return videoContents.map(toInternalVideo).filter(Boolean)
-  } catch (error) {
-    console.error('Error fetching latest video:', error)
-    return null
-  }
-
-  function channelWithAt(channelName = '') {
-    return channelName.startsWith('@') ? channelName : '@' + channelName
-  } 
-
-  function toInternalVideo(v) {
-    if (!v || !v.richItemRenderer) return
-    return {
-      channelName,
-      title: v.richItemRenderer.content.videoRenderer.title?.runs[0].text,
-      url: `https://www.youtube.com/watch?v=${v.richItemRenderer.content.videoRenderer.videoId}`, 
-      thumbnail: v.richItemRenderer.content.videoRenderer.thumbnail?.thumbnails[0].url,
-      description: v.richItemRenderer.content.videoRenderer.descriptionSnippet?.runs[0].text,
-      id: v.richItemRenderer.content.videoRenderer.videoId,
-      publishedTime: v.richItemRenderer.content.videoRenderer.publishedTimeText?.simpleText,
-      viewCount: v.richItemRenderer.content.videoRenderer.viewCountText?.simpleText,
-      duration: v.richItemRenderer.content.videoRenderer.lengthText?.simpleText,
-    }
-  }
-}
-
-function handleSSE (res, connections = []) {
-  connections.push(res)
-  res.on('close', () => {
-    connections.splice(connections.findIndex(c => res === c), 1)
-  })
-  res.writeHead(200, {
-    'Content-Type': 'text/event-stream',
-    'Cache-Control': 'no-cache',
-    Connection: 'keep-alive'
-  })
-}
-
-function broadcastSSE (data, connections = []) {
-  connections.forEach(connection => {
-    if (!connection) return
-    const id = new Date().toISOString()
-    connection.write('id: ' + id + '\n')
-    connection.write('data: ' + data + '\n\n')
-  })
-}
-
 function createServer ({repo, port = 3000}) {
   return http.createServer(async (req, res) => {
     const parsedUrl = new URL(req.url, `http://${req.headers.host}`)
@@ -249,7 +107,9 @@ function createServer ({repo, port = 3000}) {
         const { id } = JSON.parse(body)
         const {channelName} = repo.getVideo(id)
         const videos = repo.getVideos()[channelName]
-        downloadVideo(id, repo)
+        downloadVideo(id, repo, (line) => {
+          broadcastSSE(JSON.stringify({type: 'download-log-line', line}), connections)
+        })
         .then(() => {
           broadcastSSE(JSON.stringify({type: 'channel', name: channelName, videos}), connections)
         })
