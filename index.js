@@ -1,0 +1,26 @@
+import fs from 'fs'
+import Repository from './lib/repository.js'
+import { createServer } from './lib/server.js'
+
+fs.mkdirSync('./data', { recursive: true })
+fs.mkdirSync('./data/videos', { recursive: true })
+
+async function main ({port = 3000} = {}) {
+  const repo = new Repository()
+  const connections = []
+
+  fs.readdirSync('./data/videos').forEach(file => {
+    if (!file.endsWith('.mp4')) return
+    const videoId = file.replace('.mp4', '')
+    repo.setVideoDownloaded(videoId)
+  })
+
+  createServer({repo, port, connections})
+  .listen(port, () => {
+    console.log(`Server running at http://localhost:${port}`)
+  })
+}
+
+if (import.meta.url.endsWith('index.js')) {
+  main()
+}
