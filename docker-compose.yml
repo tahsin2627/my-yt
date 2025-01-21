@@ -1,0 +1,14 @@
+services:
+  app:
+    build: .
+    container_name: my-yt
+    working_dir: /app
+    volumes:
+     - ./data:/app/data
+    ports:
+    - "3000:3000"
+    command: npm start
+    # network_mode: host
+volumes:
+  data:
+    driver: local

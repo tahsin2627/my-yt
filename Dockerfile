@@ -1,0 +1,17 @@
+FROM node:22-alpine
+
+WORKDIR /app
+
+COPY package*.json ./
+
+RUN npm install
+RUN apk add python3
+
+RUN wget https://github.com/yt-dlp/yt-dlp/releases/latest/download/yt-dlp -O /usr/local/bin/yt-dlp
+RUN chmod a+rx /usr/local/bin/yt-dlp
+
+COPY . .
+
+EXPOSE 3000
+
+CMD ["node", "server.js"]
