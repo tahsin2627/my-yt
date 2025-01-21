@@ -383,7 +383,7 @@ function showSummaryHandler (event) {
     const video = videos.find(video => video.id === videoId)
     if (video) {
       document.querySelector('dialog#summary').showModal()
-      document.querySelector('dialog#summary div').innerText = video.summary
+      document.querySelector('dialog#summary div').innerHTML = `<pre>${video.summary}</pre><details><summary>transcript</summary><pre>${video.transcript}</pre></details>`
       return
     }
   }
