@@ -184,3 +184,7 @@ details > summary {
 details[open] > summary {
   color: #171717;
 }
+
+#summary pre {
+  white-space: break-spaces;
+}
