@@ -270,46 +270,12 @@ function addChannelHandler(event) {
 
 
 function handleNewVideos (videos) {
-  document.querySelectorAll('.video .actions .action.watch')
-  .forEach($watchAction => {
-    $watchAction.removeEventListener('click', watchVideoHandler)
-    $watchAction.addEventListener('click', watchVideoHandler)
-    $watchAction.removeEventListener('keydown', (event) => event.key === 'Enter' && watchVideoHandler(event))
-    $watchAction.addEventListener('keydown', (event) => event.key === 'Enter' && watchVideoHandler(event))
-  })
+  handleClick(document.querySelectorAll('.video .actions .action.watch'), watchVideoHandler)
+  handleClick(document.querySelectorAll('.video .actions .action.download'), downloadVideoHandler)
+  handleClick(document.querySelectorAll('.video .actions .action.ignore'), ignoreVideoHandler)
+  handleClick(document.querySelectorAll('.video .actions .action.summarize'), summarizeVideoHandler)
+  handleClick(document.querySelectorAll('.video .actions .action.show-summary'), showSummaryHandler)
 
-  document.querySelectorAll('.video .actions .action.download')
-  .forEach($downloadAction => {
-    $downloadAction.removeEventListener('click', downloadVideoHandler)
-    $downloadAction.addEventListener('click', downloadVideoHandler)
-    $downloadAction.removeEventListener('keydown', (event) => event.key === 'Enter' && downloadVideoHandler(event))
-    $downloadAction.addEventListener('keydown', (event) => event.key === 'Enter' && downloadVideoHandler(event))
-  })
-
-  document.querySelectorAll('.video .actions .action.ignore')
-  .forEach($ignoreAction => {
-    $ignoreAction.removeEventListener('click', ignoreVideoHandler)
-    $ignoreAction.addEventListener('click', ignoreVideoHandler)
-    $ignoreAction.removeEventListener('keydown', (event) => event.key === 'Enter' && ignoreVideoHandler(event))
-    $ignoreAction.addEventListener('keydown', (event) => event.key === 'Enter' && ignoreVideoHandler(event))
-  })
-
-  document.querySelectorAll('.video .actions .action.summarize')
-  .forEach($ignoreAction => {
-    $ignoreAction.removeEventListener('click', summarizeVideoHandler)
-    $ignoreAction.addEventListener('click', summarizeVideoHandler)
-    $ignoreAction.removeEventListener('keydown', (event) => event.key === 'Enter' && summarizeVideoHandler(event))
-    $ignoreAction.addEventListener('keydown', (event) => event.key === 'Enter' && summarizeVideoHandler(event))
-  })
-
-  document.querySelectorAll('.video .actions .action.show-summary')
-  .forEach($ignoreAction => {
-    $ignoreAction.removeEventListener('click', showSummaryHandler)
-    $ignoreAction.addEventListener('click', showSummaryHandler)
-    $ignoreAction.removeEventListener('keydown', (event) => event.key === 'Enter' && showSummaryHandler(event))
-    $ignoreAction.addEventListener('keydown', (event) => event.key === 'Enter' && showSummaryHandler(event))
-  })
-  
   if (typeof videos === 'object' && !Array.isArray(videos)) {
     const lastVideos = store.get(store.lastVideosKey)
     for (const [name, vids] of Object.entries(videos)) {
@@ -318,6 +284,16 @@ function handleNewVideos (videos) {
       lastVideos[name] = vids[0]?.id
     }
     store.set(store.lastVideosKey, lastVideos)
+  }
+
+  function handleClick ($els, handler) {
+    $els
+    .forEach($action => {
+      $action.removeEventListener('click', handler)
+      $action.addEventListener('click', handler)
+      $action.removeEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
+      $action.addEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
+    })
   }
 }
 
