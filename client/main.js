@@ -58,6 +58,53 @@ function channelSectionFor (name, videos) {
   return $channelSection
 }
 
+
+function channelVideosContents (videos) {
+  if (!videos) return
+  const ignoreList = store.get(store.ignoreVideoKey)
+  const $videosContainer = document.createElement('div')
+  $videosContainer.classList.add('videos-container')
+  videos
+  .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
+  .forEach(video => {
+    if (ignoreList.includes(video.id)) {
+      console.log('ignoring video', video.id)
+      return
+    }
+    $videosContainer.appendChild(createVideoElement(video))
+  })
+  return $videosContainer
+}
+
+function createVideoElement (video) {
+  const $video = document.createElement('div')
+  $video.classList.add('video')
+  $video.dataset['videoId'] = video.id
+  $video.innerHTML = `
+    ${video.downloaded
+    ? `<video controls width="280">
+        <source src="/videos/${video.id}" type="video/mp4" />
+        <p>
+          Your browser does not support the video tag.
+          Download the video instead <a href="/videos/${video.id}" target="_blank">here</a>
+        </p>
+      </video>`
+    : `<img src="${video.thumbnail}"/>`}
+    <span>${video.publishedTime} | ${video.publishedAt}</span> | <span>${video.viewCount}</span> | <span>${video.duration || 'N/A'}</span><br/>
+    ${video.title}
+    <div class="actions">
+      ${video.downloaded
+        ? `<a tabindex="0" href="/videos/${video.id}" target="_blank" class="action watch" data-video-id="${video.id}">👀 watch</a>`
+        : `<span tabindex="0"  class="action download" data-video-id="${video.id}">⬇️ Download</span>`}
+      ${!video.summary
+        ? `<span tabindex="0"  class="action summarize" data-video-id="${video.id}">📖 Summarize</span>`
+        : `<span tabindex="0"  class="action show-summary" data-video-id="${video.id}">📖 Summary</span>`}
+      <span tabindex="0"  class="action ignore" data-video-id="${video.id}">🙈 Ignore</span>
+    </div>
+  `
+  return $video
+}
+
 function updateDownloadedVideos (videos) {
   const $downloadedVideosContainer = document.querySelector('details.downloaded-videos-container')
   const $videosContainer = $downloadedVideosContainer.querySelector('.videos-container')
@@ -221,51 +268,6 @@ function addChannelHandler(event) {
   }
 }
 
-function channelVideosContents (videos) {
-  if (!videos) return
-  const ignoreList = store.get(store.ignoreVideoKey)
-  const $videosContainer = document.createElement('div')
-  $videosContainer.classList.add('videos-container')
-  videos
-  .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
-  .forEach(video => {
-    if (ignoreList.includes(video.id)) {
-      console.log('ignoring video', video.id)
-      return
-    }
-    $videosContainer.appendChild(createVideoElement(video))
-  })
-  return $videosContainer
-}
-
-function createVideoElement (video) {
-  const $video = document.createElement('div')
-  $video.classList.add('video')
-  $video.dataset['videoId'] = video.id
-  $video.innerHTML = `
-    ${video.downloaded
-    ? `<video controls width="280">
-        <source src="/videos/${video.id}" type="video/mp4" />
-        <p>
-          Your browser does not support the video tag.
-          Download the video instead <a href="/videos/${video.id}" target="_blank">here</a>
-        </p>
-      </video>`
-    : `<img src="${video.thumbnail}"/>`}
-    <span>${video.publishedTime} | ${video.publishedAt}</span> | <span>${video.viewCount}</span> | <span>${video.duration || 'N/A'}</span><br/>
-    ${video.title}
-    <div class="actions">
-      ${video.downloaded
-        ? `<a tabindex="0" href="/videos/${video.id}" target="_blank" class="action watch" data-video-id="${video.id}">👀 watch</a>`
-        : `<span tabindex="0"  class="action download" data-video-id="${video.id}">⬇️ Download</span>`}
-      ${!video.summary
-        ? `<span tabindex="0"  class="action summarize" data-video-id="${video.id}">📖 Summarize</span>`
-        : `<span tabindex="0"  class="action show-summary" data-video-id="${video.id}">📖 Summary</span>`}
-      <span tabindex="0"  class="action ignore" data-video-id="${video.id}">🙈 Ignore</span>
-    </div>
-  `
-  return $video
-}
 
 function handleNewVideos (videos) {
   document.querySelectorAll('.video .actions .action.watch')
