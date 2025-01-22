@@ -227,13 +227,15 @@ function channelVideosContents (videos) {
   const ignoreList = store.get(store.ignoreVideoKey)
   const $videosContainer = document.createElement('div')
   $videosContainer.classList.add('videos-container')
-  for (const video of videos) {
+  videos
+  .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
+  .forEach(video => {
     if (ignoreList.includes(video.id)) {
       console.log('ignoring video', video.id)
-      continue
-    } 
+      return
+    }
     $videosContainer.appendChild(createVideoElement(video))
-  }
+  })
   return $videosContainer
 }
 
@@ -251,7 +253,7 @@ function createVideoElement (video) {
         </p>
       </video>`
     : `<img src="${video.thumbnail}"/>`}
-    <span>${video.publishedTime}</span> | <span>${video.viewCount}</span> | <span>${video.duration || 'N/A'}</span><br/>
+    <span>${video.publishedTime} | ${video.publishedAt}</span> | <span>${video.viewCount}</span> | <span>${video.duration || 'N/A'}</span><br/>
     ${video.title}
     <div class="actions">
       ${video.downloaded
