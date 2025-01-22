@@ -23,7 +23,7 @@ eventSource.onmessage = (message) => {
       $channelsContainer.innerHTML = ''
 
       for (const [name, videos] of Object.entries(data.videos)) {
-        appendChannelSectionTo(name, videos, $channelsContainer)
+        $channelsContainer.appendChild(channelSectionFor(name, videos))
         updateDownloadedVideos(videos)
       }
       handleNewVideos(data.videos)
@@ -36,7 +36,7 @@ eventSource.onmessage = (message) => {
       if ($existingChannelSection) {
         $existingChannelSection.querySelector(`.videos-container`).replaceWith(channelVideosContents(data.videos))
       } else {
-        appendChannelSectionTo(data.name, data.videos, $channelsContainer)
+        $channelsContainer.appendChild(channelSectionFor(data.name, data.videos))
       }
       updateDownloadedVideos(data.videos)
       window.videos[data.name] = data.videos
@@ -48,14 +48,14 @@ eventSource.onmessage = (message) => {
   }
 }
 
-function appendChannelSectionTo (name, videos, $channelsContainer) {
+function channelSectionFor (name, videos) {
   const $channelSection = document.createElement('details')
   $channelSection.open = store.get(store.foldedChannelsKey)
   $channelSection.dataset['channel'] = name
   $channelSection.classList.add('channel-details')
   $channelSection.innerHTML = `<summary>${name}</summary>`
   $channelSection.appendChild(channelVideosContents(videos))
-  $channelsContainer.appendChild($channelSection)
+  return $channelSection
 }
 
 function updateDownloadedVideos (videos) {
@@ -65,8 +65,7 @@ function updateDownloadedVideos (videos) {
     const $existing = $downloadedVideosContainer.querySelector(`[data-video-id="${v.id}"]`)
     if ($existing) {
       const $video = createVideoElement(v)
-      $existing.replaceWith($video)
-      return 
+      return $existing.replaceWith($video)
     }
     const $video = createVideoElement(v)
     $videosContainer.appendChild($video)
