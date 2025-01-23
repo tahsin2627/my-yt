@@ -111,6 +111,40 @@ class VideoElement extends HTMLElement {
 }
 customElements.define('video-element', VideoElement)
 
+
+class Store {
+  showThumbnailsKey = 'showThumbnails'
+  lastVideosKey = 'lastVideos'
+
+  constructor() {
+    if (!localStorage.getItem(this.showThumbnailsKey)) localStorage.setItem(this.showThumbnailsKey, 'true')
+    if (!localStorage.getItem(this.lastVideosKey)) localStorage.setItem(this.lastVideosKey, '{}')
+  }
+
+  toggle (key) {
+    if (![this.showThumbnailsKey].includes(key)) return console.error('invalid key', key)
+    localStorage.setItem(key, localStorage.getItem(key) === 'true' ? 'false' : 'true')
+  }
+  get(key) {
+    if (![this.showThumbnailsKey, this.lastVideosKey].includes(key)) return console.error('invalid key', key)
+    return JSON.parse(localStorage.getItem(key))
+  }
+  set(key, value) {
+    if (typeof value === 'string') {
+      localStorage.setItem(key, value)
+    } else {
+      localStorage.setItem(key, JSON.stringify(value))
+    }
+  }
+  // push(key, item) {
+  //   if (![this.ignoreVideoKey].includes(key)) return console.error('invalid key', key)
+  //   const list = this.get(key)
+  //   list.push(item)
+  //   this.set(key, list)
+  //   return item
+  // }
+}
+
 // app: sse updates and renders
 const eventSource = new window.EventSource('/')
 const $videosContainer = document.querySelector('.main-videos-container')
@@ -165,76 +199,23 @@ eventSource.onmessage = (message) => {
   }
 }
 
-function channelSectionFor (name, videos) {
-  const $channelSection = document.createElement('details')
-  $channelSection.dataset['channel'] = name
-  $channelSection.classList.add('channel-details')
-  $channelSection.innerHTML = `<summary>${name}</summary>`
-  $channelSection.appendChild(channelVideosContents(videos))
-  return $channelSection
-}
+document.getElementById('add-channel-form').addEventListener('submit', addChannelHandler)
+document.getElementById('search').addEventListener('keyup', searchHandler)
 
-function channelVideosContents (videos) {
-  if (!videos) return
-  const $videosContainer = document.createElement('div')
-  $videosContainer.classList.add('videos-container')
-  videos
-  .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
-  .forEach(video => {
-    $videosContainer.appendChild(createVideoElement(video))
-  })
-  return $videosContainer
-}
-
-function createVideoElement (video) {
-  const $video = document.createElement('video-element')
-  $video.dataset['data'] = JSON.stringify(video)
-  return $video
-}
-
-function updateDownloadedVideos (videos) {
-  const $downloadedVideosContainer = document.querySelector('details.downloaded-videos-container')
-  const $videosContainer = $downloadedVideosContainer.querySelector('.videos-container')
-  videos.filter(v => v.downloaded).forEach(v => {
-    const $existing = $downloadedVideosContainer.querySelector(`[data-video-id="${v.id}"]`)
-    return $existing 
-    ? $existing.replaceWith(createVideoElement(v)) 
-    : $videosContainer.appendChild(createVideoElement(v))
-  })
-}
-
-// store
-class Store {
-  showThumbnailsKey = 'showThumbnails'
-  lastVideosKey = 'lastVideos'
-
-  constructor() {
-    if (!localStorage.getItem(this.showThumbnailsKey)) localStorage.setItem(this.showThumbnailsKey, 'true')
-    if (!localStorage.getItem(this.lastVideosKey)) localStorage.setItem(this.lastVideosKey, '{}')
-  }
-
-  toggle (key) {
-    if (![this.showThumbnailsKey].includes(key)) return console.error('invalid key', key)
-    localStorage.setItem(key, localStorage.getItem(key) === 'true' ? 'false' : 'true')
-  }
-  get(key) {
-    if (![this.showThumbnailsKey, this.lastVideosKey].includes(key)) return console.error('invalid key', key)
-    return JSON.parse(localStorage.getItem(key))
-  }
-  set(key, value) {
-    if (typeof value === 'string') {
-      localStorage.setItem(key, value)
+function searchHandler (event) {
+  const searchTerm = event.target.value.toLowerCase()
+  document.querySelectorAll('.video').forEach(video => {
+    const videoData = JSON.parse(video.dataset['data'])
+    if (
+      videoData.title.toLowerCase().includes(searchTerm)
+       || videoData.summary?.toLowerCase().includes(searchTerm)
+       || videoData.channelName?.toLowerCase().includes(searchTerm)
+      ) {
+      video.style.display = ''
     } else {
-      localStorage.setItem(key, JSON.stringify(value))
+      video.style.display = 'none'
     }
-  }
-  // push(key, item) {
-  //   if (![this.ignoreVideoKey].includes(key)) return console.error('invalid key', key)
-  //   const list = this.get(key)
-  //   list.push(item)
-  //   this.set(key, list)
-  //   return item
-  // }
+  })
 }
 
 const store = new Store()
@@ -293,9 +274,6 @@ function applyShowThumbnails(showThumbnails) {
   document.querySelector('#show-thumbnails').checked = showThumbnails
 }
 
-// app: add channel
-document.getElementById('add-channel-form').addEventListener('submit', addChannelHandler)
-
 function addChannelHandler(event) {
   event.preventDefault()
 
@@ -328,4 +306,43 @@ function addChannelHandler(event) {
     button.disabled = false
     loader.classList.remove('show')
   }
+}
+
+
+function channelSectionFor (name, videos) {
+  const $channelSection = document.createElement('details')
+  $channelSection.dataset['channel'] = name
+  $channelSection.classList.add('channel-details')
+  $channelSection.innerHTML = `<summary>${name}</summary>`
+  $channelSection.appendChild(channelVideosContents(videos))
+  return $channelSection
+}
+
+function channelVideosContents (videos) {
+  if (!videos) return
+  const $videosContainer = document.createElement('div')
+  $videosContainer.classList.add('videos-container')
+  videos
+  .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
+  .forEach(video => {
+    $videosContainer.appendChild(createVideoElement(video))
+  })
+  return $videosContainer
+}
+
+function createVideoElement (video) {
+  const $video = document.createElement('video-element')
+  $video.dataset['data'] = JSON.stringify(video)
+  return $video
+}
+
+function updateDownloadedVideos (videos) {
+  const $downloadedVideosContainer = document.querySelector('details.downloaded-videos-container')
+  const $videosContainer = $downloadedVideosContainer.querySelector('.videos-container')
+  videos.filter(v => v.downloaded).forEach(v => {
+    const $existing = $downloadedVideosContainer.querySelector(`[data-video-id="${v.id}"]`)
+    return $existing 
+    ? $existing.replaceWith(createVideoElement(v)) 
+    : $videosContainer.appendChild(createVideoElement(v))
+  })
 }
