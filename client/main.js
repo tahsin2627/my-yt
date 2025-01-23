@@ -3,6 +3,7 @@ class VideoElement extends HTMLElement {
   constructor () {
     super()
   }
+
   connectedCallback () {
     this.video = JSON.parse(this.dataset['data'])
     this.render()
@@ -11,7 +12,20 @@ class VideoElement extends HTMLElement {
   disconnectedCallback () {
     this.unregisterEvents()
   }
+  static get observedAttributes() {
+    return ['data-data'];
+  }
+
+  attributeChangedCallback(name, _, newValue) {
+    if (name === 'data-data') {
+      this.video = JSON.parse(this.dataset['data'])
+      this.unregisterEvents()
+      this.render()
+      this.registerEvents()
+    }
+  }
   render () {
+    if (!this.video) return
     this.classList.add('video')
     this.dataset['videoId'] = this.video.id
     this.innerHTML = `
@@ -33,13 +47,11 @@ class VideoElement extends HTMLElement {
         ${!this.video.summary
           ? `<span tabindex="0"  class="action summarize" data-video-id="${this.video.id}">📖 Summarize</span>`
           : `<span tabindex="0"  class="action show-summary" data-video-id="${this.video.id}">📖 Summary</span>`}
-        <span tabindex="0"  class="action ignore" data-video-id="${this.video.id}">🙈 Ignore</span>
       </div>
     `
   }
   registerEvents () {
     handleClick(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
-    handleClick(this.querySelector('.action.ignore'), this.ignoreVideoHandler.bind(this))
     handleClick(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
     handleClick(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
     
@@ -51,7 +63,6 @@ class VideoElement extends HTMLElement {
   }
   unregisterEvents () {
     handleClick(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
-    handleClick(this.querySelector('.action.ignore'), this.ignoreVideoHandler.bind(this))
     handleClick(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
     handleClick(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
 
@@ -74,12 +85,6 @@ class VideoElement extends HTMLElement {
     .then(() => console.log('Download started'))
     .catch((error) => console.error('Error starting download:', error))
   }
-  ignoreVideoHandler (event) {
-    event.preventDefault()
-    const videoId = this.video.id
-    window.store.push(window.store.ignoreVideoKey, videoId)
-    event.target.parentNode?.parentNode?.remove()
-  }
   summarizeVideoHandler (event) {
     event.preventDefault()
     const summaryStartedText = '⚡️ summary started'
@@ -95,13 +100,10 @@ class VideoElement extends HTMLElement {
   }
   showSummaryHandler (event) {
     event.preventDefault()
-    const videoId = this.video.id
-    for (const [name, videos] of Object.entries(window.videos)) {
-      const video = videos.find(video => video.id === videoId)
-      if (video) {
-        document.querySelector('dialog#summary').showModal()
-        document.querySelector('dialog#summary div').innerHTML = `<pre>${video.summary}</pre><details><summary>transcript</summary><pre>${video.transcript}</pre></details>`
-      }
+    const video = this.video
+    if (video) {
+      document.querySelector('dialog#summary').showModal()
+      document.querySelector('dialog#summary div').innerHTML = `<pre>${video.summary}</pre><details><summary>transcript</summary><pre>${video.transcript}</pre></details>`
     }
   }
 }
@@ -129,13 +131,11 @@ eventSource.onmessage = (message) => {
     }
     
     if (data.type === 'all' && data.videos) {
-      const ignoreList = store.get(store.ignoreVideoKey)
       $videosContainer.innerHTML = ''
       const allVideos = Object.entries(data.videos).reduce((acc, curr) => acc.concat(curr[1]), [])
       allVideos
       .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
       .forEach(video => {
-        if (ignoreList.includes(video.id)) return console.log('ignoring video', video.id)
         $videosContainer.appendChild(createVideoElement(video))
       })
 
@@ -143,20 +143,22 @@ eventSource.onmessage = (message) => {
       handleChannelsUpdated(data.videos)
       window.videos = data.videos
     }
-    
-    if (data.type === 'channel' && data.name && Array.isArray(data.videos)) {
-      return
-      const $existingChannelSection = document.querySelector(`details[data-channel="${data.name}"]`)
-      if ($existingChannelSection) {
-        $existingChannelSection.querySelector(`.videos-container`).replaceWith(channelVideosContents(data.videos))
-      } else {
-        $videosContainer.appendChild(channelSectionFor(data.name, data.videos))
+    if (data.type === 'summary' && data.videoId && data.summary) {
+      const $video = document.querySelector(`[data-video-id="${data.videoId}"]`)
+      if ($video) {
+        const videoData = JSON.parse($video.dataset['data'])
+        videoData.summary = data.summary
+        $video.dataset['data'] = JSON.stringify(videoData)
       }
-      updateDownloadedVideos(data.videos)
-      window.videos[data.name] = data.videos
-      handleChannelsUpdated(data.videos)
     }
-
+    if (data.type === 'downloaded' && data.videoId) {
+      const $video = document.querySelector(`[data-video-id="${data.videoId}"]`)
+      if ($video) {
+        const videoData = JSON.parse($video.dataset['data'])
+        videoData.downloaded = true
+        $video.dataset['data'] = JSON.stringify(videoData)
+      }
+    }
   } catch (err) {
     console.error('sse parse error', err)
   }
@@ -173,13 +175,11 @@ function channelSectionFor (name, videos) {
 
 function channelVideosContents (videos) {
   if (!videos) return
-  const ignoreList = store.get(store.ignoreVideoKey)
   const $videosContainer = document.createElement('div')
   $videosContainer.classList.add('videos-container')
   videos
   .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
   .forEach(video => {
-    if (ignoreList.includes(video.id)) return console.log('ignoring video', video.id)
     $videosContainer.appendChild(createVideoElement(video))
   })
   return $videosContainer
@@ -205,11 +205,9 @@ function updateDownloadedVideos (videos) {
 // store
 class Store {
   showThumbnailsKey = 'showThumbnails'
-  ignoreVideoKey = 'ignoreVideo'
   lastVideosKey = 'lastVideos'
 
   constructor() {
-    if (!localStorage.getItem(this.ignoreVideoKey)) localStorage.setItem(this.ignoreVideoKey, '[]')
     if (!localStorage.getItem(this.showThumbnailsKey)) localStorage.setItem(this.showThumbnailsKey, 'true')
     if (!localStorage.getItem(this.lastVideosKey)) localStorage.setItem(this.lastVideosKey, '{}')
   }
@@ -219,7 +217,7 @@ class Store {
     localStorage.setItem(key, localStorage.getItem(key) === 'true' ? 'false' : 'true')
   }
   get(key) {
-    if (![this.showThumbnailsKey, this.ignoreVideoKey, this.lastVideosKey].includes(key)) return console.error('invalid key', key)
+    if (![this.showThumbnailsKey, this.lastVideosKey].includes(key)) return console.error('invalid key', key)
     return JSON.parse(localStorage.getItem(key))
   }
   set(key, value) {
@@ -229,13 +227,13 @@ class Store {
       localStorage.setItem(key, JSON.stringify(value))
     }
   }
-  push(key, item) {
-    if (![this.ignoreVideoKey].includes(key)) return console.error('invalid key', key)
-    const list = this.get(key)
-    list.push(item)
-    this.set(key, list)
-    return item
-  }
+  // push(key, item) {
+  //   if (![this.ignoreVideoKey].includes(key)) return console.error('invalid key', key)
+  //   const list = this.get(key)
+  //   list.push(item)
+  //   this.set(key, list)
+  //   return item
+  // }
 }
 
 const store = new Store()
