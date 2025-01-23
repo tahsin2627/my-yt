@@ -140,7 +140,6 @@ eventSource.onmessage = (message) => {
       })
 
       updateDownloadedVideos(allVideos)
-      handleChannelsUpdated(data.videos)
       window.videos = data.videos
     }
     if (data.type === 'summary' && data.videoId && data.summary) {
@@ -326,18 +325,5 @@ function addChannelHandler(event) {
     input.disabled = false
     button.disabled = false
     loader.classList.remove('show')
-  }
-}
-
-
-function handleChannelsUpdated (videos) {
-  if (typeof videos === 'object' && !Array.isArray(videos)) {
-    const lastVideos = store.get(store.lastVideosKey)
-    for (const [name, vids] of Object.entries(videos)) {
-      if (lastVideos[name] != vids[0]?.id)
-        document.querySelector(`details[data-channel="${name}"]`)?.classList.add('has-new-videos')
-      lastVideos[name] = vids[0]?.id
-    }
-    store.set(store.lastVideosKey, lastVideos)
   }
 }
