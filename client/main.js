@@ -37,7 +37,7 @@ class VideoElement extends HTMLElement {
             Download the video instead <a href="/videos/${this.video.id}" target="_blank">here</a>
           </p>
         </video>`
-      : `<img src="${this.video.thumbnail}"/>`}
+      : `<img loading="lazy" src="${this.video.thumbnail}"/>`}
       <div>
         <span>${new Date(this.video.publishedAt).toISOString().substring(0, 16)}</span> | <span>${this.video.viewCount}</span> | <span>${this.video.duration || 'N/A'}</span><br/>
       </div>
