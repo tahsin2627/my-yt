@@ -203,6 +203,7 @@ document.getElementById('add-channel-form').addEventListener('submit', addChanne
 document.getElementById('search').addEventListener('keyup', searchHandler)
 
 function searchHandler (event) {
+  event.preventDefault()
   const searchTerm = event.target.value.toLowerCase()
   document.querySelectorAll('.video').forEach(video => {
     const videoData = JSON.parse(video.dataset['data'])
