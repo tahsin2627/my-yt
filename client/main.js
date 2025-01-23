@@ -24,7 +24,7 @@ class VideoElement extends HTMLElement {
           </p>
         </video>`
       : `<img src="${this.video.thumbnail}"/>`}
-      <span>${this.video.publishedTime} | ${this.video.publishedAt}</span> | <span>${this.video.viewCount}</span> | <span>${this.video.duration || 'N/A'}</span><br/>
+      <span>${new Date(this.video.publishedAt).toISOString().substring(0, 16)}</span> | <span>${this.video.viewCount}</span> | <span>${this.video.duration || 'N/A'}</span><br/>
       ${this.video.title}
       <div class="actions">
         ${this.video.downloaded
@@ -109,7 +109,7 @@ customElements.define('video-element', VideoElement)
 
 // app: sse updates and renders
 const eventSource = new window.EventSource('/')
-const $channelsContainer = document.querySelector('.channels-container')
+const $videosContainer = document.querySelector('.main-videos-container')
 
 eventSource.onmessage = (message) => {
   if (!message || !message.data) return console.error('skipping empty message')
@@ -129,23 +129,28 @@ eventSource.onmessage = (message) => {
     }
     
     if (data.type === 'all' && data.videos) {
-      $channelsContainer.innerHTML = ''
+      const ignoreList = store.get(store.ignoreVideoKey)
+      $videosContainer.innerHTML = ''
+      const allVideos = Object.entries(data.videos).reduce((acc, curr) => acc.concat(curr[1]), [])
+      allVideos
+      .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
+      .forEach(video => {
+        if (ignoreList.includes(video.id)) return console.log('ignoring video', video.id)
+        $videosContainer.appendChild(createVideoElement(video))
+      })
 
-      for (const [name, videos] of Object.entries(data.videos)) {
-        $channelsContainer.appendChild(channelSectionFor(name, videos))
-        updateDownloadedVideos(videos)
-      }
+      updateDownloadedVideos(allVideos)
       handleChannelsUpdated(data.videos)
       window.videos = data.videos
-      applyFoldedChannels(store.get(store.foldedChannelsKey))
     }
     
     if (data.type === 'channel' && data.name && Array.isArray(data.videos)) {
+      return
       const $existingChannelSection = document.querySelector(`details[data-channel="${data.name}"]`)
       if ($existingChannelSection) {
         $existingChannelSection.querySelector(`.videos-container`).replaceWith(channelVideosContents(data.videos))
       } else {
-        $channelsContainer.appendChild(channelSectionFor(data.name, data.videos))
+        $videosContainer.appendChild(channelSectionFor(data.name, data.videos))
       }
       updateDownloadedVideos(data.videos)
       window.videos[data.name] = data.videos
@@ -159,7 +164,6 @@ eventSource.onmessage = (message) => {
 
 function channelSectionFor (name, videos) {
   const $channelSection = document.createElement('details')
-  $channelSection.open = store.get(store.foldedChannelsKey)
   $channelSection.dataset['channel'] = name
   $channelSection.classList.add('channel-details')
   $channelSection.innerHTML = `<summary>${name}</summary>`
@@ -201,23 +205,21 @@ function updateDownloadedVideos (videos) {
 // store
 class Store {
   showThumbnailsKey = 'showThumbnails'
-  foldedChannelsKey = 'foldedChannels'
   ignoreVideoKey = 'ignoreVideo'
   lastVideosKey = 'lastVideos'
 
   constructor() {
     if (!localStorage.getItem(this.ignoreVideoKey)) localStorage.setItem(this.ignoreVideoKey, '[]')
     if (!localStorage.getItem(this.showThumbnailsKey)) localStorage.setItem(this.showThumbnailsKey, 'true')
-    if (!localStorage.getItem(this.foldedChannelsKey)) localStorage.setItem(this.foldedChannelsKey, 'true')
     if (!localStorage.getItem(this.lastVideosKey)) localStorage.setItem(this.lastVideosKey, '{}')
   }
 
   toggle (key) {
-    if (![this.showThumbnailsKey, this.foldedChannelsKey].includes(key)) return console.error('invalid key', key)
+    if (![this.showThumbnailsKey].includes(key)) return console.error('invalid key', key)
     localStorage.setItem(key, localStorage.getItem(key) === 'true' ? 'false' : 'true')
   }
   get(key) {
-    if (![this.showThumbnailsKey, this.foldedChannelsKey, this.ignoreVideoKey, this.lastVideosKey].includes(key)) return console.error('invalid key', key)
+    if (![this.showThumbnailsKey, this.ignoreVideoKey, this.lastVideosKey].includes(key)) return console.error('invalid key', key)
     return JSON.parse(localStorage.getItem(key))
   }
   set(key, value) {
@@ -259,19 +261,13 @@ $summary.addEventListener('close', () => {})
 
 // settings ui
 const $showThumbnails = document.getElementById('show-thumbnails')
-const $foldedChannels = document.getElementById('folded-channels')
 $showThumbnails.addEventListener('click', (event) => {
   store.toggle(store.showThumbnailsKey)
   applyShowThumbnails(store.get(store.showThumbnailsKey))
 })
-$foldedChannels.addEventListener('click', (event) => {
-  store.toggle(store.foldedChannelsKey)
-  applyFoldedChannels(store.get(store.foldedChannelsKey))
-})
 
 // apply settings                                                                                                                                                          
 applyShowThumbnails(store.get(store.showThumbnailsKey))
-applyFoldedChannels(store.get(store.foldedChannelsKey))
 
 // observe dialog open/close and prevent body background scroll
 observeDialogOpenPreventScroll($settings)
@@ -296,17 +292,6 @@ function applyShowThumbnails(showThumbnails) {
     document.body.classList.add('hide-thumbnails')
   }
   document.querySelector('#show-thumbnails').checked = showThumbnails
-}
-
-function applyFoldedChannels (foldedChannels) {
-  if (foldedChannels) {
-    [...document.querySelectorAll('.channels-container details')]
-    .forEach(d => d.open = false)
-  } else {
-    [...document.querySelectorAll('.channels-container details')]
-    .forEach(d => d.open = true)
-  }
-  document.querySelector('#folded-channels').checked = foldedChannels
 }
 
 // app: add channel

@@ -38,7 +38,7 @@ main {
 .channel-details.has-new-videos {
   background-color: #aeaeae
 }
-.videos-container {
+.videos-container, .main-videos-container {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;
