@@ -1,3 +1,113 @@
+
+class VideoElement extends HTMLElement {
+  constructor () {
+    super()
+  }
+  connectedCallback () {
+    this.video = JSON.parse(this.dataset['data'])
+    this.render()
+    this.registerEvents()
+  }
+  disconnectedCallback () {
+    this.unregisterEvents()
+  }
+  render () {
+    // debugger
+    this.classList.add('video')
+    this.dataset['videoId'] = this.video.id
+    this.innerHTML = `
+      ${this.video.downloaded
+      ? `<video controls width="280">
+          <source src="/videos/${this.video.id}" type="video/mp4" />
+          <p>
+            Your browser does not support the video tag.
+            Download the video instead <a href="/videos/${this.video.id}" target="_blank">here</a>
+          </p>
+        </video>`
+      : `<img src="${this.video.thumbnail}"/>`}
+      <span>${this.video.publishedTime} | ${this.video.publishedAt}</span> | <span>${this.video.viewCount}</span> | <span>${this.video.duration || 'N/A'}</span><br/>
+      ${this.video.title}
+      <div class="actions">
+        ${this.video.downloaded
+          ? ''
+          : `<span tabindex="0"  class="action download" data-video-id="${this.video.id}">⬇️ Download</span>`}
+        ${!this.video.summary
+          ? `<span tabindex="0"  class="action summarize" data-video-id="${this.video.id}">📖 Summarize</span>`
+          : `<span tabindex="0"  class="action show-summary" data-video-id="${this.video.id}">📖 Summary</span>`}
+        <span tabindex="0"  class="action ignore" data-video-id="${this.video.id}">🙈 Ignore</span>
+      </div>
+    `
+  }
+  registerEvents () {
+    handleClick(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
+    handleClick(this.querySelector('.action.ignore'), this.ignoreVideoHandler.bind(this))
+    handleClick(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
+    handleClick(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
+    
+    function handleClick ($el, handler) {
+      if (!$el) return
+      $el.addEventListener('click', handler)
+      $el.addEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
+    }
+  }
+  unregisterEvents () {
+    handleClick(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
+    handleClick(this.querySelector('.action.ignore'), this.ignoreVideoHandler.bind(this))
+    handleClick(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
+    handleClick(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
+
+    function handleClick ($el, handler) {
+      if (!$el) return
+      $el.removeEventListener('click', handler)
+      $el.removeEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
+    }
+  }
+  downloadVideoHandler (event) {
+    event.preventDefault()
+    const downloadStartedText = '⚡️ Download started'
+    if (event.target.innerText === downloadStartedText) return console.log('already downloading')
+    event.target.innerText = downloadStartedText
+    fetch('/download-video', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: this.video.id }),
+    })
+    .then(() => console.log('Download started'))
+    .catch((error) => console.error('Error starting download:', error))
+  }
+  ignoreVideoHandler (event) {
+    event.preventDefault()
+    const videoId = this.video.id
+    store.push(store.ignoreVideoKey, videoId)
+    event.target.parentNode?.parentNode?.remove()
+  }
+  summarizeVideoHandler (event) {
+    event.preventDefault()
+    const summaryStartedText = '⚡️ summary started'
+    if (event.target.innerText === summaryStartedText) return console.log('already summarizing')
+    event.target.innerText = summaryStartedText
+    fetch('/summarize-video', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: this.video.id }),
+    })
+    .then(() => console.log('summary started'))
+    .catch((error) => console.error('Error starting summary:', error))
+  }
+  showSummaryHandler (event) {
+    event.preventDefault()
+    const videoId = this.video.id
+    for (const [name, videos] of Object.entries(window.videos)) {
+      const video = videos.find(video => video.id === videoId)
+      if (video) {
+        document.querySelector('dialog#summary').showModal()
+        document.querySelector('dialog#summary div').innerHTML = `<pre>${video.summary}</pre><details><summary>transcript</summary><pre>${video.transcript}</pre></details>`
+      }
+    }
+  }
+}
+customElements.define('video-element', VideoElement)
+
 // app: sse updates and renders
 const eventSource = new window.EventSource('/')
 const $channelsContainer = document.querySelector('.channels-container')
@@ -26,7 +136,7 @@ eventSource.onmessage = (message) => {
         $channelsContainer.appendChild(channelSectionFor(name, videos))
         updateDownloadedVideos(videos)
       }
-      handleNewVideos(data.videos)
+      handleChannelsUpdated(data.videos)
       window.videos = data.videos
       applyFoldedChannels(store.get(store.foldedChannelsKey))
     }
@@ -40,7 +150,7 @@ eventSource.onmessage = (message) => {
       }
       updateDownloadedVideos(data.videos)
       window.videos[data.name] = data.videos
-      handleNewVideos(data.videos)
+      handleChannelsUpdated(data.videos)
     }
 
   } catch (err) {
@@ -58,7 +168,6 @@ function channelSectionFor (name, videos) {
   return $channelSection
 }
 
-
 function channelVideosContents (videos) {
   if (!videos) return
   const ignoreList = store.get(store.ignoreVideoKey)
@@ -67,41 +176,15 @@ function channelVideosContents (videos) {
   videos
   .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
   .forEach(video => {
-    if (ignoreList.includes(video.id)) {
-      console.log('ignoring video', video.id)
-      return
-    }
+    if (ignoreList.includes(video.id)) return console.log('ignoring video', video.id)
     $videosContainer.appendChild(createVideoElement(video))
   })
   return $videosContainer
 }
 
 function createVideoElement (video) {
-  const $video = document.createElement('div')
-  $video.classList.add('video')
-  $video.dataset['videoId'] = video.id
-  $video.innerHTML = `
-    ${video.downloaded
-    ? `<video controls width="280">
-        <source src="/videos/${video.id}" type="video/mp4" />
-        <p>
-          Your browser does not support the video tag.
-          Download the video instead <a href="/videos/${video.id}" target="_blank">here</a>
-        </p>
-      </video>`
-    : `<img src="${video.thumbnail}"/>`}
-    <span>${video.publishedTime} | ${video.publishedAt}</span> | <span>${video.viewCount}</span> | <span>${video.duration || 'N/A'}</span><br/>
-    ${video.title}
-    <div class="actions">
-      ${video.downloaded
-        ? `<a tabindex="0" href="/videos/${video.id}" target="_blank" class="action watch" data-video-id="${video.id}">👀 watch</a>`
-        : `<span tabindex="0"  class="action download" data-video-id="${video.id}">⬇️ Download</span>`}
-      ${!video.summary
-        ? `<span tabindex="0"  class="action summarize" data-video-id="${video.id}">📖 Summarize</span>`
-        : `<span tabindex="0"  class="action show-summary" data-video-id="${video.id}">📖 Summary</span>`}
-      <span tabindex="0"  class="action ignore" data-video-id="${video.id}">🙈 Ignore</span>
-    </div>
-  `
+  const $video = document.createElement('video-element')
+  $video.dataset['data'] = JSON.stringify(video)
   return $video
 }
 
@@ -110,12 +193,9 @@ function updateDownloadedVideos (videos) {
   const $videosContainer = $downloadedVideosContainer.querySelector('.videos-container')
   videos.filter(v => v.downloaded).forEach(v => {
     const $existing = $downloadedVideosContainer.querySelector(`[data-video-id="${v.id}"]`)
-    if ($existing) {
-      const $video = createVideoElement(v)
-      return $existing.replaceWith($video)
-    }
-    const $video = createVideoElement(v)
-    $videosContainer.appendChild($video)
+    return $existing 
+    ? $existing.replaceWith(createVideoElement(v)) 
+    : $videosContainer.appendChild(createVideoElement(v))
   })
 }
 
@@ -220,7 +300,6 @@ function applyShowThumbnails(showThumbnails) {
 }
 
 function applyFoldedChannels (foldedChannels) {
-  console.log('applyFoldedChannels', foldedChannels)
   if (foldedChannels) {
     [...document.querySelectorAll('.channels-container details')]
     .forEach(d => d.open = false)
@@ -269,13 +348,7 @@ function addChannelHandler(event) {
 }
 
 
-function handleNewVideos (videos) {
-  handleClick(document.querySelectorAll('.video .actions .action.watch'), watchVideoHandler)
-  handleClick(document.querySelectorAll('.video .actions .action.download'), downloadVideoHandler)
-  handleClick(document.querySelectorAll('.video .actions .action.ignore'), ignoreVideoHandler)
-  handleClick(document.querySelectorAll('.video .actions .action.summarize'), summarizeVideoHandler)
-  handleClick(document.querySelectorAll('.video .actions .action.show-summary'), showSummaryHandler)
-
+function handleChannelsUpdated (videos) {
   if (typeof videos === 'object' && !Array.isArray(videos)) {
     const lastVideos = store.get(store.lastVideosKey)
     for (const [name, vids] of Object.entries(videos)) {
@@ -284,86 +357,5 @@ function handleNewVideos (videos) {
       lastVideos[name] = vids[0]?.id
     }
     store.set(store.lastVideosKey, lastVideos)
-  }
-
-  function handleClick ($els, handler) {
-    $els
-    .forEach($action => {
-      $action.removeEventListener('click', handler)
-      $action.addEventListener('click', handler)
-      $action.removeEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
-      $action.addEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
-    })
-  }
-}
-
-function watchVideoHandler (event) {
-  event.preventDefault()
-  const videoId = event.target.dataset.videoId
-  $videoPlayer.showModal()
-  $videoPlayer.querySelector('div').innerHTML = `
-    <video autoplay controls width="500">
-      <source src="/videos/${videoId}" type="video/mp4" />
-      <p>
-        Your browser does not support the video tag.
-        Download the video instead <a href="/videos/${videoId}" target="_blank">here</a>
-      </p>
-    </video>
-  `
-}
-
-function ignoreVideoHandler (event) {
-  event.preventDefault()
-  const videoId = event.target.dataset.videoId
-  store.push(store.ignoreVideoKey, videoId)
-  event.target.parentNode?.parentNode?.remove()
-}
-
-function downloadVideoHandler (event) {
-  event.preventDefault()
-  const downloadStartedText = '⚡️ Download started'
-  if (event.target.innerText === downloadStartedText) return console.log('already downloading')
-  event.target.innerText = downloadStartedText
-  fetch('/download-video', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id: event.target.dataset.videoId }),
-  })
-  .then(() => {
-    console.log('Download started')
-  })
-  .catch((error) => {
-    console.error('Error starting download:', error)
-  })
-}
-
-function summarizeVideoHandler (event) {
-  event.preventDefault()
-  const summaryStartedText = '⚡️ summary started'
-  if (event.target.innerText === summaryStartedText) return console.log('already summarizing')
-  event.target.innerText = summaryStartedText
-  fetch('/summarize-video', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ id: event.target.dataset.videoId }),
-  })
-  .then(() => {
-    console.log('summary started')
-  })
-  .catch((error) => {
-    console.error('Error starting summary:', error)
-  })
-}
-
-function showSummaryHandler (event) {
-  event.preventDefault()
-  const videoId = event.target.dataset.videoId
-  for (const [name, videos] of Object.entries(window.videos)) {
-    const video = videos.find(video => video.id === videoId)
-    if (video) {
-      document.querySelector('dialog#summary').showModal()
-      document.querySelector('dialog#summary div').innerHTML = `<pre>${video.summary}</pre><details><summary>transcript</summary><pre>${video.transcript}</pre></details>`
-      return
-    }
   }
 }
