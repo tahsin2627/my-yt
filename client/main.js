@@ -12,7 +12,6 @@ class VideoElement extends HTMLElement {
     this.unregisterEvents()
   }
   render () {
-    // debugger
     this.classList.add('video')
     this.dataset['videoId'] = this.video.id
     this.innerHTML = `
@@ -78,7 +77,7 @@ class VideoElement extends HTMLElement {
   ignoreVideoHandler (event) {
     event.preventDefault()
     const videoId = this.video.id
-    store.push(store.ignoreVideoKey, videoId)
+    window.store.push(window.store.ignoreVideoKey, videoId)
     event.target.parentNode?.parentNode?.remove()
   }
   summarizeVideoHandler (event) {
@@ -253,10 +252,10 @@ $closeVideoPlayer.addEventListener("click", () => $videoPlayer.close())
 $videoPlayer.addEventListener('close', () => $videoPlayer.querySelector('video')?.pause())
 
 // summary modal
-const $summaryModal = document.querySelector('dialog#summary')
-const $closeSummary = $summaryModal.querySelector("button")
-$closeSummary.addEventListener("click", () => $summaryModal.close())
-$summaryModal.addEventListener('close', () => {})
+const $summary = document.querySelector('dialog#summary')
+const $closeSummary = $summary.querySelector("button")
+$closeSummary.addEventListener("click", () => $summary.close())
+$summary.addEventListener('close', () => {})
 
 // settings ui
 const $showThumbnails = document.getElementById('show-thumbnails')
@@ -277,7 +276,7 @@ applyFoldedChannels(store.get(store.foldedChannelsKey))
 // observe dialog open/close and prevent body background scroll
 observeDialogOpenPreventScroll($settings)
 observeDialogOpenPreventScroll($videoPlayer)
-observeDialogOpenPreventScroll($summaryModal)
+observeDialogOpenPreventScroll($summary)
 
 
 function observeDialogOpenPreventScroll (dialog) {
