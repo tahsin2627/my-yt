@@ -180,11 +180,11 @@ eventSource.onmessage = (message) => {
       updateDownloadedVideos(allVideos)
       window.videos = data.videos
     }
-    if (data.type === 'summary' && data.videoId && data.summary) {
+    if (data.type === 'summary' && data.videoId && data.summary && data.transcript) {
       const $video = document.querySelector(`[data-video-id="${data.videoId}"]`)
       if ($video) {
         const videoData = JSON.parse($video.dataset['data'])
-        videoData.summary = data.summary
+        Object.assign(videoData, { summary: data.summary, transcript: data.transcript })
         $video.dataset['data'] = JSON.stringify(videoData)
       }
     }
