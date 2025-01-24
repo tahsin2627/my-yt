@@ -38,10 +38,12 @@ class VideoElement extends HTMLElement {
           </p>
         </video>`
       : `<img loading="lazy" src="${this.video.thumbnail}"/>`}
-      <div>
+      <div class="info">
+        <span>${this.video.channelName}</span>
+        <br>
         <span>${new Date(this.video.publishedAt).toISOString().substring(0, 16)}</span> | <span>${this.video.viewCount}</span> | <span>${this.video.duration || 'N/A'}</span><br/>
       </div>
-      <h4>${this.video.title}</h4>
+      <h4 class="title">${this.video.title}</h4>
       <div class="actions">
         ${this.video.downloaded
           ? ''
