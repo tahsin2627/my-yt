@@ -165,6 +165,15 @@ body.dialog-opened {
 body > header {
   padding: 1em 0.5em;
   margin-bottom: 3rem;
+  overflow: hidden;
+}
+
+#search {
+  display: block;
+  margin: 0 auto;
+  width: 90%;
+  padding: 1em;
+  font-size: 1.1rem;
 }
 
 details {

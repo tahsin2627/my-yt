@@ -180,6 +180,23 @@ eventSource.onmessage = (message) => {
       updateDownloadedVideos(allVideos)
       window.videos = data.videos
     }
+    if (data.type === 'channel' && data.name && data.videos) {
+      data.videos
+      .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
+      .forEach(video => {
+        const $video = document.querySelector(`[data-video-id="${video.id}"]`)
+        if ($video) {
+          $video.dataset['data'] = JSON.stringify(video)
+          console.log('video exists', video.id)
+          return
+        }
+        console.log('video does not exist. prepending', video.id)
+        $videosContainer.insertBefore(createVideoElement(video), $videosContainer.firstChild)
+      })
+
+      updateDownloadedVideos(data.videos)
+      window.videos[data.name] = data.videos
+    }
     if (data.type === 'summary' && data.videoId && data.summary && data.transcript) {
       const $video = document.querySelector(`[data-video-id="${data.videoId}"]`)
       if ($video) {
