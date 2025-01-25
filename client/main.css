@@ -34,6 +34,21 @@ main {
 
 
 
+.channels-container div {
+  display: flex;
+  justify-content: space-around;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+}
+.channels-container div div {
+  cursor: pointer;
+  font-weight: bold; 
+}
+.channels-container div div.active {
+  color: #3498db;
+}
 
 .channel-details.has-new-videos {
   background-color: #aeaeae
