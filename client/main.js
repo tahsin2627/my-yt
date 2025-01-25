@@ -41,7 +41,7 @@ class VideoElement extends HTMLElement {
       <div class="info">
         <span>${this.video.channelName}</span>
         <br>
-        <span>${new Date(this.video.publishedAt).toISOString().substring(0, 16)}</span> | <span>${this.video.viewCount}</span> | <span>${this.video.duration || 'N/A'}</span><br/>
+        <span>${new Date(this.video.publishedAt).toISOString().substring(0, 10)}</span> | <span>${this.video.viewCount}</span> | <span>${this.video.duration || 'N/A'}</span><br/>
       </div>
       <h4 class="title">${this.video.title}</h4>
       <div class="actions">
