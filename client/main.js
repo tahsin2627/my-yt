@@ -178,6 +178,7 @@ eventSource.onmessage = (message) => {
       })
 
       updateDownloadedVideos(allVideos)
+      updateSummarizedVideos(allVideos)
       updateChannels(Object.entries(data.videos).map(([channelName, _]) => channelName))
       window.videos = data.videos
     }
@@ -187,6 +188,7 @@ eventSource.onmessage = (message) => {
         const videoData = JSON.parse($video.dataset['data'])
         Object.assign(videoData, { summary: data.summary, transcript: data.transcript })
         $video.dataset['data'] = JSON.stringify(videoData)
+        updateSummarizedVideos([data.videoId])
       }
     }
     if (data.type === 'downloaded' && data.videoId) {
@@ -346,6 +348,16 @@ function updateDownloadedVideos (videos = []) {
   const $videosContainer = $downloadedVideosContainer.querySelector('.videos-container')
   videos.filter(v => v.downloaded).forEach(v => {
     const $existing = $downloadedVideosContainer.querySelector(`[data-video-id="${v.id}"]`)
+    return $existing 
+    ? $existing.replaceWith(createVideoElement(v)) 
+    : $videosContainer.appendChild(createVideoElement(v))
+  })
+}
+function updateSummarizedVideos (videos = []) {
+  const $summarizedVideosContainer = document.querySelector('details.summarized-videos-container')
+  const $videosContainer = $summarizedVideosContainer.querySelector('.videos-container')
+  videos.filter(v => v.summary).forEach(v => {
+    const $existing = $summarizedVideosContainer.querySelector(`[data-video-id="${v.id}"]`)
     return $existing 
     ? $existing.replaceWith(createVideoElement(v)) 
     : $videosContainer.appendChild(createVideoElement(v))
