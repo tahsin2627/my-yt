@@ -165,6 +165,9 @@ main {
 body.dialog-opened {
   overflow: hidden;
 }
+dialog {
+  max-width: 800px;
+}
 
 
 
