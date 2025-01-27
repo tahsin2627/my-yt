@@ -183,22 +183,20 @@ eventSource.onmessage = (message) => {
       window.videos = data.videos
     }
     if (data.type === 'summary' && data.videoId && data.summary && data.transcript) {
-      const $video = document.querySelector(`[data-video-id="${data.videoId}"]`)
-      if ($video) {
+      ;[...document.querySelectorAll(`[data-video-id="${data.videoId}"]`)].forEach($video => {
         const videoData = JSON.parse($video.dataset['data'])
         Object.assign(videoData, { summary: data.summary, transcript: data.transcript })
         $video.dataset['data'] = JSON.stringify(videoData)
         updateSummarizedVideos([data.videoId])
-      }
+      })
     }
     if (data.type === 'downloaded' && data.videoId) {
-      const $video = document.querySelector(`[data-video-id="${data.videoId}"]`)
-      if ($video) {
+      ;[...document.querySelectorAll(`[data-video-id="${data.videoId}"]`)].forEach($video => {
         const videoData = JSON.parse($video.dataset['data'])
         videoData.downloaded = true
         $video.dataset['data'] = JSON.stringify(videoData)
         updateDownloadedVideos([data.videoId])
-      }
+      })
     }
   } catch (err) {
     console.error('sse parse error', err)
