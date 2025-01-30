@@ -391,27 +391,6 @@ function addChannelHandler(event) {
 }
 
 
-function channelSectionFor (name, videos) {
-  const $channelSection = document.createElement('details')
-  $channelSection.dataset['channel'] = name
-  $channelSection.classList.add('channel-details')
-  $channelSection.innerHTML = `<summary>${name}</summary>`
-  $channelSection.appendChild(channelVideosContents(videos))
-  return $channelSection
-}
-
-function channelVideosContents (videos) {
-  if (!videos) return
-  const $videosContainer = document.createElement('div')
-  $videosContainer.classList.add('videos-container')
-  videos
-  .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
-  .forEach(video => {
-    $videosContainer.appendChild(createVideoElement(video))
-  })
-  return $videosContainer
-}
-
 function createVideoElement (video) {
   const $video = document.createElement('video-element')
   $video.dataset['data'] = JSON.stringify(video)
