@@ -105,41 +105,6 @@ function applyShowThumbnails(showThumbnails) {
   document.querySelector('#show-thumbnails').checked = showThumbnails
 }
 
-function addChannelHandler(event) {
-  event.preventDefault()
-
-  const form = event.target
-  const button = form.querySelector('button')
-  const input = form.querySelector('input')
-  const loader = form.querySelector('.loader')
-  freezeForm()
-  
-  const channelName = document.getElementById('channel-name').value
-
-  if (!channelName) return alert('empty channel name'), unfreezeForm();
-
-  fetch('/channels', {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify({ name: channelName })
-  })
-  .then(() => document.getElementById('add-channel-form').reset())
-  .catch(error => console.error('Error adding channel:', error))
-  .finally(unfreezeForm)
-
-  function freezeForm() {
-    input.disabled = true
-    button.disabled = true
-    loader.classList.add('show')
-  }
-  function unfreezeForm() {
-    input.disabled = false
-    button.disabled = false
-    loader.classList.remove('show')
-  }
-}
-
-
 function createVideoElement (video) {
   const $video = document.createElement('video-element')
   $video.dataset['data'] = JSON.stringify(video)
