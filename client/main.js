@@ -316,12 +316,6 @@ const $closeSettings = $settings.querySelector("button")
 $openSettings.addEventListener("click", () => $settings.showModal())
 $closeSettings.addEventListener("click", () => $settings.close())
 
-// video player modal
-const $videoPlayer = document.querySelector('dialog#video-player')
-const $closeVideoPlayer = $videoPlayer.querySelector("button")
-$closeVideoPlayer.addEventListener("click", () => $videoPlayer.close())
-$videoPlayer.addEventListener('close', () => $videoPlayer.querySelector('video')?.pause())
-
 // summary modal
 const $summary = document.querySelector('dialog#summary')
 const $closeSummary = $summary.querySelector("button")
@@ -340,7 +334,6 @@ applyShowThumbnails(store.get(store.showThumbnailsKey))
 
 // observe dialog open/close and prevent body background scroll
 observeDialogOpenPreventScroll($settings)
-observeDialogOpenPreventScroll($videoPlayer)
 observeDialogOpenPreventScroll($summary)
 
 
