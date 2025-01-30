@@ -33,7 +33,8 @@ eventSource.onmessage = (message) => {
 
       updateDownloadedVideos(allVideos)
       updateSummarizedVideos(allVideos)
-      updateChannels(Object.entries(data.videos).map(([channelName, _]) => channelName))
+      const channelsList = Object.entries(data.videos).map(([channelName, _]) => channelName)
+      document.querySelector('channels-list').dataset['list'] = channelsList
       window.videos = data.videos
     }
     if (data.type === 'summary' && data.videoId && data.summary && data.transcript) {
@@ -130,38 +131,4 @@ function updateSummarizedVideos (videos = []) {
     ? $existing.replaceWith(createVideoElement(v)) 
     : $videosContainer.appendChild(createVideoElement(v))
   })
-}
-
-function updateChannels (channels = []) {
-  channels.sort()
-  const $channelsContainer = document.querySelector('details.channels-container div')
-  channels.forEach(channel => {
-    const $existingChannel = $channelsContainer.querySelector(`[data-channel="${channel}"]`)
-    if ($existingChannel) {
-      $existingChannel.replaceWith(createChannelElement(channel))
-    } else {
-      $channelsContainer.appendChild(createChannelElement(channel))
-    }
-  })
-}
-
-function createChannelElement (channel = '') {
-  const $channel = document.createElement('div')
-  $channel.dataset.channel = channel
-  $channel.classList.add('channel')
-  $channel.innerText = channel
-  $channel.addEventListener('click', function (event) {
-    
-    const $searchInput = document.querySelector('#search')
-    if ($searchInput.value === channel) {
-      $searchInput.value = ''
-      event.target.classList.remove('active')
-    } else {
-      $searchInput.value = channel
-      event.target.parentNode.querySelector('.active')?.classList.remove('active')
-      event.target.classList.add('active')
-    }
-    $searchInput.dispatchEvent(new Event('keyup'))
-  })
-  return $channel
 }
