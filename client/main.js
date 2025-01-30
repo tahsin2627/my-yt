@@ -113,6 +113,70 @@ class VideoElement extends HTMLElement {
 }
 customElements.define('video-element', VideoElement)
 
+class AddChannelForm extends HTMLElement {
+  constructor () {
+    super()
+  }
+  connectedCallback () {
+    this.render()
+    this.registerEvents()
+  }
+  disconnectedCallback () {
+    this.unregisterEvents()
+  }
+  registerEvents () {
+    this.querySelector('form').addEventListener('submit', this.addChannelHandler.bind(this))
+  }
+  unregisterEvents () {
+    this.querySelector('form').removeEventListener('submit', this.addChannelHandler.bind(this))
+  }
+  render () {
+    this.innerHTML = `
+      <form id="add-channel-form">
+        <label for="channel-name">Add a new channel</label>
+        <input type="text" id="channel-name" placeholder="Channel Name" required>
+        <button type="submit">Submit</button>
+        <span class="loader"></span>
+      </form>
+    `
+  }
+
+  addChannelHandler (event) {
+    event.preventDefault()
+  
+    const form = event.target
+    const button = form.querySelector('button')
+    const input = form.querySelector('input')
+    const loader = form.querySelector('.loader')
+    freezeForm()
+    
+    const channelName = document.getElementById('channel-name').value
+  
+    if (!channelName) return alert('empty channel name'), unfreezeForm();
+  
+    fetch('/channels', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name: channelName })
+    })
+    .then(() => form.reset())
+    .catch(error => console.error('Error adding channel:', error))
+    .finally(unfreezeForm)
+  
+    function freezeForm() {
+      input.disabled = true
+      button.disabled = true
+      loader.classList.add('show')
+    }
+    function unfreezeForm() {
+      input.disabled = false
+      button.disabled = false
+      loader.classList.remove('show')
+    }
+  }
+}
+customElements.define('add-channel-form', AddChannelForm)
+
 
 class Store {
   showThumbnailsKey = 'showThumbnails'
@@ -203,25 +267,45 @@ eventSource.onmessage = (message) => {
   }
 }
 
-document.getElementById('add-channel-form').addEventListener('submit', addChannelHandler)
-document.getElementById('search').addEventListener('keyup', searchHandler)
-
-function searchHandler (event) {
-  event.preventDefault()
-  const searchTerm = event.target.value.toLowerCase()
-  document.querySelectorAll('.video').forEach(video => {
-    const videoData = JSON.parse(video.dataset['data'])
-    if (
-      videoData.title.toLowerCase().includes(searchTerm)
-       || videoData.summary?.toLowerCase().includes(searchTerm)
-       || videoData.channelName?.toLowerCase().includes(searchTerm)
-      ) {
-      video.style.display = ''
-    } else {
-      video.style.display = 'none'
-    }
-  })
+class SearchVideos extends HTMLElement {
+  constructor () {
+    super()
+  }
+  connectedCallback () {
+    this.render()
+    this.registerEvents()
+  }
+  disconnectedCallback () {
+    this.deregisterEvents()
+  }
+  registerEvents () {
+    this.querySelector('input').addEventListener('keyup', this.searchHandler.bind(this))
+  }
+  deregisterEvents () {
+    this.querySelector('input').removeEventListener('keyup', this.searchHandler.bind(this))
+  }
+  render () {
+    this.innerHTML = `<input type="text" id="search" placeholder="Search videos" autofocus>`
+  }
+  searchHandler (event) {
+    event.preventDefault()
+    const searchTerm = event.target.value.toLowerCase()
+    document.querySelectorAll('.video').forEach(video => {
+      const videoData = JSON.parse(video.dataset['data'])
+      if (
+        videoData.title.toLowerCase().includes(searchTerm)
+         || videoData.summary?.toLowerCase().includes(searchTerm)
+         || videoData.channelName?.toLowerCase().includes(searchTerm)
+        ) {
+        video.style.display = ''
+      } else {
+        video.style.display = 'none'
+      }
+    })
+  
+  }
 }
+customElements.define('search-videos', SearchVideos)
 
 const store = new Store()
 

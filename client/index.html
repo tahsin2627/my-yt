@@ -10,7 +10,7 @@
 <body>
   <header>
     <h1 class="">My-YT</h1>
-    <input type="text" id="search" placeholder="Search videos" autofocus>
+    <search-videos></search-videos>
   </header>
 
   <button id="open-settings">🔧 Settings</button>
@@ -43,12 +43,7 @@
     </div>
     <br>
     <br>
-    <form id="add-channel-form">
-      <label for="channel-name">Add a new channel</label>
-      <input type="text" id="channel-name" placeholder="Channel Name" required>
-      <button type="submit">Submit</button>
-      <span class="loader"></span>
-    </form>
+    <add-channel-form></add-channel-form>
     <br>
     <br>
     <label for="show-thumbnails">
