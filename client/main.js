@@ -42,7 +42,7 @@ eventSource.onmessage = (message) => {
         const videoData = JSON.parse($video.dataset['data'])
         Object.assign(videoData, { summary: data.summary, transcript: data.transcript })
         $video.dataset['data'] = JSON.stringify(videoData)
-        updateSummarizedVideos([data.videoId])
+        updateSummarizedVideos([videoData])
       })
     }
     if (data.type === 'downloaded' && data.videoId) {
@@ -50,7 +50,7 @@ eventSource.onmessage = (message) => {
         const videoData = JSON.parse($video.dataset['data'])
         videoData.downloaded = true
         $video.dataset['data'] = JSON.stringify(videoData)
-        updateDownloadedVideos([data.videoId])
+        updateDownloadedVideos([videoData])
       })
     }
   } catch (err) {
