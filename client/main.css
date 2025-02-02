@@ -59,9 +59,6 @@ form {
   margin: 0;
 }
 .video {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
   width: 280px;
   max-height: 300px;
   text-align: left;
