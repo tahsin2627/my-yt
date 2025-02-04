@@ -34,7 +34,7 @@ class Channels extends HTMLElement {
   deregisterEvents () {
   }
   render () {
-    this.innerHTML = `
+    this.innerHTML = /*html*/`
     <details class="channels-container">
       <summary>Channels</summary>
       <div></div>

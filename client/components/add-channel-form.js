@@ -16,7 +16,7 @@ class AddChannelForm extends HTMLElement {
     this.querySelector('form').removeEventListener('submit', this.addChannelHandler.bind(this))
   }
   render () {
-    this.innerHTML = `
+    this.innerHTML = /*html*/`
       <form id="add-channel-form">
         <label for="channel-name">Add a new channel</label>
         <input type="text" id="channel-name" placeholder="Channel Name" required>

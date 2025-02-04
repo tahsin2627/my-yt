@@ -27,16 +27,16 @@ class VideoElement extends HTMLElement {
     if (!this.video) return
     this.classList.add('video')
     this.dataset['videoId'] = this.video.id
-    this.innerHTML = `
+    this.innerHTML = /*html*/`
       ${this.video.downloaded
-      ? `<video controls width="280">
+      ? /*html*/`<video controls width="280">
           <source src="/videos/${this.video.id}" type="video/mp4" />
           <p>
             Your browser does not support the video tag.
             Download the video instead <a href="/videos/${this.video.id}" target="_blank">here</a>
           </p>
         </video>`
-      : `<img loading="lazy" src="${this.video.thumbnail}"/>`}
+      : /*html*/`<img loading="lazy" src="${this.video.thumbnail}"/>`}
       <div class="info">
         <span>${this.video.channelName}</span>
         <br>
@@ -46,10 +46,10 @@ class VideoElement extends HTMLElement {
       <div class="actions">
         ${this.video.downloaded
           ? ''
-          : `<span tabindex="0"  class="action download" data-video-id="${this.video.id}">⬇️ Download</span>`}
+          : /*html*/`<span tabindex="0"  class="action download" data-video-id="${this.video.id}">⬇️ Download</span>`}
         ${!this.video.summary
-          ? `<span tabindex="0"  class="action summarize" data-video-id="${this.video.id}">📖 Summarize</span>`
-          : `<span tabindex="0"  class="action show-summary" data-video-id="${this.video.id}">📖 Summary</span>`}
+          ? /*html*/`<span tabindex="0"  class="action summarize" data-video-id="${this.video.id}">📖 Summarize</span>`
+          : /*html*/`<span tabindex="0"  class="action show-summary" data-video-id="${this.video.id}">📖 Summary</span>`}
       </div>
     `
   }
@@ -106,7 +106,13 @@ class VideoElement extends HTMLElement {
     const video = this.video
     if (video) {
       document.querySelector('dialog#summary').showModal()
-      document.querySelector('dialog#summary div').innerHTML = `<pre>${video.summary}</pre><details><summary>transcript</summary><pre>${video.transcript}</pre></details>`
+      document.querySelector('dialog#summary div').innerHTML = /*html*/`
+      <pre>${video.summary}</pre>
+      <details>
+        <summary>transcript</summary>
+        <pre>${video.transcript}</pre>
+      </details>
+      `
     }
   }
 }
