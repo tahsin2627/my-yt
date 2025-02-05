@@ -50,6 +50,7 @@ class VideoElement extends HTMLElement {
         ${!this.video.summary
           ? /*html*/`<span tabindex="0"  class="action summarize" data-video-id="${this.video.id}">📖 Summarize</span>`
           : /*html*/`<span tabindex="0"  class="action show-summary" data-video-id="${this.video.id}">📖 Summary</span>`}
+        <a href="https://www.youtube.com/watch?v=${this.video.id}" target="_blank">📺 external</a>
       </div>
     `
   }
