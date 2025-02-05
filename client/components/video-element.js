@@ -38,7 +38,7 @@ class VideoElement extends HTMLElement {
         </video>`
       : /*html*/`<img loading="lazy" src="${this.video.thumbnail}"/>`}
       <div class="info">
-        <span>${this.video.channelName}</span>
+        <span class="channel-name">${this.video.channelName}</span>
         <br>
         <span>${new Date(this.video.publishedAt).toISOString().substring(0, 10)}</span> | <span>${this.video.viewCount}</span> | <span>${this.video.duration || 'N/A'}</span><br/>
       </div>
@@ -58,6 +58,7 @@ class VideoElement extends HTMLElement {
     handleClick(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
     handleClick(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
     handleClick(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
+    handleClick(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
     
     function handleClick ($el, handler) {
       if (!$el) return
@@ -69,6 +70,7 @@ class VideoElement extends HTMLElement {
     handleClick(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
     handleClick(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
     handleClick(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
+    handleClick(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
 
     function handleClick ($el, handler) {
       if (!$el) return
@@ -114,6 +116,17 @@ class VideoElement extends HTMLElement {
         <pre>${video.transcript}</pre>
       </details>
       `
+    }
+  }
+  filterByChannelHandler (event) {
+    // find search input, set value to channelname
+    const $searchInput = document.querySelector('#search')
+    if ($searchInput && $searchInput.value !== this.video.channelName) {
+      $searchInput.value = this.video.channelName
+      $searchInput.dispatchEvent(new Event('keyup'))
+    } else {
+      $searchInput.value = ''
+      $searchInput.dispatchEvent(new Event('keyup'))
     }
   }
 }
