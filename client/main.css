@@ -1,3 +1,16 @@
+/* dark mode */
+@media (prefers-color-scheme: dark) {
+  body {
+    background-color: #121212;
+    color: #f0f0f0;
+  }
+  video, img {
+    background-color: #202020;
+    color: #f0f0f0;
+  }
+}
+
+
 body {
   font-family: Arial, sans-serif;
   margin: 20px;
@@ -63,10 +76,10 @@ form {
   max-height: 300px;
   text-align: left;
   text-decoration: none;
-  color: black;
   font-weight: bold;
   padding: 5px;
-  background-color: #f0f0f0;
+  /* color: black; */
+  /* background-color: #f0f0f0; */
   margin: 5px;
 }
 .video .title {
@@ -83,9 +96,9 @@ form {
   opacity: 0 !important;
 
 }
-.video span {
+.video span, .video a {
   font-size: 12px;
-  color: #555;
+  color: #555 !important;
 }
 .video a {
   font-size: 12px;
@@ -211,4 +224,10 @@ details[open] > summary {
 
 #summary pre {
   white-space: break-spaces;
+}
+
+
+.flex {
+  display: flex;
+  justify-content: space-between;
 }
