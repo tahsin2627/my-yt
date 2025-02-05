@@ -40,10 +40,12 @@ class VideoElement extends HTMLElement {
       <div class="info">
         <span class="channel-name">${this.video.channelName}</span>
         <br>
-        <span>${new Date(this.video.publishedAt).toISOString().substring(0, 10)}</span> | <span>${this.video.viewCount}</span> | <span>${this.video.duration || 'N/A'}</span><br/>
+        <div class="flex">
+        <span>${new Date(this.video.publishedAt).toISOString().substring(0, 10)}</span><span>${this.video.viewCount}</span><span>${this.video.duration || 'N/A'}</span><br/>
+        </div>
       </div>
       <h4 class="title">${this.video.title}</h4>
-      <div class="actions">
+      <div class="actions flex">
         ${this.video.downloaded
           ? ''
           : /*html*/`<span tabindex="0"  class="action download" data-video-id="${this.video.id}">⬇️ Download</span>`}
