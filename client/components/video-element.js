@@ -136,11 +136,10 @@ class VideoElement extends HTMLElement {
     const $searchInput = document.querySelector('#search')
     if ($searchInput && $searchInput.value !== this.video.channelName) {
       $searchInput.value = this.video.channelName
-      $searchInput.dispatchEvent(new Event('keyup'))
     } else {
       $searchInput.value = ''
-      $searchInput.dispatchEvent(new Event('keyup'))
     }
+    $searchInput.dispatchEvent(new Event('keyup'))
   }
 }
 customElements.define('video-element', VideoElement)
