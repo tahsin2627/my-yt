@@ -1,4 +1,9 @@
-/* dark mode */
+body {
+  font-family: Arial, sans-serif;
+  margin: 20px;
+  background-color: white;
+  color: black;
+}
 @media (prefers-color-scheme: dark) {
   body {
     background-color: #121212;
@@ -10,11 +15,6 @@
   }
 }
 
-
-body {
-  font-family: Arial, sans-serif;
-  margin: 20px;
-}
 form {
   margin-bottom: 20px;
 }
@@ -142,15 +142,14 @@ form {
 
 
 #open-settings {
-  position: fixed;
-  top: 0;
-  right: 0;
   display: block;
-  background: white;
-  border: 1px solid lightgrey;
   border-radius: 4px;
   font-size: 1rem;
   padding: 0.5rem;
+  background-color: transparent;
+  color: inherit;
+  border: none;
+  outline: none;
 }
 #settings {
   position: relative;
@@ -187,15 +186,29 @@ dialog {
 
 
 body > header {
+  position: sticky;
+  top: 0;
+  z-index: 1000;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
   padding: 1em 0.5em;
   margin-bottom: 3rem;
   overflow: hidden;
+  background-color: inherit;
+  /* box-shadow on the bottom border */
+  box-shadow: 0px 5px 10px rgba(119, 118, 118, 0.2);
+}
+
+search-videos {
+  flex: 2;
 }
 
 #search {
   display: block;
   margin: 0 auto;
   width: 90%;
+  flex: 2;
   padding: 1em;
   font-size: 1.1rem;
 }
@@ -204,22 +217,6 @@ details {
   padding: 10px; 
   border: 5px solid #f7f7f7;
   border-radius: 3px;
-}
-
-details {
-  transition: 0.2s background linear;
-}
-
-details:hover {
-  /* background: #eaeaea; */
-}
-
-details > summary {
-  transition: color 1s;
-}
-
-details[open] > summary {
-  color: #171717;
 }
 
 #summary pre {
