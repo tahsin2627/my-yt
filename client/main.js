@@ -1,5 +1,6 @@
 import Store from '/lib/store.js'
 const store = new Store()
+window.store = store
 
 // app: sse updates and renders
 const eventSource = new window.EventSource('/')
@@ -26,6 +27,9 @@ eventSource.onmessage = (message) => {
       $videosContainer.innerHTML = ''
       const allVideos = Object.entries(data.videos).reduce((acc, curr) => acc.concat(curr[1]), [])
       allVideos
+      .filter(video => {
+        return !window.store.includes(window.store.ignoreVideoKey, video.id)
+      })
       .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
       .forEach(video => {
         $videosContainer.appendChild(createVideoElement(video))

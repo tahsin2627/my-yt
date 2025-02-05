@@ -25,6 +25,7 @@ class VideoElement extends HTMLElement {
   }
   render () {
     if (!this.video) return
+    if (store.includes(store.ignoreVideoKey, this.video.id)) return this.remove()
     this.classList.add('video')
     this.dataset['videoId'] = this.video.id
     this.innerHTML = /*html*/`
@@ -37,6 +38,7 @@ class VideoElement extends HTMLElement {
           </p>
         </video>`
       : /*html*/`<img loading="lazy" src="${this.video.thumbnail}"/>`}
+      <span class="action ignore">ignore</span>
       <div class="info">
         <span class="channel-name">${this.video.channelName}</span>
         <br>
@@ -62,6 +64,7 @@ class VideoElement extends HTMLElement {
     handleClick(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
     handleClick(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
     handleClick(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
+    handleClick(this.querySelector('.action.ignore'), this.ignoreVideoHandler.bind(this))
     handleClick(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
     
     function handleClick ($el, handler) {
@@ -74,6 +77,7 @@ class VideoElement extends HTMLElement {
     handleClick(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
     handleClick(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
     handleClick(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
+    handleClick(this.querySelector('.action.ignore'), this.ignoreVideoHandler.bind(this))
     handleClick(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
 
     function handleClick ($el, handler) {
@@ -121,6 +125,11 @@ class VideoElement extends HTMLElement {
       </details>
       `
     }
+  }
+  ignoreVideoHandler (event) {
+    event.preventDefault()
+    store.push(store.ignoreVideoKey, this.video.id)
+    this.render()
   }
   filterByChannelHandler (event) {
     // find search input, set value to channelname

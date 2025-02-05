@@ -72,6 +72,7 @@ form {
   margin: 0;
 }
 .video {
+  position: relative;
   width: 280px;
   max-height: 300px;
   text-align: left;
@@ -81,6 +82,15 @@ form {
   /* color: black; */
   /* background-color: #f0f0f0; */
   margin: 5px;
+}
+.video .action.ignore {
+  position: absolute;
+  top: 0;
+  right: 0;
+  z-index: 1000;
+  background-color: #f0f0f0;
+  color: black;
+  padding: 0.25rem;
 }
 .video .title {
   margin-top: 5px;
@@ -134,9 +144,6 @@ form {
   max-height: 100px;
   overflow-y: scroll;
 }
-
-
-
 
 
 
