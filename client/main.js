@@ -25,12 +25,13 @@ eventSource.onmessage = (message) => {
     
     if (data.type === 'all' && data.videos) {
       $videosContainer.innerHTML = ''
-      const allVideos = Object.entries(data.videos).reduce((acc, curr) => acc.concat(curr[1]), [])
-      allVideos
+      let allVideos = Object.entries(data.videos).reduce((acc, curr) => acc.concat(curr[1]), [])
+      allVideos = allVideos
       .filter(video => !window.store.includes(window.store.ignoreVideoKey, video.id))
       .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
-      .forEach(video => {
+      .map(video => {
         $videosContainer.appendChild(createVideoElement(video))
+        return video
       })
 
       updateDownloadedVideos(allVideos)
