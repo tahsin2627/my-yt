@@ -43,6 +43,7 @@ eventSource.onmessage = (message) => {
     }
     if (data.type === 'summary' && data.videoId && data.summary && data.transcript) {
       ;[...document.querySelectorAll(`[data-video-id="${data.videoId}"]`)].forEach($video => {
+        if (!$video.dataset['data']) return
         const videoData = JSON.parse($video.dataset['data'])
         Object.assign(videoData, { summary: data.summary, transcript: data.transcript })
         $video.dataset['data'] = JSON.stringify(videoData)
@@ -51,6 +52,7 @@ eventSource.onmessage = (message) => {
     }
     if (data.type === 'downloaded' && data.videoId) {
       ;[...document.querySelectorAll(`[data-video-id="${data.videoId}"]`)].forEach($video => {
+        if (!$video.dataset['data']) return
         const videoData = JSON.parse($video.dataset['data'])
         videoData.downloaded = true
         $video.dataset['data'] = JSON.stringify(videoData)
