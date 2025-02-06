@@ -1,7 +1,7 @@
 export default class Store {
   showThumbnailsKey = 'showThumbnails'
   lastVideosKey = 'lastVideos'
-  ignoreVideoKeyKey = 'ignoreVideoKey'
+  ignoreVideoKey = 'ignoreVideo'
 
   constructor() {
     if (!localStorage.getItem(this.showThumbnailsKey)) localStorage.setItem(this.showThumbnailsKey, 'true')
