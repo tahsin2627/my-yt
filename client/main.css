@@ -43,6 +43,10 @@ form {
 
 
 
+.channels-container {
+  user-select: none;
+  -webkit-user-select: none;
+}
 .channels-container div {
   display: flex;
   justify-content: space-around;
