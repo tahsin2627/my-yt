@@ -27,9 +27,7 @@ eventSource.onmessage = (message) => {
       $videosContainer.innerHTML = ''
       const allVideos = Object.entries(data.videos).reduce((acc, curr) => acc.concat(curr[1]), [])
       allVideos
-      .filter(video => {
-        return !window.store.includes(window.store.ignoreVideoKey, video.id)
-      })
+      .filter(video => !window.store.includes(window.store.ignoreVideoKey, video.id))
       .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
       .forEach(video => {
         $videosContainer.appendChild(createVideoElement(video))
