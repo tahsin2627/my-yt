@@ -129,6 +129,7 @@ form {
   right: 10px;
   width: 300px;
   overflow: hidden;
+  z-index: 9000;
   /* height: 200px; */
   font-size: 10px;
   background-color: white;
