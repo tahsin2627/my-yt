@@ -38,7 +38,6 @@ eventSource.onmessage = (message) => {
       updateSummarizedVideos(allVideos)
       const channelsList = Object.entries(data.videos).map(([channelName, _]) => channelName)
       document.querySelector('channels-list').dataset['list'] = channelsList
-      window.videos = data.videos
     }
     if (data.type === 'summary' && data.videoId && data.summary && data.transcript) {
       ;[...document.querySelectorAll(`[data-video-id="${data.videoId}"]`)].forEach($video => {
