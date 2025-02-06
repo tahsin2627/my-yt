@@ -66,6 +66,7 @@ class VideoElement extends HTMLElement {
     handleClick(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
     handleClick(this.querySelector('.action.ignore'), this.ignoreVideoHandler.bind(this))
     handleClick(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
+    this.querySelector('video') && this.registerVideoEvents(this.querySelector('video'))
     
     function handleClick ($el, handler) {
       if (!$el) return
@@ -79,6 +80,7 @@ class VideoElement extends HTMLElement {
     handleClick(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
     handleClick(this.querySelector('.action.ignore'), this.ignoreVideoHandler.bind(this))
     handleClick(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
+    this.querySelector('video') && this.unregisterVideoEvents(this.querySelector('video'))
 
     function handleClick ($el, handler) {
       if (!$el) return
@@ -140,6 +142,15 @@ class VideoElement extends HTMLElement {
       $searchInput.value = ''
     }
     $searchInput.dispatchEvent(new Event('keyup'))
+  }
+  registerVideoEvents (video) {
+    video.addEventListener('play', this.pauseOtherVideos.bind(this, video))
+  }
+  unregisterVideoEvents (video) {
+    video.removeEventListener('play', this.pauseOtherVideos.bind(this, video))
+  }
+  pauseOtherVideos (video) {
+    document.querySelectorAll('video').forEach(v => v !== video && !v.paused && v.pause())
   }
 }
 customElements.define('video-element', VideoElement)
