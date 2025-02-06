@@ -113,6 +113,7 @@ function applyShowThumbnails(showThumbnails) {
 function createVideoElement (video) {
   const $video = document.createElement('video-element')
   $video.dataset['data'] = JSON.stringify(video)
+  $video.dataset['videoId'] = video.id
   return $video
 }
 
