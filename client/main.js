@@ -25,9 +25,12 @@ eventSource.onmessage = (message) => {
     
     if (data.type === 'all' && data.videos) {
       $videosContainer.innerHTML = ''
+      const ignoredTerms = window.store.get(window.store.ignoreTermsKey)
+      
       let allVideos = Object.entries(data.videos).reduce((acc, curr) => acc.concat(curr[1]), [])
       allVideos = allVideos
       .filter(video => !window.store.includes(window.store.ignoreVideoKey, video.id))
+      .filter(video => video.title.split(' ').every(word => !ignoredTerms.includes(word.toLowerCase().replace(/('s|"|,|:)/,''))))
       .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
       .map(video => {
         $videosContainer.appendChild(createVideoElement(video))
@@ -79,12 +82,34 @@ $summary.addEventListener('close', () => {})
 // settings ui
 const $showThumbnails = document.getElementById('show-thumbnails')
 $showThumbnails.addEventListener('click', (event) => {
+  event.preventDefault()
   store.toggle(store.showThumbnailsKey)
   applyShowThumbnails(store.get(store.showThumbnailsKey))
 })
+const $addIgnoredTerm = document.getElementById('add-ignored-term')
+$addIgnoredTerm.addEventListener('keyup', (event) => {
+  event.preventDefault()
+  if (event.key !== 'Enter') return
+  const ignoredTerm = $addIgnoredTerm.value.trim().toLowerCase()
+  if (ignoredTerm) {
+    store.push(store.ignoreTermsKey, ignoredTerm)
+    $addIgnoredTerm.value = ''
+  }
+  applyIgnoredTerms(store.get(store.ignoreTermsKey))
+})
+
+function applyIgnoredTerms (ignoredTerms) {
+  const $ignoredTerms = document.getElementById('ignored-terms')
+  $ignoredTerms.innerHTML = ignoredTerms.map(term => `<li class="ignored-term">${term}</li>`).join('')
+  if (ignoredTerms.length === 0) {
+    $ignoredTerms.innerHTML = '<li>No ignored terms</li>'
+  }
+}
+
 
 // apply settings                                                                                                                                                          
 applyShowThumbnails(store.get(store.showThumbnailsKey))
+applyIgnoredTerms(store.get(store.ignoreTermsKey))
 
 // observe dialog open/close and prevent body background scroll
 observeDialogOpenPreventScroll($settings)
