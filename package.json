@@ -12,6 +12,6 @@
   "license": "ISC",
   "description": "",
   "dependencies": {
-    "execa": "^9.5.2"
+    "nano-spawn": "^0.2.0"
   }
 }
