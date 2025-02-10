@@ -83,9 +83,12 @@ form {
   text-decoration: none;
   font-weight: bold;
   padding: 5px;
+  align-self: flex-start;
   /* color: black; */
   /* background-color: #f0f0f0; */
   margin: 5px;
+  user-select: none;
+  -webkit-user-select: none;
 }
 .video .action.ignore {
   position: absolute;

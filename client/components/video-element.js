@@ -38,7 +38,7 @@ class VideoElement extends HTMLElement {
           </p>
         </video>`
       : /*html*/`<img loading="lazy" src="${this.video.thumbnail}"/>`}
-      <span class="action ignore">ignore</span>
+      <span class="action ignore" tabindex="0">ignore</span>
       <div class="info">
         <span class="channel-name">${this.video.channelName}</span>
         <br>
