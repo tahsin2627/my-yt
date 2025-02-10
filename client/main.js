@@ -27,8 +27,7 @@ eventSource.onmessage = (message) => {
       $videosContainer.innerHTML = ''
       const ignoredTerms = window.store.get(window.store.ignoreTermsKey)
       
-      let allVideos = Object.entries(data.videos).reduce((acc, curr) => acc.concat(curr[1]), [])
-      allVideos = allVideos
+      const allVideos = data.videos
       .filter(video => !window.store.includes(window.store.ignoreVideoKey, video.id))
       .filter(video => video.title.split(' ').every(word => !ignoredTerms.includes(word.toLowerCase().replace(/('s|"|,|:)/,''))))
       .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
@@ -39,8 +38,14 @@ eventSource.onmessage = (message) => {
 
       updateDownloadedVideos(allVideos)
       updateSummarizedVideos(allVideos)
-      const channelsList = Object.entries(data.videos).map(([channelName, _]) => channelName)
+      const channelsList = data.videos.reduce((acc, video) => {
+        if (!acc.includes(video.channelName)) acc.push(video.channelName)
+        return acc
+      }, []).join(',')
       document.querySelector('channels-list').dataset['list'] = channelsList
+    }
+    if (data.type === 'channel' && data.name && data.videos) {
+      console.error('UNHANDLED', data)
     }
     if (data.type === 'summary' && data.videoId && data.summary && data.transcript) {
       ;[...document.querySelectorAll(`[data-video-id="${data.videoId}"]`)].forEach($video => {
