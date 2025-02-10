@@ -45,7 +45,15 @@ eventSource.onmessage = (message) => {
       document.querySelector('channels-list').dataset['list'] = channelsList
     }
     if (data.type === 'channel' && data.name && data.videos) {
-      console.error('UNHANDLED', data)
+      // data.videos.forEach(video => {
+      //   for (const $videoElement of $videosContainer.querySelectorAll('video-element')) {
+      //     const videoDate = new Date($videoElement.dataset['date'])
+      //     if (new Date(video.publishedAt) < videoDate) {
+      //       // $videoElement.prepend(createVideoElement(video))
+      //       break
+      //     }
+      //   }
+      // })
     }
     if (data.type === 'summary' && data.videoId && data.summary && data.transcript) {
       ;[...document.querySelectorAll(`[data-video-id="${data.videoId}"]`)].forEach($video => {

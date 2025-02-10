@@ -28,6 +28,7 @@ class VideoElement extends HTMLElement {
     if (store.includes(store.ignoreVideoKey, this.video.id)) return this.remove()
     this.classList.add('video')
     this.dataset['videoId'] = this.video.id
+    this.dataset['date'] = this.video.publishedAt
     this.innerHTML = /*html*/`
       ${this.video.downloaded
       ? /*html*/`<video controls width="280">
