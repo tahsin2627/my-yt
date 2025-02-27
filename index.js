@@ -6,9 +6,8 @@ import { createServer } from './lib/server.js'
 fs.mkdirSync('./data', { recursive: true })
 fs.mkdirSync('./data/videos', { recursive: true })
 
-async function main ({port = 3000} = {}) {
+async function main ({port = 3000, connections = []} = {}) {
   const repo = new Repository()
-  const connections = []
 
   fs.readdirSync('./data/videos').forEach(file => {
     if (!file.endsWith('.mp4')) return
