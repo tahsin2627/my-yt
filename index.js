@@ -3,7 +3,6 @@ import os from 'os'
 import Repository from './lib/repository.js'
 import { createServer } from './lib/server.js'
 
-fs.mkdirSync('./data', { recursive: true })
 fs.mkdirSync('./data/videos', { recursive: true })
 
 async function main ({port = 3000, connections = []} = {}) {
