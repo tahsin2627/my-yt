@@ -55,6 +55,10 @@ eventSource.onmessage = (message) => {
       //   }
       // })
     }
+    if (data.type === 'summary-error' && data.videoId) {
+      const $videoElement = document.querySelector(`[data-video-id="${data.videoId}"]`)
+      $videoElement && $videoElement.render && $videoElement.render()
+    }
     if (data.type === 'summary' && data.videoId && data.summary && data.transcript) {
       ;[...document.querySelectorAll(`[data-video-id="${data.videoId}"]`)].forEach($video => {
         if (!$video.dataset['data']) return
