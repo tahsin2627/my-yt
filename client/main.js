@@ -31,10 +31,8 @@ eventSource.onmessage = (message) => {
       .filter(video => !window.store.includes(window.store.ignoreVideoKey, video.id))
       .filter(video => video.title.split(' ').every(word => !ignoredTerms.includes(word.toLowerCase().replace(/('s|"|,|:)/,''))))
       .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
-      .map(video => {
-        $videosContainer.appendChild(createVideoElement(video))
-        return video
-      })
+
+      allVideos.forEach(video => $videosContainer.appendChild(createVideoElement(video)))
 
       updateDownloadedVideos(allVideos)
       updateSummarizedVideos(allVideos)
