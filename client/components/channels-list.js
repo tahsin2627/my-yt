@@ -14,7 +14,7 @@ class Channels extends HTMLElement {
   attributeChangedCallback(name, _, newValue) {
     if (name === 'data-list') {
       const channels = newValue.split(',')
-      channels.sort()
+      channels.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
       const $channelsContainer = this.querySelector('div')
       channels.forEach(channel => {
         const $existingChannel = $channelsContainer.querySelector(`[data-channel="${channel}"]`)
