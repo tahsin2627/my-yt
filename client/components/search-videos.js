@@ -17,7 +17,7 @@ class SearchVideos extends HTMLElement {
     this.querySelector('input').removeEventListener('keyup', this.searchHandler.bind(this))
   }
   render () {
-    this.innerHTML = `<input type="text" id="search" placeholder="Search videos" autofocus>`
+    this.innerHTML = `<input type="search" id="search" placeholder="Search videos" autofocus>`
   }
   searchHandler (event) {
     event.preventDefault()
