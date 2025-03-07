@@ -29,6 +29,10 @@ class VideoElement extends HTMLElement {
     this.classList.add('video')
     this.dataset['videoId'] = this.video.id
     this.dataset['date'] = this.video.publishedAt
+    if (this.video.summary) this.dataset['summarized'] = "true"
+    else this.dataset['summarized'] = "false"
+    if (this.video.downloaded) this.dataset['downloaded'] = "true"
+    else this.dataset['downloaded'] = "false"
     this.innerHTML = /*html*/`
       ${this.video.downloaded
       ? /*html*/`<video controls width="280">

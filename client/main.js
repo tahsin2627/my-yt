@@ -35,8 +35,6 @@ eventSource.onmessage = (message) => {
 
       allVideos.forEach(video => $videosContainer.appendChild(createVideoElement(video)))
 
-      updateDownloadedVideos(allVideos)
-      updateSummarizedVideos(allVideos)
       const channelsList = data.videos.reduce((acc, video) => {
         if (!acc.includes(video.channelName)) acc.push(video.channelName)
         return acc
@@ -44,6 +42,7 @@ eventSource.onmessage = (message) => {
       document.querySelector('channels-list').dataset['list'] = channelsList
     }
     if (data.type === 'channel' && data.name && data.videos) {
+      console.warn('unhandled', data)
       // data.videos.forEach(video => {
       //   for (const $videoElement of $videosContainer.querySelectorAll('video-element')) {
       //     const videoDate = new Date($videoElement.dataset['date'])
@@ -64,7 +63,6 @@ eventSource.onmessage = (message) => {
         const videoData = JSON.parse($video.dataset['data'])
         Object.assign(videoData, { summary: data.summary, transcript: data.transcript })
         $video.dataset['data'] = JSON.stringify(videoData)
-        updateSummarizedVideos([videoData])
       })
     }
     if (data.type === 'downloaded' && data.videoId) {
@@ -73,7 +71,6 @@ eventSource.onmessage = (message) => {
         const videoData = JSON.parse($video.dataset['data'])
         videoData.downloaded = true
         $video.dataset['data'] = JSON.stringify(videoData)
-        updateDownloadedVideos([videoData])
       })
     }
   } catch (err) {
@@ -122,6 +119,16 @@ function applyIgnoredTerms (ignoredTerms) {
   }
 }
 
+const $showDownloadedVideos = document.getElementById('show-downloaded-videos')
+handleClick($showDownloadedVideos, (event) => {
+  event.target.classList.toggle('active')
+  document.body.classList.toggle('show-downloaded-videos')
+})
+const $showSummarizedVideos = document.getElementById('show-summarized-videos')
+handleClick($showSummarizedVideos, (event) => {
+  event.target.classList.toggle('active')
+  document.body.classList.toggle('show-summarized-videos')
+})
 
 // apply settings                                                                                                                                                          
 applyShowThumbnails(store.get(store.showThumbnailsKey))
@@ -131,6 +138,11 @@ applyIgnoredTerms(store.get(store.ignoreTermsKey))
 observeDialogOpenPreventScroll($settings)
 observeDialogOpenPreventScroll($summary)
 
+function handleClick ($el, handler) {
+  if (!$el) return
+  $el.addEventListener('click', handler)
+  $el.addEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
+}
 
 function observeDialogOpenPreventScroll (dialog) {
   new MutationObserver((mutationList, observer) => {
@@ -156,25 +168,4 @@ function createVideoElement (video) {
   $video.dataset['data'] = JSON.stringify(video)
   $video.dataset['videoId'] = video.id
   return $video
-}
-
-function updateDownloadedVideos (videos = []) {
-  const $downloadedVideosContainer = document.querySelector('details.downloaded-videos-container')
-  const $videosContainer = $downloadedVideosContainer.querySelector('.videos-container')
-  videos.filter(v => v.downloaded).forEach(v => {
-    const $existing = $downloadedVideosContainer.querySelector(`[data-video-id="${v.id}"]`)
-    return $existing 
-    ? $existing.replaceWith(createVideoElement(v)) 
-    : $videosContainer.appendChild(createVideoElement(v))
-  })
-}
-function updateSummarizedVideos (videos = []) {
-  const $summarizedVideosContainer = document.querySelector('details.summarized-videos-container')
-  const $videosContainer = $summarizedVideosContainer.querySelector('.videos-container')
-  videos.filter(v => v.summary).forEach(v => {
-    const $existing = $summarizedVideosContainer.querySelector(`[data-video-id="${v.id}"]`)
-    return $existing 
-    ? $existing.replaceWith(createVideoElement(v)) 
-    : $videosContainer.appendChild(createVideoElement(v))
-  })
 }
