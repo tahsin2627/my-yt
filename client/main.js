@@ -28,7 +28,6 @@ eventSource.onmessage = (message) => {
       const ignoredTerms = window.store.get(window.store.ignoreTermsKey)
       
       const allVideos = data.videos
-      .filter(video => !window.store.includes(window.store.ignoreVideoKey, video.id))
       .filter(video => video.title.split(' ').every(word => !ignoredTerms.includes(word.toLowerCase().replace(/('s|"|,|:)/,''))))
       .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
       .filter((_, i) => i < 300)
@@ -113,9 +112,9 @@ $addIgnoredTerm.addEventListener('keyup', (event) => {
 
 function applyIgnoredTerms (ignoredTerms) {
   const $ignoredTerms = document.getElementById('ignored-terms')
-  $ignoredTerms.innerHTML = ignoredTerms.map(term => `<li class="ignored-term">${term}</li>`).join('')
+  $ignoredTerms.innerHTML = ignoredTerms.map(term => /*html*/`<li class="ignored-term">${term}</li>`).join('')
   if (ignoredTerms.length === 0) {
-    $ignoredTerms.innerHTML = '<li>No ignored terms</li>'
+    $ignoredTerms.innerHTML = /*html*/`<li>No ignored terms</li>`
   }
 }
 

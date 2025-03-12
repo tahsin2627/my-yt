@@ -25,7 +25,6 @@ class VideoElement extends HTMLElement {
   }
   render () {
     if (!this.video) return
-    if (store.includes(store.ignoreVideoKey, this.video.id)) return this.remove()
     this.classList.add('video')
     this.dataset['videoId'] = this.video.id
     this.dataset['date'] = this.video.publishedAt
@@ -133,10 +132,19 @@ class VideoElement extends HTMLElement {
       `
     }
   }
-  ignoreVideoHandler (event) {
+  async ignoreVideoHandler (event) {
     event.preventDefault()
-    store.push(store.ignoreVideoKey, this.video.id)
-    this.render()
+
+    await fetch('/ignore-video', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: this.video.id }),
+    })
+    .then(() => this.remove())
+    .catch((error) => {
+      console.error('Error ignoring summary:', error)
+      this.render()
+    })
   }
   filterByChannelHandler (event) {
     // find search input, set value to channelname
