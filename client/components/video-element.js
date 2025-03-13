@@ -96,6 +96,7 @@ class VideoElement extends HTMLElement {
         Download the video instead <a href="/videos/${this.video.id}" target="_blank">here</a>
       </p>
     </video>`
+    this.querySelector('video').play()
   }
   downloadVideoHandler (event) {
     event.preventDefault()
