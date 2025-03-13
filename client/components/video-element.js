@@ -132,10 +132,10 @@ class VideoElement extends HTMLElement {
       `
     }
   }
-  async ignoreVideoHandler (event) {
+  ignoreVideoHandler (event) {
     event.preventDefault()
 
-    await fetch('/ignore-video', {
+    fetch('/ignore-video', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: this.video.id }),
