@@ -40,17 +40,17 @@ eventSource.onmessage = (message) => {
       }, []).join(',')
       document.querySelector('channels-list').dataset['list'] = channelsList
     }
-    if (data.type === 'channel' && data.name && data.videos) {
-      console.warn('unhandled', data)
-      // data.videos.forEach(video => {
-      //   for (const $videoElement of $videosContainer.querySelectorAll('video-element')) {
-      //     const videoDate = new Date($videoElement.dataset['date'])
-      //     if (new Date(video.publishedAt) < videoDate) {
-      //       // $videoElement.prepend(createVideoElement(video))
-      //       break
-      //     }
-      //   }
-      // })
+    if (data.type === 'new-videos' && data.videos) {
+      console.warn('new-videos', data)
+      data.videos.forEach(video => {
+        for (const $videoElement of $videosContainer.querySelectorAll('video-element')) {
+          const videoDate = new Date($videoElement.dataset['date'])
+          if (new Date(video.publishedAt) < videoDate) {
+            $videoElement.parentNode.insertBefore(createVideoElement(video), $videoElement.nextSibling)
+            break
+          }
+        }
+      })
     }
     if (data.type === 'summary-error' && data.videoId) {
       const $videoElement = document.querySelector(`[data-video-id="${data.videoId}"]`)
@@ -168,3 +168,5 @@ function createVideoElement (video) {
   $video.dataset['videoId'] = video.id
   return $video
 }
+
+window.createVideoElement = createVideoElement
