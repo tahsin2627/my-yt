@@ -1,3 +1,14 @@
+function handleClickAddListener ($el, handler) {
+  if (!$el) return
+  $el.addEventListener('click', handler)
+  $el.addEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
+}
+function handleClickRemoveListener ($el, handler) {
+  if (!$el) return
+  $el.removeEventListener('click', handler)
+  $el.removeEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
+}
+
 class VideoElement extends HTMLElement {
   constructor () {
     super()
@@ -65,32 +76,21 @@ class VideoElement extends HTMLElement {
     `
   }
   registerEvents () {
-    handleClick(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
-    handleClick(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
-    handleClick(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
-    handleClick(this.querySelector('.action.ignore'), this.ignoreVideoHandler.bind(this))
-    handleClick(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
+    handleClickAddListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
+    handleClickAddListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
+    handleClickAddListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
+    handleClickAddListener(this.querySelector('.action.ignore'), this.ignoreVideoHandler.bind(this))
+    handleClickAddListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
+    handleDoubleClick(this.querySelector('img'), this.ignoreVideoHandler.bind(this))
     this.querySelector('video') && this.registerVideoEvents(this.querySelector('video'))
-    
-    function handleClick ($el, handler) {
-      if (!$el) return
-      $el.addEventListener('click', handler)
-      $el.addEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
-    }
   }
   unregisterEvents () {
-    handleClick(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
-    handleClick(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
-    handleClick(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
-    handleClick(this.querySelector('.action.ignore'), this.ignoreVideoHandler.bind(this))
-    handleClick(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
+    handleClickRemoveListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
+    handleClickRemoveListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
+    handleClickRemoveListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
+    handleClickRemoveListener(this.querySelector('.action.ignore'), this.ignoreVideoHandler.bind(this))
+    handleClickRemoveListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
     this.querySelector('video') && this.unregisterVideoEvents(this.querySelector('video'))
-
-    function handleClick ($el, handler) {
-      if (!$el) return
-      $el.removeEventListener('click', handler)
-      $el.removeEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
-    }
   }
   downloadVideoHandler (event) {
     event.preventDefault()
