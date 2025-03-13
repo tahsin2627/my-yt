@@ -248,6 +248,34 @@ details {
   background-color: #e2ffd8;
 }
 
+.play-video-placeholder {
+  height: 157px;
+  background-color: #ceaf80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.play-icon {
+  position: relative;
+  width: 0; 
+  height: 0;
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+  border-left: 30px solid rgb(0, 0, 0);
+  z-index: 100;
+}
+.play-icon::after {
+  z-index: 98;
+  position: absolute;
+  top: -22px;
+  left: -32px;
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+  border-left: 30px solid rgb(255, 255, 255);
+}
 .show-downloaded-videos [data-downloaded="false"] {
   display: none;
 }

@@ -45,13 +45,7 @@ class VideoElement extends HTMLElement {
     else this.dataset['downloaded'] = "false"
     this.innerHTML = /*html*/`
       ${this.video.downloaded
-      ? /*html*/`<video controls width="280">
-          <source src="/videos/${this.video.id}" type="video/mp4" />
-          <p>
-            Your browser does not support the video tag.
-            Download the video instead <a href="/videos/${this.video.id}" target="_blank">here</a>
-          </p>
-        </video>`
+      ? /*html*/`<div class="play-video-placeholder" style="background-image: url(${this.video.thumbnail})"><div class="play-icon"></div></div>`
       : /*html*/`<img loading="lazy" src="${this.video.thumbnail}"/>`}
       <span class="action ignore" tabindex="0">ignore</span>
       <div class="info">
@@ -81,7 +75,8 @@ class VideoElement extends HTMLElement {
     handleClickAddListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
     handleClickAddListener(this.querySelector('.action.ignore'), this.ignoreVideoHandler.bind(this))
     handleClickAddListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
-    handleDoubleClick(this.querySelector('img'), this.ignoreVideoHandler.bind(this))
+    handleClickAddListener(this.querySelector('.play-video-placeholder'), this.watchVideoHandler.bind(this))
+    // handleDoubleClick(this.querySelector('img'), this.ignoreVideoHandler.bind(this))
     this.querySelector('video') && this.registerVideoEvents(this.querySelector('video'))
   }
   unregisterEvents () {
@@ -91,6 +86,16 @@ class VideoElement extends HTMLElement {
     handleClickRemoveListener(this.querySelector('.action.ignore'), this.ignoreVideoHandler.bind(this))
     handleClickRemoveListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
     this.querySelector('video') && this.unregisterVideoEvents(this.querySelector('video'))
+  }
+  watchVideoHandler (event) {
+    event.preventDefault()
+    this.querySelector('.play-video-placeholder').outerHTML = /*html*/`<video controls width="280">
+      <source src="/videos/${this.video.id}" type="video/mp4" />
+      <p>
+        Your browser does not support the video tag.
+        Download the video instead <a href="/videos/${this.video.id}" target="_blank">here</a>
+      </p>
+    </video>`
   }
   downloadVideoHandler (event) {
     event.preventDefault()
