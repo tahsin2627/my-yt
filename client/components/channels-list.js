@@ -1,5 +1,5 @@
 
-class Channels extends HTMLElement {
+class ChannelsList extends HTMLElement {
   constructor () {
     super()
   }
