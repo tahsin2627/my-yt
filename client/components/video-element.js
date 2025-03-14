@@ -149,12 +149,11 @@ class VideoElement extends HTMLElement {
     })
     .then(res => res.json())
     .then((ignored) => {
-      console.log({ignored})
       this.video.ignored = ignored
       this.render()
     })
     .catch((error) => {
-      console.error('Error ignoring summary:', error)
+      console.error('Error ignoring video:', error)
       this.render()
     })
   }
