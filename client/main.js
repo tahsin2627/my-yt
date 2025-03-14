@@ -43,13 +43,12 @@ eventSource.onmessage = (message) => {
     if (data.type === 'new-videos' && data.videos) {
       console.warn('new-videos', data)
       data.videos.forEach(video => {
-        for (const $videoElement of $videosContainer.querySelectorAll('video-element')) {
-          const videoDate = new Date($videoElement.dataset['date'])
-          if (new Date(video.publishedAt) < videoDate) {
-            $videoElement.parentNode.insertBefore(createVideoElement(video), $videoElement.nextSibling)
-            break
-          }
+        const $videoElement = $videosContainer.querySelector('video-element')
+        if (!$videoElement) {
+          $videosContainer.appendChild(createVideoElement(video))
+          return
         }
+        $videoElement.parentNode.insertBefore(createVideoElement(video), $videoElement.nextSibling)
       })
     }
     if (data.type === 'summary-error' && data.videoId) {
