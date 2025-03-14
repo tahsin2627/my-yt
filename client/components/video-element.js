@@ -17,7 +17,6 @@ class VideoElement extends HTMLElement {
   connectedCallback () {
     this.video = JSON.parse(this.dataset['data'])
     this.render()
-    this.registerEvents()
   }
   disconnectedCallback () {
     this.unregisterEvents()
@@ -29,13 +28,12 @@ class VideoElement extends HTMLElement {
   attributeChangedCallback(name, _, newValue) {
     if (name === 'data-data') {
       this.video = JSON.parse(this.dataset['data'])
-      this.unregisterEvents()
       this.render()
-      this.registerEvents()
     }
   }
   render () {
     if (!this.video) return
+    this.unregisterEvents()
     this.classList.add('video')
     this.dataset['videoId'] = this.video.id
     this.dataset['date'] = this.video.publishedAt
@@ -43,6 +41,8 @@ class VideoElement extends HTMLElement {
     else this.dataset['summarized'] = "false"
     if (this.video.downloaded) this.dataset['downloaded'] = "true"
     else this.dataset['downloaded'] = "false"
+    if (this.video.ignored) this.dataset['ignored'] = "true"
+    else this.dataset['ignored'] = "false"
     this.innerHTML = /*html*/`
       ${this.video.downloaded
       ? /*html*/`<div class="play-video-placeholder" style="background-image: url(${this.video.thumbnail})"><div class="play-icon"></div></div>`
@@ -68,22 +68,22 @@ class VideoElement extends HTMLElement {
         <a href="https://www.youtube.com/watch?v=${this.video.id}" target="_blank">📺 external</a>
       </div>
     `
+    this.registerEvents()
   }
   registerEvents () {
     handleClickAddListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
     handleClickAddListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
     handleClickAddListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
-    handleClickAddListener(this.querySelector('.action.ignore'), this.ignoreVideoHandler.bind(this))
+    handleClickAddListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
     handleClickAddListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
     handleClickAddListener(this.querySelector('.play-video-placeholder'), this.watchVideoHandler.bind(this))
-    // handleDoubleClick(this.querySelector('img'), this.ignoreVideoHandler.bind(this))
     this.querySelector('video') && this.registerVideoEvents(this.querySelector('video'))
   }
   unregisterEvents () {
     handleClickRemoveListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
     handleClickRemoveListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
     handleClickRemoveListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
-    handleClickRemoveListener(this.querySelector('.action.ignore'), this.ignoreVideoHandler.bind(this))
+    handleClickRemoveListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
     handleClickRemoveListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
     this.querySelector('video') && this.unregisterVideoEvents(this.querySelector('video'))
   }
@@ -139,7 +139,7 @@ class VideoElement extends HTMLElement {
       `
     }
   }
-  ignoreVideoHandler (event) {
+  toggleIgnoreVideoHandler (event) {
     event.preventDefault()
 
     fetch('/ignore-video', {
@@ -147,7 +147,12 @@ class VideoElement extends HTMLElement {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: this.video.id }),
     })
-    .then(() => this.remove())
+    .then(res => res.json())
+    .then((ignored) => {
+      console.log({ignored})
+      this.video.ignored = ignored
+      this.render()
+    })
     .catch((error) => {
       console.error('Error ignoring summary:', error)
       this.render()

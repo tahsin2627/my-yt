@@ -244,9 +244,6 @@ details {
   justify-content: space-around;
   margin-top: 0.3em;
 }
-#show-summarized-videos.active, #show-downloaded-videos.active {
-  background-color: #e2ffd8;
-}
 
 .play-video-placeholder {
   height: 157px;
@@ -276,9 +273,23 @@ details {
   border-bottom: 20px solid transparent;
   border-left: 30px solid rgb(255, 255, 255);
 }
+
+[data-ignored="true"] {
+  display: none;
+}
+
+#show-summarized-videos.active, #show-downloaded-videos.active, #show-ignored-videos.active {
+  background-color: #e2ffd8;
+}
 .show-downloaded-videos [data-downloaded="false"] {
   display: none;
 }
 .show-summarized-videos [data-summarized="false"] {
   display: none;
+}
+.show-ignored-videos [data-ignored="false"] {
+  display: none;
+}
+.show-ignored-videos [data-ignored="true"] {
+  display: block;
 }

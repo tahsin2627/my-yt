@@ -128,6 +128,11 @@ handleClick($showSummarizedVideos, (event) => {
   event.target.classList.toggle('active')
   document.body.classList.toggle('show-summarized-videos')
 })
+const $showIgnoredVideos = document.getElementById('show-ignored-videos')
+handleClick($showIgnoredVideos, (event) => {
+  event.target.classList.toggle('active')
+  document.body.classList.toggle('show-ignored-videos')
+})
 
 // apply settings                                                                                                                                                          
 applyShowThumbnails(store.get(store.showThumbnailsKey))
