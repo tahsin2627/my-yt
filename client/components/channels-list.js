@@ -42,7 +42,7 @@ class ChannelsList extends HTMLElement {
     `
   }
 }
-customElements.define('channels-list', Channels)
+customElements.define('channels-list', ChannelsList)
 
 
 function createChannelElement (channel = '') {
