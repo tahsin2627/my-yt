@@ -18,7 +18,17 @@ Supported by yt-dlp, and optionally your local AI model, to make your youtube ex
 - No dependencies (except for `nano-spawn`), HTML/CSS only, no JS frameworks on client/server side
 - Host it in your home network to playback videos on all your devices
 
-Application runs on http://localhost:3000 
+## Why?
+
+- **Why not??**
+- wanted to get back my chronological feed, instead of a "algorithmically curated" one
+- no distractions, no ads, just videos and a clean UI
+- wanted to try integrate the so much hyped AI in a personal project
+- wanted to try out `yt-dlp`
+- I am even paying for YouTube Premium, so it's not a matter of money, but a matter of control over my attention and offline experience
+
+
+> Application runs on http://localhost:3000 
 
 ## Installation (node.js)
 
