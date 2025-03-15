@@ -22,20 +22,6 @@ class SearchVideos extends HTMLElement {
   searchHandler (event) {
     event.preventDefault()
     const searchTerm = event.target.value.toLowerCase()
-    if (searchTerm.startsWith('https://')) {
-      if (event.key !== 'Enter') return
-      console.log('Downloading video...')
-      event.target.value = ''
-      // send request to server to download video
-      fetch('/download-video', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ url: searchTerm })
-      })
-      .then(() => alert('Video downloaded successfully'))
-      .catch(error => alert('Error downloading video: ' + error.message))
-       return
-    }
     document.querySelectorAll('.video').forEach(video => {
       const videoData = JSON.parse(video.dataset['data'])
       if (
