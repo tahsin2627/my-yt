@@ -39,6 +39,44 @@ cd my-yt
 docker compose up --build -d
 ```
 
+## Project
+
+Here are some links to help you understand the project better:
+
+### [server.js](https://github.com/christian-fei/my-yt/blob/main/lib/server.js)
+
+Bare HTTP server
+
+Handles SSE for client updates
+
+Implements HTTP Ranged requests for video playback
+
+### [llm.js](https://github.com/christian-fei/my-yt/blob/main/lib/llm.js)
+
+Makes requests using the chat completions API of LMStudio.
+
+### [sse.js](https://github.com/christian-fei/my-yt/blob/main/lib/sse.js)
+
+Utility functions for Server-sent events
+
+### [subtitles-summary.js](https://github.com/christian-fei/my-yt/blob/main/lib/subtitles-summary.js)
+
+Summarizes video transcript using LMStudio API
+
+### [youtube.js](https://github.com/christian-fei/my-yt/blob/main/lib/youtube.js)
+
+yt-dlp wrapper to download videos, get channel videos and video information and transcript
+
+### [repository.js](https://github.com/christian-fei/my-yt/blob/main/lib/repository.js)
+
+Handles persistence of video information (set video as downloaded, summary, ignored, upserting videos, etc.)
+
+### [client](https://github.com/christian-fei/my-yt/tree/main/client)
+
+dependency less, bare HTML5, CSS3 and JS for a basic frontend
+
+Handles SSE updates, interacting with the API
+
 ## General information
 
 Currently, on the LLM side of things:
