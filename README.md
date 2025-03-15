@@ -22,10 +22,14 @@ Supported by yt-dlp, and optionally your local AI model, to make your youtube ex
 
 - **Why not??**
 - wanted to get back my chronological feed, instead of a "algorithmically curated" one
-- no distractions, no ads, just videos and a clean UI
+  - you can just go to the "Subscriptions" page if you want to see your YouTube videos in chronological order, as [gently pointed out on HN](https://news.ycombinator.com/item?id=43374730)
+- no distractions
+- no ads (in "just skip the sponsors")
+- just videos and a clean UI
 - wanted to try integrate the so much hyped AI in a personal project
 - wanted to try out `yt-dlp`
-- I am even paying for YouTube Premium, so it's not a matter of money, but a matter of control over my attention and offline experience
+- just wanted to make this, ok?
+- I am even paying for YouTube Premium, so it's not a matter of money, but a matter of control over my attention and enhanced offline experience
 
 
 > Application runs on http://localhost:3000 
