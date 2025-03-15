@@ -5,6 +5,8 @@
 A clean and minimal youtube frontend, without all the ads and whistles.
 Supported by yt-dlp, and optionally your local AI model, to make your youtube experience local, mindful, succint and ad free.
 
+![preview my-yt](/preview.png)
+
 ## Features
 
 - Channel management/Subscriptions
