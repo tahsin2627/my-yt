@@ -37,4 +37,16 @@ cd my-yt
 docker compose up --build -d
 ```
 
+## General information
+
+Currently, on the LLM side of things:
+
+- supports basic chat completions API (LMStudio right now)
+  - expects `lms server` to be running on `http://localhost:1234`
+- works with `meta-llama-3.1-8b-instruct` model
+- customization will come in the future if there's enough interest (let me know by opening an issue or pull-request)
+
+
+---
+
 Download the project while you can before I get striked with a DMCA takedown request
