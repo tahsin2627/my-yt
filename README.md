@@ -24,6 +24,7 @@ Supported by yt-dlp, and optionally your local AI model, to make your youtube ex
 - wanted to get back my chronological feed, instead of a "algorithmically curated" one
   - you can just go to the "Subscriptions" page if you want to see your YouTube videos in chronological order, as [gently pointed out on HN](https://news.ycombinator.com/item?id=43374730)
 - no distractions
+- no clickbait thumbnails (using `mq2` instead of `mqdefault` thumbnail, thanks @drcheap)
 - no comments
 - no related videos, or any algorithmically determined videos pushed in your face
 - no ads (in "just skip the sponsors")
