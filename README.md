@@ -55,6 +55,12 @@ cd my-yt
 docker compose up --build -d
 ```
 
+or (currently **wip**)
+
+```bash
+docker run -p 3000:3000 -it christianfei/my-yt:latest
+```
+
 ## Project
 
 Here are some links to help you understand the project better:
