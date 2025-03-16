@@ -64,9 +64,6 @@ form {
   color: #3498db;
 }
 
-.channel-details.has-new-videos {
-  background-color: #aeaeae
-}
 .videos-container, .main-videos-container {
   display: flex;
   justify-content: space-around;
@@ -98,7 +95,8 @@ form {
   z-index: 1000;
   background-color: #f0f0f0;
   color: black;
-  padding: 0.25rem;
+  padding: 0.5rem;
+  cursor: pointer;
 }
 .video .title {
   margin-top: 5px;
