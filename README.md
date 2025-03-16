@@ -21,6 +21,7 @@ Supported by yt-dlp, and optionally your local AI model, to make your youtube ex
 - Host it in your home network to playback videos on all your devices
 - Just JSON files for persistence, stupid simple management and backup
 
+[Check out the todo list](https://github.com/christian-fei/my-yt/issues/5)
 
 
 > Application runs on http://localhost:3000 
@@ -127,16 +128,6 @@ Currently, on the LLM side of things:
 - works with `meta-llama-3.1-8b-instruct` model
 - customization will come in the future if there's enough interest (let me know by opening an issue or pull-request)
 
-
----
-
-## dev todo (ignore this section, or open a PR!)
-
-- handle clear search
-- handle empty state /
-- cta add channels if none
-- handle no subtitles
-- add app state (e.g. filtering)
 
 ---
 
