@@ -130,4 +130,14 @@ Currently, on the LLM side of things:
 
 ---
 
+## dev todo (ignore this section, or open a PR!)
+
+- handle clear search
+- handle empty state /
+- cta add channels if none
+- handle no subtitles
+- add app state (e.g. filtering)
+
+---
+
 Download the project while you can before I get striked with a DMCA takedown request
