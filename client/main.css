@@ -150,6 +150,7 @@ form {
 .video .title {
   margin-top: 5px;
   margin-bottom: 5px;
+  min-height: 4rem;
 }
 .video img {
   width: 100%;
