@@ -177,7 +177,7 @@ class VideoElement extends HTMLElement {
     } else {
       $searchInput.value = ''
     }
-    $searchInput.dispatchEvent(new Event('keyup'))
+    $searchInput.dispatchEvent(new Event('search'))
   }
   registerVideoEvents (video) {
     video.addEventListener('play', this.pauseOtherVideos.bind(this, video))
