@@ -71,14 +71,14 @@ eventSource.onmessage = (message) => {
     console.log('[sse] message', data)
 
     if (data.type === 'download-log-line' && data.line) {
-      const $downloadLog = document.querySelector('.download-log');
-      $downloadLog.open = true;
-      const $downloadLogLines = document.querySelector('.download-log .lines');
+      const $downloadLog = document.querySelector('.download-log')
+      $downloadLog.open = true
+      const $downloadLogLines = document.querySelector('.download-log .lines')
       const text = $downloadLogLines.innerText
       let lines = text.split('\n')
       lines = lines.join('\n') + '\n' + data.line
       $downloadLogLines.innerText = lines
-      $downloadLogLines.scrollTop = $downloadLogLines.scrollHeight;
+      $downloadLogLines.scrollTop = $downloadLogLines.scrollHeight
       return
     }
     
@@ -88,10 +88,7 @@ eventSource.onmessage = (message) => {
 
       data.videos.forEach(video => {
         const $videoElement = $videosContainer.querySelector('video-element')
-        if (!$videoElement) {
-          $videosContainer.appendChild(createVideoElement(video))
-          return
-        }
+        if (!$videoElement) return $videosContainer.appendChild(createVideoElement(video))
         $videoElement.parentNode.insertBefore(createVideoElement(video), $videoElement.nextSibling)
       })
       return
