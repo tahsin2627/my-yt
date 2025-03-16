@@ -47,7 +47,7 @@ const routes = {
     videos = videos
     .filter(video => video.title.split(' ').every(word => !ignoredTerms.includes(word.toLowerCase().replace(/('s|"|,|:)/,''))))
     .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
-    .filter((_, i) => i < 1000)
+    // .filter((_, i) => i < 1000)
 
     videos.forEach(video => $videosContainer.appendChild(createVideoElement(video)))
 
