@@ -21,7 +21,13 @@ class SearchVideos extends HTMLElement {
   }
   searchHandler (event) {
     event.preventDefault()
-    const searchTerm = event.target.value.toLowerCase()
+    const searchTerm = event.target.value.trim().toLowerCase()
+    const $status = document.querySelector('#filter-results-status')
+    if (!searchTerm) {
+      if ($status) $status.innerText = ''
+      return console.log('no search term')
+    }
+    let filteredCount = 0
     document.querySelectorAll('.video').forEach(video => {
       const videoData = JSON.parse(video.dataset['data'])
       if (
@@ -30,11 +36,15 @@ class SearchVideos extends HTMLElement {
          || videoData.channelName?.toLowerCase().includes(searchTerm)
         ) {
         video.style.display = ''
+        filteredCount++
       } else {
         video.style.display = 'none'
       }
     })
-  
+    if ($status) {
+      if (filteredCount > 0) $status.innerText = `Found ${filteredCount} videos`
+      else $status.innerText = `No videos found`
+    }
   }
 }
 customElements.define('search-videos', SearchVideos)

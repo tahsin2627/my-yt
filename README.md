@@ -75,6 +75,8 @@ docker run -p 3000:3000 -it christianfei/my-yt:latest
 - Add a way to download a single video without subscribing to a channel
 - Specify LLM server endpoint
   - List and choose available model to use for summarization
+- add some options for download quality (with webm merge for 4k support)
+
 
 
 ## Project

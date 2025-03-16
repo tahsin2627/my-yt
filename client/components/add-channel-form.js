@@ -17,10 +17,11 @@ class AddChannelForm extends HTMLElement {
   }
   render () {
     this.innerHTML = /*html*/`
-      <form id="add-channel-form">
-        <label for="channel-name">Add a new channel</label>
-        <input type="text" id="channel-name" placeholder="Channel Name" required>
-        <button type="submit">Submit</button>
+      <form id="add-channel-form" class="p-1 border-light">
+        <div class="flex space-between">
+          <label for="channel-name">Add a new channel</label>
+          <input type="text" id="channel-name" placeholder="Channel Name" required>
+        </div>
         <span class="loader"></span>
       </form>
     `
@@ -30,15 +31,14 @@ class AddChannelForm extends HTMLElement {
     event.preventDefault()
   
     const form = event.target
-    const button = form.querySelector('button')
     const input = form.querySelector('input')
     const loader = form.querySelector('.loader')
-    freezeForm()
     
     const channelName = document.getElementById('channel-name').value
-  
-    if (!channelName) return alert('empty channel name'), unfreezeForm();
-  
+    if (!channelName) return alert('empty channel name')
+
+    freezeForm()
+    
     fetch('/channels', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -50,12 +50,10 @@ class AddChannelForm extends HTMLElement {
   
     function freezeForm() {
       input.disabled = true
-      button.disabled = true
       loader.classList.add('show')
     }
     function unfreezeForm() {
       input.disabled = false
-      button.disabled = false
       loader.classList.remove('show')
     }
   }

@@ -8,6 +8,13 @@ function handleClickRemoveListener ($el, handler) {
   $el.removeEventListener('click', handler)
   $el.removeEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
 }
+function tryFormatDate(date) {
+  try {
+    return new Date(date).toISOString().substring(0, 10)
+  } catch (err) {
+    return 'N/A'
+  }
+}
 
 class VideoElement extends HTMLElement {
   constructor () {
@@ -52,7 +59,7 @@ class VideoElement extends HTMLElement {
         <span class="channel-name">${this.video.channelName}</span>
         <br>
         <div class="flex">
-          <span>${new Date(this.video.publishedAt).toISOString().substring(0, 10)}</span>
+          <span>${tryFormatDate(this.video.publishedAt)}</span>
           <span>${this.video.viewCount}</span>
           <span>${this.video.duration || 'N/A'}</span><br/>
         </div>
