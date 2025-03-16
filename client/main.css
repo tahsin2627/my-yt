@@ -174,8 +174,10 @@ form {
 }
 
 
-
-@media all and (min-width: 50em) {
+video-element, video-element video {
+  transition: width 0.2s ease-in;
+}
+@media all and (min-width: 60em) {
   video-element.big {
     width: 50%;
   }
@@ -183,7 +185,7 @@ form {
     width: 100%;
   }
 }
-@media all and (max-width: 50em) {
+@media all and (max-width: 60em) {
   video-element.big {
     width: 100%;
   }

@@ -184,6 +184,9 @@ class VideoElement extends HTMLElement {
       this.classList.add('big')
       this.pauseOtherVideos(video)
     })
+    video.addEventListener('pause', () => {
+      this.classList.remove('big')
+    })
   }
   unregisterVideoEvents (video) {
     video.removeEventListener('play', this.pauseOtherVideos.bind(this, video))
