@@ -9,12 +9,19 @@
 </head>
 <body>
   <header>
-    <h1 class="">My-YT</h1>
+    <h1><a href="/">My-YT</a></h1>
     <search-videos></search-videos>
     <a href="/settings">🔧 Settings</a>
   </header>
 
-  <main>
+  <main></main>
+
+  <dialog id="summary">
+    <button id="close">X</button>
+    <div></div>
+  </dialog>
+
+  <template id="main-template">
     <channels-list></channels-list>
     <div class="flex space-around">
       <button id="show-downloaded-videos">Downloaded videos</button>
@@ -26,23 +33,18 @@
       <summary>Download Log</summary>
       <div class="lines"></div>
     </details>
-  </main>
-
-  <dialog id="summary">
-    <button id="close">X</button>
-    <div></div>
-  </dialog>
+  </template>
 
 
   <template id="settings-template">
-    <div id="settings">
-      <button id="close">X</button>
+    <div id="settings" class="contain">
       <div>
-        <h5>Settings </h5>
+        <h2>Settings </h2>
       </div>
       <br>
       <add-channel-form></add-channel-form>
       <br>
+      <!--
       <form>
         <label for="show-thumbnails">
           Show video thumbnails 
@@ -50,11 +52,18 @@
         <input type="checkbox" id="show-thumbnails"/>
       </form>
       <br>
+      -->
+      <!--
       <div>
         <input type="text" id="add-ignored-term"/>
         <ul id="ignored-terms"></ul>
       </div>
+      -->
     </div>
+  </template>
+
+  <template id="not-found-template">
+    <h1>404 Not Found</h1>
   </template>
 
   <script type="module" src="/components/channels-list.js"></script>

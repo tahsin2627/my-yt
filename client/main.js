@@ -2,9 +2,67 @@ import Store from '/lib/store.js'
 const store = new Store()
 window.store = store
 
+
+
+function handleRoute(route = window.location.pathname) {
+  console.log('handling route', route)
+  if (routes[route]) {
+    document.querySelector('main').replaceChildren(routes[route].template.content.cloneNode(true))
+    routes[route].initialize && routes[route].initialize()
+  } else {
+    document.querySelector('main').replaceChildren(routes['/404'].template.content.cloneNode(true))
+    routes['/404'].initialize && routes['/404'].initialize()
+  }
+}
+
+const routes = {
+  '/': { template: document.getElementById('main-template'), title: 'My YT', async initialize() {
+    console.log('initialize /')
+    let $videosContainer = document.querySelector('.main-videos-container')
+    if (!$videosContainer) return
+    let videos = await fetch('/videos').then(res => res.json())
+
+    $videosContainer.innerHTML = ''
+    const ignoredTerms = window.store.get(window.store.ignoreTermsKey)
+    
+    videos = videos
+    .filter(video => video.title.split(' ').every(word => !ignoredTerms.includes(word.toLowerCase().replace(/('s|"|,|:)/,''))))
+    .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
+    .filter((_, i) => i < 1000)
+
+    videos.forEach(video => $videosContainer.appendChild(createVideoElement(video)))
+
+    const channelsList = videos.reduce((acc, video) => {
+      if (!acc.includes(video.channelName)) acc.push(video.channelName)
+      return acc
+    }, []).join(',')
+    document.querySelector('channels-list').dataset['list'] = channelsList
+  } },
+  '/settings': { template: document.getElementById('settings-template'), title: 'My YT - Settings', async initialize () {
+    console.log('initalize /settings')
+  } },
+  '/404': { template: document.getElementById('not-found-template'), title: 'Not Found' }
+}
+
+handleRoute()
+window.addEventListener('popstate', (event) => {
+  console.log('popstate', window.location.pathname)
+  handleRoute()
+})
+document.querySelectorAll('[href="/"],[href="/settings"]').forEach(($el) => {
+  $el.addEventListener('click', (event) => {
+    event.preventDefault()
+    const path = new URL($el.href, window.location.origin).pathname
+    console.log('navigating ->', path)
+    window.history.pushState({}, '', path)
+    var popStateEvent = new PopStateEvent('popstate', {})
+    dispatchEvent(popStateEvent)
+  })
+})
+
 // app: sse updates and renders
 const eventSource = new window.EventSource('/')
-const $videosContainer = document.querySelector('.main-videos-container')
+let $videosContainer = document.querySelector('.main-videos-container')
 
 eventSource.onmessage = (message) => {
   if (!message || !message.data) return console.error('skipping empty message')
@@ -21,27 +79,13 @@ eventSource.onmessage = (message) => {
       lines = lines.join('\n') + '\n' + data.line
       $downloadLogLines.innerText = lines
       $downloadLogLines.scrollTop = $downloadLogLines.scrollHeight;
+      return
     }
     
-    if (data.type === 'all' && data.videos) {
-      $videosContainer.innerHTML = ''
-      const ignoredTerms = window.store.get(window.store.ignoreTermsKey)
-      
-      const allVideos = data.videos
-      .filter(video => video.title.split(' ').every(word => !ignoredTerms.includes(word.toLowerCase().replace(/('s|"|,|:)/,''))))
-      .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
-      .filter((_, i) => i < 1000)
-
-      allVideos.forEach(video => $videosContainer.appendChild(createVideoElement(video)))
-
-      const channelsList = data.videos.reduce((acc, video) => {
-        if (!acc.includes(video.channelName)) acc.push(video.channelName)
-        return acc
-      }, []).join(',')
-      document.querySelector('channels-list').dataset['list'] = channelsList
-    }
     if (data.type === 'new-videos' && data.videos) {
-      console.warn('new-videos', data)
+      $videosContainer = document.querySelector('.main-videos-container')
+      if (!$videosContainer) return
+
       data.videos.forEach(video => {
         const $videoElement = $videosContainer.querySelector('video-element')
         if (!$videoElement) {
@@ -50,10 +94,12 @@ eventSource.onmessage = (message) => {
         }
         $videoElement.parentNode.insertBefore(createVideoElement(video), $videoElement.nextSibling)
       })
+      return
     }
     if (data.type === 'summary-error' && data.videoId) {
       const $videoElement = document.querySelector(`[data-video-id="${data.videoId}"]`)
       $videoElement && $videoElement.render && $videoElement.render()
+      return
     }
     if (data.type === 'summary' && data.videoId && data.summary && data.transcript) {
       ;[...document.querySelectorAll(`[data-video-id="${data.videoId}"]`)].forEach($video => {
@@ -62,6 +108,7 @@ eventSource.onmessage = (message) => {
         Object.assign(videoData, { summary: data.summary, transcript: data.transcript })
         $video.dataset['data'] = JSON.stringify(videoData)
       })
+      return
     }
     if (data.type === 'downloaded' && data.videoId) {
       ;[...document.querySelectorAll(`[data-video-id="${data.videoId}"]`)].forEach($video => {
@@ -70,7 +117,9 @@ eventSource.onmessage = (message) => {
         videoData.downloaded = true
         $video.dataset['data'] = JSON.stringify(videoData)
       })
+      return
     }
+    console.warn('unhandled', data)
   } catch (err) {
     console.error('sse parse error', err)
   }
@@ -155,7 +204,7 @@ function observeDialogOpenPreventScroll (dialog) {
 //   } else {
 //     document.body.classList.add('hide-thumbnails')
 //   }
-//   const $showThumbnailsCheckbox = document.querySelector('#show-thumbnails')
+//   const $showThumbnailsCheckbox = document.getElementById('show-thumbnails')
 //   if ($showThumbnailsCheckbox) $showThumbnailsCheckbox.checked = showThumbnails
 // }
 
