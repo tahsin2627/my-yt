@@ -124,8 +124,8 @@ form {
 
 .video {
   position: relative;
-  width: 280px;
-  max-height: 300px;
+  width: 400px;
+  /* max-height: 300px; */
   text-align: left;
   text-decoration: none;
   font-weight: bold;
@@ -150,7 +150,7 @@ form {
 .video .title {
   margin-top: 5px;
   margin-bottom: 5px;
-  min-height: 4rem;
+  min-height: 2rem;
 }
 .video img {
   width: 100%;
@@ -180,8 +180,9 @@ form {
 }
 
 .play-video-placeholder {
-  height: 157px;
+  height: 225px;
   background-color: #ceaf80;
+  background-size: contain;
   display: flex;
   align-items: center;
   justify-content: center;
