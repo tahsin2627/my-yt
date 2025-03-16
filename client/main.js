@@ -19,6 +19,19 @@ const routes = {
   '/': { template: document.getElementById('main-template'), title: 'My YT', async initialize() {
     console.log('initialize /')
 
+    let $videosContainer = document.querySelector('.main-videos-container')
+    if (!$videosContainer) return
+    let videos = await fetch('/videos').then(res => res.json())
+    console.log('videos.length', videos.length)
+    if (videos.length === 0) {
+      document.querySelector('empty-state').style.display = 'block'
+      document.querySelector('channels-list').style.display = 'none'
+      document.querySelector('#filters-container').style.display = 'none'
+    } else {
+      document.querySelector('empty-state').style.display = 'none'
+      document.querySelector('channels-list').style.display = 'block'
+      document.querySelector('#filters-container').style.display = 'block'
+    }
 
     const $showDownloadedVideos = document.getElementById('show-downloaded-videos')
     handleClick($showDownloadedVideos, (event) => {
@@ -37,9 +50,6 @@ const routes = {
     })
     
 
-    let $videosContainer = document.querySelector('.main-videos-container')
-    if (!$videosContainer) return
-    let videos = await fetch('/videos').then(res => res.json())
 
     $videosContainer.innerHTML = ''
     const ignoredTerms = window.store.get(window.store.ignoreTermsKey)

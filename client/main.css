@@ -355,3 +355,25 @@ details {
 .show-ignored-videos [data-ignored="true"] {
   display: block;
 }
+
+
+
+
+
+
+empty-state {
+  position: relative;
+  max-width: 30em;
+  margin: 2em auto;
+}
+.big-sad-emoji {
+  display: block;
+}
+.big-sad-emoji::after {
+  display: block;
+  font-size: 10em;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  animation: fadeIn 1s ease-in-out;
+  content: ':(';
+}

@@ -29,12 +29,13 @@
   <template id="main-template">
     <channels-list></channels-list>
     <div id="filter-results-status"></div>
-    <div class="flex space-around p-1">
+    <div id="filters-container" class="flex space-around p-1">
       <button id="show-downloaded-videos">Downloaded videos</button>
       <button id="show-summarized-videos">Summarized videos</button>
       <button id="show-ignored-videos">Ignored videos</button>
     </div>
     <div class="main-videos-container"></div>
+    <empty-state style="display:none"></empty-state>
   </template>
 
 
@@ -66,6 +67,7 @@
     <h1>404 Not Found</h1>
   </template>
 
+  <script type="module" src="/components/empty-state.js"></script>
   <script type="module" src="/components/channels-list.js"></script>
   <script type="module" src="/components/search-videos.js"></script>
   <script type="module" src="/components/add-channel-form.js"></script>
