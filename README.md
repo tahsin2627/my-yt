@@ -45,7 +45,7 @@ cd my-yt
 docker compose up --build -d
 ```
 
-or (currently **wip**)
+or
 
 ```bash
 docker run -p 3000:3000 -v /path/to/your/data/folder/for/persistence:/app/data christianfei/my-yt:latest
