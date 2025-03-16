@@ -18,22 +18,6 @@ Supported by yt-dlp, and optionally your local AI model, to make your youtube ex
 - No dependencies (except for `nano-spawn`), HTML/CSS only, no JS frameworks on client/server side
 - Host it in your home network to playback videos on all your devices
 
-## Why?
-
-- **Why not??**
-- wanted to get back my chronological feed, instead of a "algorithmically curated" one
-  - you can just go to the "Subscriptions" page if you want to see your YouTube videos in chronological order, as [gently pointed out on HN](https://news.ycombinator.com/item?id=43374730)
-- no distractions
-- no clickbait thumbnails (using `mq2` instead of `mqdefault` thumbnail, thanks @drcheap)
-- no comments
-- no related videos, or any algorithmically determined videos pushed in your face
-- no ads (in "just skip the sponsors")
-- just videos and a clean UI
-- wanted to try integrate the so much hyped AI in a personal project
-- wanted to try out `yt-dlp`
-- wanted to experiment with the HTML5 [`<track>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track) element and [WebVTT API](https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API)
-- just wanted to make this, ok?
-- I am even paying for YouTube Premium, so it's not a matter of money, but a matter of control over my attention and enhanced offline experience
 
 
 > Application runs on http://localhost:3000 
@@ -62,6 +46,26 @@ or (currently **wip**)
 ```bash
 docker run -p 3000:3000 -it christianfei/my-yt:latest
 ```
+
+
+## Why?
+
+- **Why not??**
+- wanted to get back my chronological feed, instead of a "algorithmically curated" one
+  - you can just go to the "Subscriptions" page if you want to see your YouTube videos in chronological order, as [gently pointed out on HN](https://news.ycombinator.com/item?id=43374730)
+- no distractions
+- no clickbait thumbnails (using `mq2` instead of `mqdefault` thumbnail, thanks @drcheap)
+- no comments
+- no related videos, or any algorithmically determined videos pushed in your face
+- no ads (in "just skip the sponsors")
+- just videos and a clean UI
+- wanted to try integrate the so much hyped AI in a personal project
+- wanted to try out `yt-dlp`
+- wanted to experiment with the HTML5 [`<track>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track) element and [WebVTT API](https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API)
+- just wanted to make this, ok?
+- I am even paying for YouTube Premium, so it's not a matter of money, but a matter of control over my attention and enhanced offline experience
+
+
 
 ## Project
 
