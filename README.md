@@ -19,6 +19,7 @@ Supported by yt-dlp, and optionally your local AI model, to make your youtube ex
 - No dependencies (except for `nano-spawn`, which itself has no transient deps)
 - HTML/CSS only, no JS frameworks on client/server side
 - Host it in your home network to playback videos on all your devices
+- Just JSON files for persistence, stupid simple management and backup
 
 
 
@@ -46,7 +47,7 @@ docker compose up --build -d
 or (currently **wip**)
 
 ```bash
-docker run -p 3000:3000 -it christianfei/my-yt:latest
+docker run -p 3000:3000 -v /path/to/your/data/folder/for/persistence:/app/data christianfei/my-yt:latest
 ```
 
 

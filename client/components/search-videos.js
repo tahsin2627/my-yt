@@ -23,22 +23,24 @@ class SearchVideos extends HTMLElement {
     event.preventDefault()
     const searchTerm = event.target.value.trim().toLowerCase()
     const $status = document.querySelector('#filter-results-status')
+    const $videos = document.querySelectorAll('.video')
     if (!searchTerm) {
       if ($status) $status.innerText = ''
+      $videos.forEach($video => $video.style.display = '')
       return console.log('no search term')
     }
     let filteredCount = 0
-    document.querySelectorAll('.video').forEach(video => {
-      const videoData = JSON.parse(video.dataset['data'])
+    $videos.forEach($video => {
+      const videoData = JSON.parse($video.dataset['data'])
       if (
         videoData.title.toLowerCase().includes(searchTerm)
          || videoData.summary?.toLowerCase().includes(searchTerm)
          || videoData.channelName?.toLowerCase().includes(searchTerm)
         ) {
-        video.style.display = ''
+        $video.style.display = ''
         filteredCount++
       } else {
-        video.style.display = 'none'
+        $video.style.display = 'none'
       }
     })
     if ($status) {
