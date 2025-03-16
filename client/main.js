@@ -18,6 +18,25 @@ function handleRoute(route = window.location.pathname) {
 const routes = {
   '/': { template: document.getElementById('main-template'), title: 'My YT', async initialize() {
     console.log('initialize /')
+
+
+    const $showDownloadedVideos = document.getElementById('show-downloaded-videos')
+    handleClick($showDownloadedVideos, (event) => {
+      event.target.classList.toggle('active')
+      document.body.classList.toggle('show-downloaded-videos')
+    })
+    const $showSummarizedVideos = document.getElementById('show-summarized-videos')
+    handleClick($showSummarizedVideos, (event) => {
+      event.target.classList.toggle('active')
+      document.body.classList.toggle('show-summarized-videos')
+    })
+    const $showIgnoredVideos = document.getElementById('show-ignored-videos')
+    handleClick($showIgnoredVideos, (event) => {
+      event.target.classList.toggle('active')
+      document.body.classList.toggle('show-ignored-videos')
+    })
+    
+
     let $videosContainer = document.querySelector('.main-videos-container')
     if (!$videosContainer) return
     let videos = await fetch('/videos').then(res => res.json())
@@ -158,21 +177,6 @@ $summary.addEventListener('close', () => {})
 //   }
 // }
 
-const $showDownloadedVideos = document.getElementById('show-downloaded-videos')
-handleClick($showDownloadedVideos, (event) => {
-  event.target.classList.toggle('active')
-  document.body.classList.toggle('show-downloaded-videos')
-})
-const $showSummarizedVideos = document.getElementById('show-summarized-videos')
-handleClick($showSummarizedVideos, (event) => {
-  event.target.classList.toggle('active')
-  document.body.classList.toggle('show-summarized-videos')
-})
-const $showIgnoredVideos = document.getElementById('show-ignored-videos')
-handleClick($showIgnoredVideos, (event) => {
-  event.target.classList.toggle('active')
-  document.body.classList.toggle('show-ignored-videos')
-})
 
 // applyShowThumbnails(store.get(store.showThumbnailsKey))
 // applyIgnoredTerms(store.get(store.ignoreTermsKey))
