@@ -68,6 +68,8 @@ docker run -p 3000:3000 -v /path/to/your/data/folder/for/persistence:/app/data c
 - wanted to experiment with the HTML5 [`<track>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track) element and [WebVTT API](https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API)
 - just wanted to make this, ok?
 - I am even paying for YouTube Premium, so it's not a matter of money, but a matter of control over my attention and enhanced offline experience
+- because I can, and wanted to do this
+- feedback was awesome on [HackerNews](https://news.ycombinator.com/item?id=43373242), so here we are
 
 
 ## Upcoming features (TODO)
