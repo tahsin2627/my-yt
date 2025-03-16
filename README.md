@@ -49,6 +49,8 @@ or (currently **wip**)
 
 ```bash
 docker run -p 3000:3000 -v /path/to/your/data/folder/for/persistence:/app/data christianfei/my-yt:latest
+# ok calm down, here is an actual example command to copy-n-paste, jeez
+docker run -p 3000:3000 -v $HOME/my-yt-data$:/app/data christianfei/my-yt:latest
 ```
 
 
