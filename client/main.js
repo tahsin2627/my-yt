@@ -77,12 +77,6 @@ eventSource.onmessage = (message) => {
 }
 
 
-// settings modal
-const $settings = document.querySelector("dialog#settings")
-const $openSettings = document.querySelector("#open-settings")
-const $closeSettings = $settings.querySelector("button")
-$openSettings.addEventListener("click", () => $settings.showModal())
-$closeSettings.addEventListener("click", () => $settings.close())
 
 // summary modal
 const $summary = document.querySelector('dialog#summary')
@@ -91,31 +85,32 @@ $closeSummary.addEventListener("click", () => $summary.close())
 $summary.addEventListener('close', () => {})
 
 // settings ui
-const $showThumbnails = document.getElementById('show-thumbnails')
-$showThumbnails.addEventListener('click', (event) => {
-  event.preventDefault()
-  store.toggle(store.showThumbnailsKey)
-  applyShowThumbnails(store.get(store.showThumbnailsKey))
-})
-const $addIgnoredTerm = document.getElementById('add-ignored-term')
-$addIgnoredTerm.addEventListener('keyup', (event) => {
-  event.preventDefault()
-  if (event.key !== 'Enter') return
-  const ignoredTerm = $addIgnoredTerm.value.trim().toLowerCase()
-  if (ignoredTerm) {
-    store.push(store.ignoreTermsKey, ignoredTerm)
-    $addIgnoredTerm.value = ''
-  }
-  applyIgnoredTerms(store.get(store.ignoreTermsKey))
-})
+// const $showThumbnails = document.getElementById('show-thumbnails')
+// $showThumbnails.addEventListener('click', (event) => {
+//   event.preventDefault()
+//   store.toggle(store.showThumbnailsKey)
+//   applyShowThumbnails(store.get(store.showThumbnailsKey))
+// })
+// const $addIgnoredTerm = document.getElementById('add-ignored-term')
+// $addIgnoredTerm.addEventListener('keyup', (event) => {
+//   event.preventDefault()
+//   if (event.key !== 'Enter') return
+//   const ignoredTerm = $addIgnoredTerm.value.trim().toLowerCase()
+//   if (ignoredTerm) {
+//     store.push(store.ignoreTermsKey, ignoredTerm)
+//     $addIgnoredTerm.value = ''
+//   }
+//   applyIgnoredTerms(store.get(store.ignoreTermsKey))
+// })
 
-function applyIgnoredTerms (ignoredTerms) {
-  const $ignoredTerms = document.getElementById('ignored-terms')
-  $ignoredTerms.innerHTML = ignoredTerms.map(term => /*html*/`<li class="ignored-term">${term}</li>`).join('')
-  if (ignoredTerms.length === 0) {
-    $ignoredTerms.innerHTML = /*html*/`<li>No ignored terms</li>`
-  }
-}
+// function applyIgnoredTerms (ignoredTerms) {
+//   const $ignoredTerms = document.getElementById('ignored-terms')
+//   if (!$ignoredTerms) return
+//   $ignoredTerms.innerHTML = ignoredTerms.map(term => /*html*/`<li class="ignored-term">${term}</li>`).join('')
+//   if (ignoredTerms.length === 0) {
+//     $ignoredTerms.innerHTML = /*html*/`<li>No ignored terms</li>`
+//   }
+// }
 
 const $showDownloadedVideos = document.getElementById('show-downloaded-videos')
 handleClick($showDownloadedVideos, (event) => {
@@ -133,12 +128,9 @@ handleClick($showIgnoredVideos, (event) => {
   document.body.classList.toggle('show-ignored-videos')
 })
 
-// apply settings                                                                                                                                                          
-applyShowThumbnails(store.get(store.showThumbnailsKey))
-applyIgnoredTerms(store.get(store.ignoreTermsKey))
+// applyShowThumbnails(store.get(store.showThumbnailsKey))
+// applyIgnoredTerms(store.get(store.ignoreTermsKey))
 
-// observe dialog open/close and prevent body background scroll
-observeDialogOpenPreventScroll($settings)
 observeDialogOpenPreventScroll($summary)
 
 function handleClick ($el, handler) {
@@ -157,14 +149,15 @@ function observeDialogOpenPreventScroll (dialog) {
   }).observe(dialog, { attributes: true, childList: true, subtree: true })
 }
 
-function applyShowThumbnails(showThumbnails) {
-  if (showThumbnails) {
-    document.body.classList.remove('hide-thumbnails')
-  } else {
-    document.body.classList.add('hide-thumbnails')
-  }
-  document.querySelector('#show-thumbnails').checked = showThumbnails
-}
+// function applyShowThumbnails(showThumbnails) {
+//   if (showThumbnails) {
+//     document.body.classList.remove('hide-thumbnails')
+//   } else {
+//     document.body.classList.add('hide-thumbnails')
+//   }
+//   const $showThumbnailsCheckbox = document.querySelector('#show-thumbnails')
+//   if ($showThumbnailsCheckbox) $showThumbnailsCheckbox.checked = showThumbnails
+// }
 
 function createVideoElement (video) {
   const $video = document.createElement('video-element')

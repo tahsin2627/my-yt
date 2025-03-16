@@ -154,17 +154,6 @@ form {
 
 
 
-
-#open-settings {
-  display: block;
-  border-radius: 4px;
-  font-size: 1rem;
-  padding: 0.5rem;
-  background-color: transparent;
-  color: inherit;
-  border: none;
-  outline: none;
-}
 #settings {
   position: relative;
 }
