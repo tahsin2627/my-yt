@@ -15,6 +15,7 @@ Supported by yt-dlp, and optionally your local AI model, to make your youtube ex
 - Ignore videos you don't want to watch
 - Play videos in background
 - Offline media playback
+- Subtitles using `<track>` element and WebVTT API
 - No dependencies (except for `nano-spawn`), HTML/CSS only, no JS frameworks on client/server side
 - Host it in your home network to playback videos on all your devices
 
