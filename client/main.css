@@ -116,11 +116,6 @@ form {
 
 
 
-
-
-
-
-
 .video {
   position: relative;
   width: 400px;
@@ -177,6 +172,29 @@ form {
 .video .actions > * {
   cursor: pointer;
 }
+
+
+
+@media all and (min-width: 50em) {
+  video-element.big {
+    width: 50%;
+  }
+  video-element.big video {
+    width: 100%;
+  }
+}
+@media all and (max-width: 50em) {
+  video-element.big {
+    width: 100%;
+  }
+  video-element.big video {
+    width: 100%;
+  }
+}
+
+
+
+
 
 .play-video-placeholder {
   height: 225px;

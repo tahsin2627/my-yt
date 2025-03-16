@@ -84,7 +84,6 @@ class VideoElement extends HTMLElement {
     handleClickAddListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
     handleClickAddListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
     handleClickAddListener(this.querySelector('.play-video-placeholder'), this.watchVideoHandler.bind(this))
-    this.querySelector('video') && this.registerVideoEvents(this.querySelector('video'))
   }
   unregisterEvents () {
     handleClickRemoveListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
@@ -108,8 +107,9 @@ class VideoElement extends HTMLElement {
         Download the video instead <a href="/videos/${this.video.id}" target="_blank">here</a>
       </p>
     </video>`
-    this.pauseOtherVideos()
+
     this.querySelector('video').play()
+    this.registerVideoEvents(this.querySelector('video'))
   }
   downloadVideoHandler (event) {
     event.preventDefault()
@@ -179,13 +179,22 @@ class VideoElement extends HTMLElement {
     $searchInput.dispatchEvent(new Event('search'))
   }
   registerVideoEvents (video) {
-    video.addEventListener('play', this.pauseOtherVideos.bind(this, video))
+    video.addEventListener('play', () => {
+      console.log('video event play')
+      this.classList.add('big')
+      this.pauseOtherVideos(video)
+    })
   }
   unregisterVideoEvents (video) {
     video.removeEventListener('play', this.pauseOtherVideos.bind(this, video))
   }
   pauseOtherVideos (video) {
-    document.querySelectorAll('video').forEach(v => v !== video && !v.paused && v.pause())
+    document.querySelectorAll('video').forEach(v => {
+      if (v !== video) {
+        v.pause()
+        v.parentElement.classList.remove('big')
+      }
+    })
   }
 }
 customElements.define('video-element', VideoElement)
