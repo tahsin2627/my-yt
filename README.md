@@ -31,6 +31,7 @@ Supported by yt-dlp, and optionally your local AI model, to make your youtube ex
 - just videos and a clean UI
 - wanted to try integrate the so much hyped AI in a personal project
 - wanted to try out `yt-dlp`
+- wanted to experiment with the HTML5 [`<track>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track) element and [WebVTT API](https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API)
 - just wanted to make this, ok?
 - I am even paying for YouTube Premium, so it's not a matter of money, but a matter of control over my attention and enhanced offline experience
 
