@@ -71,7 +71,6 @@ docker run -p 3000:3000 -it christianfei/my-yt:latest
 ## Upcoming features (TODO)
 
 - Make it possible to delete downloaded videos
-- Show more than just a few weeks worth of videos per channel. For example, if I look at @AndrejKarpathy I only see his latest two videos.
 - Have a way to view a video at a reasonable size in between the small preview and full screen
 - Add a way to download a single video without subscribing to a channel
 - Specify LLM server endpoint
