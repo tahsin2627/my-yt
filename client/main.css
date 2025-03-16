@@ -304,6 +304,12 @@ search-videos {
   font-size: 1.1rem;
 }
 
+
+#filter-results-status {
+  height: 2em;
+  padding: 0.5rem;
+}
+
 details {
   padding: 10px; 
   border: 5px solid #f7f7f7;

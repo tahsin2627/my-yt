@@ -20,7 +20,7 @@
     <summary>Download Log</summary>
     <div class="lines"></div>
   </details>
-  
+
   <dialog id="summary">
     <button id="close">X</button>
     <div></div>
@@ -28,7 +28,8 @@
 
   <template id="main-template">
     <channels-list></channels-list>
-    <div class="flex space-around">
+    <div id="filter-results-status"></div>
+    <div class="flex space-around p-1">
       <button id="show-downloaded-videos">Downloaded videos</button>
       <button id="show-summarized-videos">Summarized videos</button>
       <button id="show-ignored-videos">Ignored videos</button>
