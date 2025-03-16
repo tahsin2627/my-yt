@@ -16,7 +16,7 @@ function handleRoute(route = window.location.pathname) {
 }
 
 const routes = {
-  '/': { template: document.getElementById('main-template'), title: 'My YT', async initialize() {
+  '/': { template: document.getElementById('main-template'), async initialize() {
     console.log('initialize /')
 
     let $videosContainer = document.querySelector('.main-videos-container')
@@ -70,7 +70,7 @@ const routes = {
     applyShowThumbnails(store.get(store.showThumbnailsKey))
 
   } },
-  '/settings': { template: document.getElementById('settings-template'), title: 'My YT - Settings', async initialize () {
+  '/settings': { template: document.getElementById('settings-template'), async initialize () {
     console.log('initalize /settings')
 
     
@@ -82,7 +82,7 @@ const routes = {
       applyShowThumbnails(store.get(store.showThumbnailsKey))
     })
   } },
-  '/404': { template: document.getElementById('not-found-template'), title: 'Not Found' }
+  '/404': { template: document.getElementById('not-found-template') }
 }
 
 handleRoute()
