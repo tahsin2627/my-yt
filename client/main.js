@@ -56,9 +56,21 @@ const routes = {
       return acc
     }, []).join(',')
     document.querySelector('channels-list').dataset['list'] = channelsList
+
+    applyShowThumbnails(store.get(store.showThumbnailsKey))
+
   } },
   '/settings': { template: document.getElementById('settings-template'), title: 'My YT - Settings', async initialize () {
     console.log('initalize /settings')
+
+    
+    const $showThumbnails = document.getElementById('show-thumbnails')
+    store.get(store.showThumbnailsKey) ? $showThumbnails.setAttribute('checked', 'true') : $showThumbnails.removeAttribute('checked')
+    
+    $showThumbnails.addEventListener('click', (event) => {
+      store.toggle(store.showThumbnailsKey)
+      applyShowThumbnails(store.get(store.showThumbnailsKey))
+    })
   } },
   '/404': { template: document.getElementById('not-found-template'), title: 'Not Found' }
 }
@@ -176,12 +188,6 @@ function createVideoElement (video) {
 }
 
 // settings ui
-// const $showThumbnails = document.getElementById('show-thumbnails')
-// $showThumbnails.addEventListener('click', (event) => {
-//   event.preventDefault()
-//   store.toggle(store.showThumbnailsKey)
-//   applyShowThumbnails(store.get(store.showThumbnailsKey))
-// })
 // const $addIgnoredTerm = document.getElementById('add-ignored-term')
 // $addIgnoredTerm.addEventListener('keyup', (event) => {
 //   event.preventDefault()
@@ -204,16 +210,15 @@ function createVideoElement (video) {
 // }
 
 
-// applyShowThumbnails(store.get(store.showThumbnailsKey))
 // applyIgnoredTerms(store.get(store.ignoreTermsKey))
 
 
-// function applyShowThumbnails(showThumbnails) {
-//   if (showThumbnails) {
-//     document.body.classList.remove('hide-thumbnails')
-//   } else {
-//     document.body.classList.add('hide-thumbnails')
-//   }
-//   const $showThumbnailsCheckbox = document.getElementById('show-thumbnails')
-//   if ($showThumbnailsCheckbox) $showThumbnailsCheckbox.checked = showThumbnails
-// }
+function applyShowThumbnails(showThumbnails) {
+  if (showThumbnails) {
+    document.body.classList.remove('hide-thumbnails')
+  } else {
+    document.body.classList.add('hide-thumbnails')
+  }
+  const $showThumbnailsCheckbox = document.getElementById('show-thumbnails')
+  if ($showThumbnailsCheckbox) $showThumbnailsCheckbox.checked = showThumbnails
+}

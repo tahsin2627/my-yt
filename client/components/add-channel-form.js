@@ -17,7 +17,7 @@ class AddChannelForm extends HTMLElement {
   }
   render () {
     this.innerHTML = /*html*/`
-      <form id="add-channel-form" class="p-1 border-light">
+      <form id="add-channel-form">
         <div class="flex space-between">
           <label for="channel-name">Add a new channel</label>
           <input type="text" id="channel-name" placeholder="Channel Name" required>
