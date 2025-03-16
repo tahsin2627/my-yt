@@ -63,6 +63,7 @@ docker run -p 3000:3000 -v /path/to/your/data/folder/for/persistence:/app/data c
 - no related videos, or any algorithmically determined videos pushed in your face
 - no ads (in "just skip the sponsors")
 - just videos and a clean UI
+- wanted to dabble with [Server-sent Events](https://github.com/christian-fei/my-yt/blob/main/lib/sse.js)
 - wanted to try integrate the so much hyped AI in a personal project
 - wanted to try out `yt-dlp`
 - wanted to experiment with the HTML5 [`<track>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track) element and [WebVTT API](https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API)
