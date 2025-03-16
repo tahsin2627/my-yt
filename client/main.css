@@ -30,12 +30,29 @@ main {
 .p-1 {
   padding: 0.5rem;
 }
+.m-0 {
+  margin: 0;
+}
+
+.flex {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  margin-top: 0.3em;
+}
+.space-between {
+  justify-content: space-between;
+}
+
+
+
+
+
+
+
 
 form {
   margin-bottom: 20px;
-}
-.m-0 {
-  margin: 0;
 }
 .loader {
   display: inline-block;
@@ -54,6 +71,8 @@ form {
   0% { transform: rotate(0deg); }
   100% { transform: rotate(360deg); }
 }
+
+
 
 
 
@@ -88,6 +107,18 @@ form {
   padding: 10px;
   margin: 0;
 }
+
+
+
+
+
+
+
+
+
+
+
+
 .video {
   position: relative;
   width: 280px;
@@ -144,6 +175,46 @@ form {
   cursor: pointer;
 }
 
+.play-video-placeholder {
+  height: 157px;
+  background-color: #ceaf80;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.play-icon {
+  position: relative;
+  width: 0; 
+  height: 0;
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+  border-left: 30px solid rgb(0, 0, 0);
+  z-index: 100;
+}
+.play-icon::after {
+  z-index: 98;
+  position: absolute;
+  top: -22px;
+  left: -32px;
+  content: "";
+  width: 0;
+  height: 0;
+  border-top: 20px solid transparent;
+  border-bottom: 20px solid transparent;
+  border-left: 30px solid rgb(255, 255, 255);
+}
+
+
+
+
+
+
+
+
+
+
+
+
 .download-log {
   position: fixed;
   bottom: 10px;
@@ -166,6 +237,14 @@ form {
   max-height: 100px;
   overflow-y: scroll;
 }
+
+
+
+
+
+
+
+
 
 
 ::backdrop {
@@ -233,49 +312,17 @@ details {
 }
 
 
-.flex {
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  margin-top: 0.3em;
-}
-.space-between {
-  justify-content: space-between;
-}
 
-.play-video-placeholder {
-  height: 157px;
-  background-color: #ceaf80;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-.play-icon {
-  position: relative;
-  width: 0; 
-  height: 0;
-  border-top: 20px solid transparent;
-  border-bottom: 20px solid transparent;
-  border-left: 30px solid rgb(0, 0, 0);
-  z-index: 100;
-}
-.play-icon::after {
-  z-index: 98;
-  position: absolute;
-  top: -22px;
-  left: -32px;
-  content: "";
-  width: 0;
-  height: 0;
-  border-top: 20px solid transparent;
-  border-bottom: 20px solid transparent;
-  border-left: 30px solid rgb(255, 255, 255);
-}
+
+
+
+
+
+
 
 [data-ignored="true"] {
   display: none;
 }
-
 #show-summarized-videos.active, #show-downloaded-videos.active, #show-ignored-videos.active {
   background-color: #e2ffd8;
 }
