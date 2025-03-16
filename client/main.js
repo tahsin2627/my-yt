@@ -149,6 +149,32 @@ const $closeSummary = $summary.querySelector("button")
 $closeSummary.addEventListener("click", () => $summary.close())
 $summary.addEventListener('close', () => {})
 
+
+observeDialogOpenPreventScroll($summary)
+
+function handleClick ($el, handler) {
+  if (!$el) return
+  $el.addEventListener('click', handler)
+  $el.addEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
+}
+
+function observeDialogOpenPreventScroll (dialog) {
+  new MutationObserver((mutationList, observer) => {
+    for (const mutation of mutationList) {
+      if (mutation.type === "attributes" && mutation.attributeName === 'open') {
+        document.body.classList[mutation.target.open ? 'add' : 'remove']('dialog-opened')
+      }
+    }
+  }).observe(dialog, { attributes: true, childList: true, subtree: true })
+}
+
+function createVideoElement (video) {
+  const $video = document.createElement('video-element')
+  $video.dataset['data'] = JSON.stringify(video)
+  $video.dataset['videoId'] = video.id
+  return $video
+}
+
 // settings ui
 // const $showThumbnails = document.getElementById('show-thumbnails')
 // $showThumbnails.addEventListener('click', (event) => {
@@ -181,23 +207,6 @@ $summary.addEventListener('close', () => {})
 // applyShowThumbnails(store.get(store.showThumbnailsKey))
 // applyIgnoredTerms(store.get(store.ignoreTermsKey))
 
-observeDialogOpenPreventScroll($summary)
-
-function handleClick ($el, handler) {
-  if (!$el) return
-  $el.addEventListener('click', handler)
-  $el.addEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
-}
-
-function observeDialogOpenPreventScroll (dialog) {
-  new MutationObserver((mutationList, observer) => {
-    for (const mutation of mutationList) {
-      if (mutation.type === "attributes" && mutation.attributeName === 'open') {
-        document.body.classList[mutation.target.open ? 'add' : 'remove']('dialog-opened')
-      }
-    }
-  }).observe(dialog, { attributes: true, childList: true, subtree: true })
-}
 
 // function applyShowThumbnails(showThumbnails) {
 //   if (showThumbnails) {
@@ -208,12 +217,3 @@ function observeDialogOpenPreventScroll (dialog) {
 //   const $showThumbnailsCheckbox = document.getElementById('show-thumbnails')
 //   if ($showThumbnailsCheckbox) $showThumbnailsCheckbox.checked = showThumbnails
 // }
-
-function createVideoElement (video) {
-  const $video = document.createElement('video-element')
-  $video.dataset['data'] = JSON.stringify(video)
-  $video.dataset['videoId'] = video.id
-  return $video
-}
-
-window.createVideoElement = createVideoElement
