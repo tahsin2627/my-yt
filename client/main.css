@@ -208,6 +208,13 @@ video-element, video-element video {
 
 
 
+.play-video-placeholder:hover {
+  transform: scale(1.01);
+  filter: drop-shadow(2px 4px 6px rgb(140, 138, 138));
+}
+.play-video-placeholder {
+  transition: all .1s ease;
+}
 .play-video-placeholder {
   height: 225px;
   background-color: #ceaf80;
