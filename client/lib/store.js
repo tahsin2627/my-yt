@@ -1,22 +1,24 @@
 export default class Store {
   showThumbnailsKey = 'showThumbnails'
   showBigPlayerKey = 'showBigPlayer'
+  showOriginalThumbnailKey = 'showOriginalThumbnail'
   lastVideosKey = 'lastVideos'
   ignoreTermsKey = 'ignoreTerms'
 
   constructor() {
     if (!localStorage.getItem(this.showThumbnailsKey)) localStorage.setItem(this.showThumbnailsKey, 'true')
     if (!localStorage.getItem(this.showBigPlayerKey)) localStorage.setItem(this.showBigPlayerKey, 'true')
+    if (!localStorage.getItem(this.showOriginalThumbnailKey)) localStorage.setItem(this.showOriginalThumbnailKey, 'false')
     if (!localStorage.getItem(this.lastVideosKey)) localStorage.setItem(this.lastVideosKey, '{}')
     if (!localStorage.getItem(this.ignoreTermsKey)) localStorage.setItem(this.ignoreTermsKey, '[]')
   }
 
   toggle (key) {
-    if (![this.showThumbnailsKey, this.showBigPlayerKey].includes(key)) return console.error('invalid key', key)
+    if (![this.showThumbnailsKey, this.showBigPlayerKey, this.showOriginalThumbnailKey].includes(key)) return console.error('invalid key', key)
     localStorage.setItem(key, localStorage.getItem(key) === 'true' ? 'false' : 'true')
   }
   get(key) {
-    if (![this.showThumbnailsKey, this.showBigPlayerKey, this.lastVideosKey, this.ignoreTermsKey].includes(key)) return console.error('invalid key', key)
+    if (![this.showThumbnailsKey, this.showBigPlayerKey, this.showOriginalThumbnailKey, this.lastVideosKey, this.ignoreTermsKey].includes(key)) return console.error('invalid key', key)
     return JSON.parse(localStorage.getItem(key))
   }
   set(key, value) {

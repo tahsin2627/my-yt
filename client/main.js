@@ -52,14 +52,15 @@ const routes = {
 
 
     $videosContainer.innerHTML = ''
-    const ignoredTerms = window.store.get(window.store.ignoreTermsKey)
+    const ignoredTerms = store.get(store.ignoreTermsKey)
+    const showOriginalThumbnail = store.get(store.showOriginalThumbnailKey)
     
     videos = videos
     .filter(video => video.title.split(' ').every(word => !ignoredTerms.includes(word.toLowerCase().replace(/('s|"|,|:)/,''))))
     .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
     // .filter((_, i) => i < 1000)
 
-    videos.forEach(video => $videosContainer.appendChild(createVideoElement(video)))
+    videos.forEach(video => $videosContainer.appendChild(createVideoElement(video, showOriginalThumbnail)))
 
     const channelsList = videos.reduce((acc, video) => {
       if (!acc.includes(video.channelName)) acc.push(video.channelName)
@@ -88,6 +89,13 @@ const routes = {
     $showBigPlayer.addEventListener('click', (event) => {
       store.toggle(store.showBigPlayerKey)
       applyShowBigPlayer(store.get(store.showBigPlayerKey))
+    })
+
+    const $showOriginalThumbnail = document.getElementById('show-original-thumbnail')
+    store.get(store.showOriginalThumbnailKey) ? $showOriginalThumbnail.setAttribute('checked', 'true') : $showOriginalThumbnail.removeAttribute('checked')
+    
+    $showOriginalThumbnail.addEventListener('click', (event) => {
+      store.toggle(store.showOriginalThumbnailKey)
     })
   } },
   '/404': { template: document.getElementById('not-found-template') }
@@ -134,11 +142,12 @@ eventSource.onmessage = (message) => {
     if (data.type === 'new-videos' && data.videos) {
       $videosContainer = document.querySelector('.main-videos-container')
       if (!$videosContainer) return
+      const showOriginalThumbnail = store.get(store.showOriginalThumbnailKey)
 
       data.videos.forEach(video => {
         const $videoElement = $videosContainer.querySelector('video-element')
-        if (!$videoElement) return $videosContainer.appendChild(createVideoElement(video))
-        $videoElement.parentNode.insertBefore(createVideoElement(video), $videoElement.nextSibling)
+        if (!$videoElement) return $videosContainer.appendChild(createVideoElement(video, showOriginalThumbnail))
+        $videoElement.parentNode.insertBefore(createVideoElement(video, showOriginalThumbnail), $videoElement.nextSibling)
       })
       return
     }
@@ -198,9 +207,11 @@ function observeDialogOpenPreventScroll (dialog) {
   }).observe(dialog, { attributes: true, childList: true, subtree: true })
 }
 
-function createVideoElement (video) {
+function createVideoElement (video, showOriginalThumbnail = false) {
   const $video = document.createElement('video-element')
-  $video.dataset['data'] = JSON.stringify(video)
+  $video.dataset['data'] = JSON.stringify(Object.assign(video, showOriginalThumbnail ? {
+    thumbnail: video.thumbnail.replace('mq2.jpg', 'mqdefault.jpg')
+  } : {}))
   $video.dataset['videoId'] = video.id
   return $video
 }
