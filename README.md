@@ -9,13 +9,16 @@ Supported by yt-dlp, and optionally your local AI model, to make your youtube ex
 
 - Channel management/Subscriptions
 - Download videos from YouTube, using `yt-dlp` behind the scenes
-- Summarize video content using your local AI model
 - Ignore videos you don't want to watch
-- Play videos in background
+- Remove sponsors automatically thanks to SponsorBlock
 - Offline media playback
-- Subtitles using `<track>` element and WebVTT API
+- Disable clickbait thumbnails
+- Play videos in background
+- Summarize video content using your local AI model
+- Native Picture-in-Picture support
 - No dependencies (except for `nano-spawn`, which itself has no transient deps)
 - HTML/CSS only, no JS frameworks on client/server side
+- Subtitles using `<track>` element and WebVTT API
 - Host it in your home network to playback videos on all your devices
 - Just JSON files for persistence, stupid simple management and backup
 
@@ -70,7 +73,6 @@ Simply set the env variables to your needs, by following the format above (e.g. 
 - **Why not??**
 - wanted to get back my chronological feed, instead of a "algorithmically curated" one
   - you can just go to the "Subscriptions" page if you want to see your YouTube videos in chronological order, as [gently pointed out on HN](https://news.ycombinator.com/item?id=43374730)
-- native Picture-in-Picture support
 - no distractions
 - no clickbait thumbnails (using `mq2` instead of `mqdefault` thumbnail, thanks @drcheap)
 - no comments
