@@ -29,25 +29,16 @@ class VideoFilters extends HTMLElement {
     `
   }
   handleDownloadedVideos(event) {
-    this.reset()
     event.target.classList.toggle('active')
     document.body.classList.toggle('show-downloaded-videos')
   }
   handleSummarizedVideos(event) {
-    this.reset()
     event.target.classList.toggle('active')
     document.body.classList.toggle('show-summarized-videos')
   }
   handleIgnoredVideos(event) {
-    this.reset()
     event.target.classList.toggle('active')
     document.body.classList.toggle('show-ignored-videos')
-  }
-  reset() {
-    this.querySelectorAll('button').forEach(button => button.classList.remove('active'))
-    document.body.classList.remove('show-downloaded-videos')
-    document.body.classList.remove('show-summarized-videos')
-    document.body.classList.remove('show-ignored-videos')
   }
 }
 customElements.define('video-filters', VideoFilters)

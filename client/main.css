@@ -409,7 +409,12 @@ body.searching [data-ignored="true"] {
   display: block;
 }
 
-
+.show-downloaded-videos.show-summarized-videos [data-downloaded="true"][data-summarized="true"] {
+  display: block !important;
+}
+.show-downloaded-videos.show-summarized-videos [data-downloaded="false"][data-summarized="false"] {
+  display: none !important;
+}
 
 
 
