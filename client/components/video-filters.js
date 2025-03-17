@@ -10,20 +10,14 @@ class VideoFilters extends HTMLElement {
     this.deregisterEvents()
   }
   registerEvents () {
-    const $showDownloadedVideos = this.querySelector('#show-downloaded-videos')
-    const $showSummarizedVideos = this.querySelector('#show-summarized-videos')
-    const $showIgnoredVideos = this.querySelector('#show-ignored-videos')
-    $showDownloadedVideos.addEventListener('click', this.handleDownloadedVideos.bind(this))
-    $showSummarizedVideos.addEventListener('click', this.handleSummarizedVideos.bind(this))
-    $showIgnoredVideos.addEventListener('click', this.handleIgnoredVideos.bind(this))
+    this.querySelector('#show-downloaded-videos').addEventListener('click', this.handleDownloadedVideos.bind(this))
+    this.querySelector('#show-summarized-videos').addEventListener('click', this.handleSummarizedVideos.bind(this))
+    this.querySelector('#show-ignored-videos').addEventListener('click', this.handleIgnoredVideos.bind(this))
   }
   deregisterEvents () {
-    const $showDownloadedVideos = this.querySelector('#show-downloaded-videos')
-    const $showSummarizedVideos = this.querySelector('#show-summarized-videos')
-    const $showIgnoredVideos = this.querySelector('#show-ignored-videos')
-    $showDownloadedVideos.removeEventListener('click', this.handleDownloadedVideos.bind(this))
-    $showSummarizedVideos.removeEventListener('click', this.handleSummarizedVideos.bind(this))
-    $showIgnoredVideos.removeEventListener('click', this.handleIgnoredVideos.bind(this))
+    this.querySelector('#show-downloaded-videos').removeEventListener('click', this.handleDownloadedVideos.bind(this))
+    this.querySelector('#show-summarized-videos').removeEventListener('click', this.handleSummarizedVideos.bind(this))
+    this.querySelector('#show-ignored-videos').removeEventListener('click', this.handleIgnoredVideos.bind(this))
   }
   render () {
     this.innerHTML = /*html*/`
@@ -35,16 +29,25 @@ class VideoFilters extends HTMLElement {
     `
   }
   handleDownloadedVideos(event) {
+    this.reset()
     event.target.classList.toggle('active')
     document.body.classList.toggle('show-downloaded-videos')
   }
   handleSummarizedVideos(event) {
+    this.reset()
     event.target.classList.toggle('active')
     document.body.classList.toggle('show-summarized-videos')
   }
   handleIgnoredVideos(event) {
+    this.reset()
     event.target.classList.toggle('active')
     document.body.classList.toggle('show-ignored-videos')
+  }
+  reset() {
+    this.querySelectorAll('button').forEach(button => button.classList.remove('active'))
+    document.body.classList.remove('show-downloaded-videos')
+    document.body.classList.remove('show-summarized-videos')
+    document.body.classList.remove('show-ignored-videos')
   }
 }
 customElements.define('video-filters', VideoFilters)
