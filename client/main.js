@@ -48,6 +48,8 @@ const routes = {
       event.target.classList.toggle('active')
       document.body.classList.toggle('show-ignored-videos')
     })
+
+    document.getElementById('search').removeAttribute('disabled')
     
 
 
@@ -74,6 +76,7 @@ const routes = {
   '/settings': { template: document.getElementById('settings-template'), async initialize () {
     console.log('initalize /settings')
 
+    document.getElementById('search').setAttribute('disabled', 'disabled')
     
     const $showThumbnails = document.getElementById('show-thumbnails')
     store.get(store.showThumbnailsKey) ? $showThumbnails.setAttribute('checked', 'true') : $showThumbnails.removeAttribute('checked')
@@ -98,7 +101,9 @@ const routes = {
       store.toggle(store.showOriginalThumbnailKey)
     })
   } },
-  '/404': { template: document.getElementById('not-found-template') }
+  '/404': { template: document.getElementById('not-found-template'), async initialize () {
+    document.getElementById('search').setAttribute('disabled', 'disabled')
+  } }
 }
 
 handleRoute()
