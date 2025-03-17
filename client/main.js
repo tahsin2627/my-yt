@@ -24,13 +24,13 @@ const routes = {
     let videos = await fetch('/videos').then(res => res.json())
     console.log('videos.length', videos.length)
     if (videos.length === 0) {
-      document.querySelector('empty-state').style.display = 'block'
+      document.querySelector('empty-state').style.display = ''
       document.querySelector('channels-list').style.display = 'none'
       document.querySelector('#filters-container').style.display = 'none'
     } else {
       document.querySelector('empty-state').style.display = 'none'
-      document.querySelector('channels-list').style.display = 'block'
-      document.querySelector('#filters-container').style.display = 'block'
+      document.querySelector('channels-list').style.display = ''
+      document.querySelector('#filters-container').style.display = ''
     }
 
     const $showDownloadedVideos = document.getElementById('show-downloaded-videos')

@@ -343,10 +343,6 @@ search-videos {
 }
 
 
-#filter-results-status {
-  height: 2em;
-  padding: 0.5rem;
-}
 
 details {
   padding: 10px; 
@@ -365,13 +361,31 @@ details {
 
 
 
-
+#filters-container button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin: 0.5em;
+  padding: 0.5em 1em;
+  font-size: 1rem;
+  background-color: #f0f0f0;
+  border: none;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+  border-radius: 5px;
+  color: #333;
+}
+#filter-results-status {
+  height: 2em;
+  padding: 0.5rem;
+}
 
 [data-ignored="true"] {
   display: none;
 }
 #show-summarized-videos.active, #show-downloaded-videos.active, #show-ignored-videos.active {
-  background-color: #e2ffd8;
+  background-color: #545454;
+  color: #f0f0f0;
 }
 .show-downloaded-videos [data-downloaded="false"] {
   display: none;
