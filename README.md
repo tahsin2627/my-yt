@@ -73,16 +73,6 @@ docker run -d -p 3000:3000 -v $HOME/my-yt-data:/app/data christianfei/my-yt:late
 - feedback was awesome on [HackerNews](https://news.ycombinator.com/item?id=43373242), so here we are
 
 
-## Upcoming features (TODO)
-
-- Make it possible to delete downloaded videos
-- Have a way to view a video at a reasonable size in between the small preview and full screen
-- Add a way to download a single video without subscribing to a channel
-- Specify LLM server endpoint
-  - List and choose available model to use for summarization
-- add some options for download quality (with webm merge for 4k support)
-
-
 
 ## Project
 
