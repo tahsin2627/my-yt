@@ -116,7 +116,7 @@ class VideoElement extends HTMLElement {
     const downloadStartedText = '⚡️ Download started'
     if (event.target.innerText === downloadStartedText) return console.log('already downloading')
     event.target.innerText = downloadStartedText
-    fetch('/download-video', {
+    fetch('/api/download-video', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: this.video.id }),
@@ -129,7 +129,7 @@ class VideoElement extends HTMLElement {
     const summaryStartedText = '⚡️ summary started'
     if (event.target.innerText === summaryStartedText) return console.log('already summarizing')
     event.target.innerText = summaryStartedText
-    fetch('/summarize-video', {
+    fetch('/api/summarize-video', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: this.video.id }),
@@ -154,7 +154,7 @@ class VideoElement extends HTMLElement {
   toggleIgnoreVideoHandler (event) {
     event.preventDefault()
 
-    fetch('/ignore-video', {
+    fetch('/api/ignore-video', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: this.video.id }),

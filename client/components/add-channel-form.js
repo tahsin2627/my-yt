@@ -39,7 +39,7 @@ class AddChannelForm extends HTMLElement {
 
     freezeForm()
     
-    fetch('/channels', {
+    fetch('/api/channels', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: channelName })

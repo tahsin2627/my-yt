@@ -16,7 +16,7 @@ const routes = {
 
     let $videosContainer = document.querySelector('.main-videos-container')
     if (!$videosContainer) return
-    let videos = await fetch('/videos').then(res => res.json())
+    let videos = await fetch('/api/videos').then(res => res.json())
     console.log('videos.length', videos.length)
     if (videos.length === 0) {
       document.querySelector('empty-state').style.display = ''
