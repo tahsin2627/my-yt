@@ -67,7 +67,7 @@ class VideoElement extends HTMLElement {
       <h4 class="title">${this.video.title}</h4>
       <div class="actions flex">
         ${this.video.downloaded
-          ? ''
+          ? /*html*/`<span tabindex="0"  class="action delete" data-video-id="${this.video.id}">🗑️ Delete</span>`
           : /*html*/`<span tabindex="0"  class="action download" data-video-id="${this.video.id}">⬇️ Download</span>`}
         ${!this.video.summary
           ? /*html*/`<span tabindex="0"  class="action summarize" data-video-id="${this.video.id}">📖 Summarize</span>`
@@ -79,6 +79,7 @@ class VideoElement extends HTMLElement {
   }
   registerEvents () {
     handleClickAddListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
+    handleClickAddListener(this.querySelector('.action.delete'), this.deleteVideoHandler.bind(this))
     handleClickAddListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
     handleClickAddListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
     handleClickAddListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
@@ -87,6 +88,7 @@ class VideoElement extends HTMLElement {
   }
   unregisterEvents () {
     handleClickRemoveListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
+    handleClickRemoveListener(this.querySelector('.action.delete'), this.deleteVideoHandler.bind(this))
     handleClickRemoveListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
     handleClickRemoveListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
     handleClickRemoveListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
@@ -123,6 +125,21 @@ class VideoElement extends HTMLElement {
     })
     .then(() => console.log('Download started'))
     .catch((error) => console.error('Error starting download:', error))
+  }
+  deleteVideoHandler (event) {
+    event.preventDefault()
+    if (!confirm('About to delete video files, are you sure?')) return
+    fetch('/api/delete-video', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ id: this.video.id }),
+    })
+    .then(() => {
+      console.log('Video deleted')
+      this.video.downloaded = false
+      this.render()
+    })
+    .catch((error) => console.error('Error deleting video:', error))  
   }
   summarizeVideoHandler (event) {
     event.preventDefault()
