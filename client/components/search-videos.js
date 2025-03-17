@@ -27,8 +27,10 @@ class SearchVideos extends HTMLElement {
     if (!searchTerm) {
       if ($status) $status.innerText = ''
       $videos.forEach($video => $video.style.display = '')
+      document.body.classList.remove('searching')
       return console.log('no search term')
     }
+    document.body.classList.add('searching')
     let filteredCount = 0
     $videos.forEach($video => {
       const videoData = JSON.parse($video.dataset['data'])

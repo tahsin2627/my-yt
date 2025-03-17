@@ -380,6 +380,9 @@ details {
   padding: 0.5rem;
 }
 
+body.searching [data-ignored="true"] {
+  display: block;
+}
 [data-ignored="true"] {
   display: none;
 }
