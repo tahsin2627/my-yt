@@ -26,33 +26,15 @@ const routes = {
     if (videos.length === 0) {
       document.querySelector('empty-state').style.display = ''
       document.querySelector('channels-list').style.display = 'none'
-      document.querySelector('#filters-container').style.display = 'none'
+      document.querySelector('video-filters').style.display = 'none'
     } else {
       document.querySelector('empty-state').style.display = 'none'
       document.querySelector('channels-list').style.display = ''
-      document.querySelector('#filters-container').style.display = ''
+      document.querySelector('video-filters').style.display = ''
     }
-
-    const $showDownloadedVideos = document.getElementById('show-downloaded-videos')
-    handleClick($showDownloadedVideos, (event) => {
-      event.target.classList.toggle('active')
-      document.body.classList.toggle('show-downloaded-videos')
-    })
-    const $showSummarizedVideos = document.getElementById('show-summarized-videos')
-    handleClick($showSummarizedVideos, (event) => {
-      event.target.classList.toggle('active')
-      document.body.classList.toggle('show-summarized-videos')
-    })
-    const $showIgnoredVideos = document.getElementById('show-ignored-videos')
-    handleClick($showIgnoredVideos, (event) => {
-      event.target.classList.toggle('active')
-      document.body.classList.toggle('show-ignored-videos')
-    })
 
     document.getElementById('search').removeAttribute('disabled')
     
-
-
     $videosContainer.innerHTML = ''
     const ignoredTerms = store.get(store.ignoreTermsKey)
     const showOriginalThumbnail = store.get(store.showOriginalThumbnailKey)
