@@ -78,12 +78,6 @@ $summary.addEventListener('close', () => {})
 
 observeDialogOpenPreventScroll($summary)
 
-function handleClick ($el, handler) {
-  if (!$el) return
-  $el.addEventListener('click', handler)
-  $el.addEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
-}
-
 function observeDialogOpenPreventScroll (dialog) {
   new MutationObserver((mutationList, observer) => {
     for (const mutation of mutationList) {
