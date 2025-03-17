@@ -30,7 +30,8 @@ Supported by yt-dlp, and optionally your local AI model, to make your youtube ex
 git clone https://github.com/christian-fei/my-yt.git
 cd my-yt
 npm i
-# install yt-dlp, please see https://github.com/yt-dlp/yt-dlp
+# install yt-dlp, https://github.com/yt-dlp/yt-dlp
+# install ffmpeg, https://ffmpeg.org/
 
 npm start
 ```
