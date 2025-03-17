@@ -127,15 +127,12 @@ dependency less, bare HTML5, CSS3 and JS for a basic frontend
 
 Handles SSE updates, interacting with the API
 
-## General information
+## Keep your fork updated
 
-Currently, on the LLM side of things:
-
-- supports basic chat completions API (LMStudio right now)
-  - expects `lms server` to be running on `http://localhost:1234`
-- works with `meta-llama-3.1-8b-instruct` model
-- customization will come in the future if there's enough interest (let me know by opening an issue or pull-request)
-
+```bash
+git fetch upstream
+git pull --rebase upstream main
+```
 
 ---
 
