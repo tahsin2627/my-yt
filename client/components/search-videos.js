@@ -11,10 +11,10 @@ class SearchVideos extends HTMLElement {
     this.deregisterEvents()
   }
   registerEvents () {
-    this.querySelector('input').addEventListener('search', this.searchHandler.bind(this))
+    this.querySelector('input').addEventListener('keyup', this.searchHandler.bind(this))
   }
   deregisterEvents () {
-    this.querySelector('input').removeEventListener('search', this.searchHandler.bind(this))
+    this.querySelector('input').removeEventListener('keyup', this.searchHandler.bind(this))
   }
   render () {
     this.innerHTML = /*html*/`<input type="search" incremental="incremental" id="search" placeholder="Search videos" autofocus>`

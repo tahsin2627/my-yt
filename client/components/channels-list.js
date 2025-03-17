@@ -60,7 +60,7 @@ function createChannelElement (channel = '') {
       event.target.parentNode.querySelector('.active')?.classList.remove('active')
       event.target.classList.add('active')
     }
-    $searchInput.dispatchEvent(new Event('search'))
+    $searchInput.dispatchEvent(new Event('keyup'))
   })
   return $channel
 }
