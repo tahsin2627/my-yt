@@ -69,11 +69,13 @@ Simply set the env variables to your needs, by following the format above (e.g. 
 - **Why not??**
 - wanted to get back my chronological feed, instead of a "algorithmically curated" one
   - you can just go to the "Subscriptions" page if you want to see your YouTube videos in chronological order, as [gently pointed out on HN](https://news.ycombinator.com/item?id=43374730)
+- native Picture-in-Picture support
 - no distractions
 - no clickbait thumbnails (using `mq2` instead of `mqdefault` thumbnail, thanks @drcheap)
 - no comments
 - no related videos, or any algorithmically determined videos pushed in your face
-- no ads (in "just skip the sponsors")
+- no ads
+- no sponsors, thanks to SponsorBlock
 - just videos and a clean UI
 - wanted to dabble with [Server-sent Events](https://github.com/christian-fei/my-yt/blob/main/lib/sse.js)
 - wanted to try integrate the so much hyped AI in a personal project
