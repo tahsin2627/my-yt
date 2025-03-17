@@ -178,18 +178,18 @@ video-element, video-element video {
   transition: width 0.2s ease-in;
 }
 @media all and (min-width: 60em) {
-  video-element.big {
+  .show-big-player video-element.big {
     width: 50%;
   }
-  video-element.big video {
+  .show-big-player video-element.big video {
     width: 100%;
   }
 }
 @media all and (max-width: 60em) {
-  video-element.big {
+  .show-big-player video-element.big {
     width: 100%;
   }
-  video-element.big video {
+  .show-big-player video-element.big video {
     width: 100%;
   }
 }

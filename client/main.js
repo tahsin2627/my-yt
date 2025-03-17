@@ -68,7 +68,7 @@ const routes = {
     document.querySelector('channels-list').dataset['list'] = channelsList
 
     applyShowThumbnails(store.get(store.showThumbnailsKey))
-
+    applyShowBigPlayer(store.get(store.showBigPlayerKey))
   } },
   '/settings': { template: document.getElementById('settings-template'), async initialize () {
     console.log('initalize /settings')
@@ -80,6 +80,14 @@ const routes = {
     $showThumbnails.addEventListener('click', (event) => {
       store.toggle(store.showThumbnailsKey)
       applyShowThumbnails(store.get(store.showThumbnailsKey))
+    })
+
+    const $showBigPlayer = document.getElementById('show-big-player')
+    store.get(store.showBigPlayerKey) ? $showBigPlayer.setAttribute('checked', 'true') : $showBigPlayer.removeAttribute('checked')
+    
+    $showBigPlayer.addEventListener('click', (event) => {
+      store.toggle(store.showBigPlayerKey)
+      applyShowBigPlayer(store.get(store.showBigPlayerKey))
     })
   } },
   '/404': { template: document.getElementById('not-found-template') }
@@ -231,4 +239,13 @@ function applyShowThumbnails(showThumbnails) {
   }
   const $showThumbnailsCheckbox = document.getElementById('show-thumbnails')
   if ($showThumbnailsCheckbox) $showThumbnailsCheckbox.checked = showThumbnails
+}
+function applyShowBigPlayer(showBigPlayer) {
+  if (showBigPlayer) {
+    document.body.classList.add('show-big-player')
+  } else {
+    document.body.classList.remove('show-big-player')
+  }
+  const $showBigPlayerCheckbox = document.getElementById('show-big-player')
+  if ($showBigPlayerCheckbox) $showBigPlayerCheckbox.checked = showBigPlayer
 }
