@@ -20,7 +20,7 @@ test('gets videos for channel', async () => {
 test('gets single video', async () => {
   // https://www.youtube.com/watch?v=qJZ1Ez28C-A
   const video = await getVideo('qJZ1Ez28C-A')
-  assert.equal(video.channelName, '@veritasium')
+  assert.equal(video.channelName, 'veritasium')
   assert.equal(video.title, 'Something Strange Happens When You Trust Quantum Mechanics')
   assert.equal(video.url, 'https://www.youtube.com/watch?v=qJZ1Ez28C-A')
   assert.equal(video.thumbnail, 'https://img.youtube.com/vi/qJZ1Ez28C-A/mq2.jpg')

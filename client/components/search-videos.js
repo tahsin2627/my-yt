@@ -17,11 +17,11 @@ class SearchVideos extends HTMLElement {
     this.querySelector('input').removeEventListener('keyup', this.searchHandler.bind(this))
   }
   render () {
-    this.innerHTML = /*html*/`<input type="search" incremental="incremental" id="search" placeholder="Search videos" autofocus>`
+    this.innerHTML = /*html*/`<input type="search" incremental="incremental" id="search" placeholder="Search videos or paste video url" autofocus>`
   }
   searchHandler (event) {
     event.preventDefault()
-    const searchTerm = event.target.value.trim().toLowerCase()
+    let searchTerm = event.target.value.trim()
     const $status = document.querySelector('#filter-results-status')
     const $videos = document.querySelectorAll('.video')
     if (!searchTerm) {
@@ -30,6 +30,21 @@ class SearchVideos extends HTMLElement {
       document.body.classList.remove('searching')
       return console.log('no search term')
     }
+
+    if (searchTerm.match('https?://')) {
+      const id = searchTerm.replace(/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/watch\?v=(.+)$/, '$4')
+      fetch('/api/download-video', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ id, external: true }),
+      })
+      .then(() => console.log('Download started'))
+      .catch((error) => console.error('Error starting download:', error))
+      event.target.value = ''
+      return
+    }
+
+    searchTerm = searchTerm.toLowerCase()
     document.body.classList.add('searching')
     let filteredCount = 0
     $videos.forEach($video => {
