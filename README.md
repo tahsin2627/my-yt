@@ -1,7 +1,6 @@
 # my-yt
 
-A clean and minimal youtube frontend
-Supported by yt-dlp, and optionally your local AI model, to make your youtube experience local, mindful and succint.
+A clean and minimal youtube frontend supported by yt-dlp, and optionally your local AI model, to make your youtube experience local, mindful and succint.
 
 ![preview my-yt](/preview.png)
 
