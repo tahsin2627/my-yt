@@ -23,8 +23,8 @@ class AddChannelForm extends HTMLElement {
           <input type="text" id="channel-name" placeholder="Channel Name" required>
           <button type="submit">Add Channel</button>
           <span class="loader"></span>
-          <div class="status"></div>
         </div>
+        <div class="status"></div>
       </form>
     `
   }
