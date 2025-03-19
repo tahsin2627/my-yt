@@ -32,11 +32,10 @@ class SearchVideos extends HTMLElement {
     }
 
     if (searchTerm.match('https?://')) {
-      const id = searchTerm.replace(/^(https?:\/\/)?(www\.)?(youtube\.com|youtu\.be)\/watch\?v=(.+)$/, '$4')
       fetch('/api/download-video', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ id, external: true }),
+        body: JSON.stringify({ id: searchTerm, external: true }),
       })
       .then(() => console.log('Download started'))
       .catch((error) => console.error('Error starting download:', error))
