@@ -23,6 +23,7 @@ class AddChannelForm extends HTMLElement {
           <input type="text" id="channel-name" placeholder="Channel Name" required>
           <button type="submit">Add Channel</button>
           <span class="loader"></span>
+          <div class="status"></div>
         </div>
       </form>
     `
@@ -34,6 +35,7 @@ class AddChannelForm extends HTMLElement {
     const form = event.target
     const input = form.querySelector('input')
     const loader = form.querySelector('.loader')
+    const status = form.querySelector('.status')
     
     const channelName = document.getElementById('channel-name').value
     if (!channelName) return alert('empty channel name')
@@ -45,8 +47,14 @@ class AddChannelForm extends HTMLElement {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: channelName })
     })
-    .then(() => form.reset())
-    .catch(error => console.error('Error adding channel:', error))
+    .then(() => {
+      form.reset()
+      status.innerText = `Successfully added ${channelName}`
+    })
+    .catch(error => {
+      console.error('Error adding channel:', error)
+      status.innerText = `There was an error adding the channel ${channelName}, please check your application logs`
+    })
     .finally(unfreezeForm)
   
     function freezeForm() {
