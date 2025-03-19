@@ -218,7 +218,7 @@ video-element, video-element video {
 .play-video-placeholder {
   height: 225px;
   background-color: #ceaf80;
-  background-size: contain;
+  background-size: cover;
   display: flex;
   align-items: center;
   justify-content: center;
