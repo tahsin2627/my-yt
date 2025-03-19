@@ -4,6 +4,7 @@ body {
   background-color: white;
   color: black;
   padding-bottom: 3em;
+  overflow-y: scroll;
 }
 @media (prefers-color-scheme: dark) {
   body {
