@@ -171,6 +171,9 @@ class VideoElement extends HTMLElement {
   toggleIgnoreVideoHandler (event) {
     event.preventDefault()
 
+    this.video.ignored = !this.video.ignored
+    this.render()
+
     fetch('/api/ignore-video', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
