@@ -65,6 +65,18 @@
         <input type="checkbox" id="show-original-thumbnail"/>
         <div><small>Show the creators chosen thumbnail, or a neutral one based on the actual video frames</small></div>
       </form>
+      <br>
+      <form>
+        <div class="flex space-between">
+          <div>
+            Delete downloaded videos you ignored to reclaim disk space
+          </div>
+          <button id="reclaim-disk-space" type="submit">Delete videos</button>
+        </div>
+        <div><small id="ignored-videos-disk-space">Currently <span id="disk-space-used"></span> of disk space used</small></div>
+      </form>
+      <br>
+      
       <!--
       <br>
       <div>

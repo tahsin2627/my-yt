@@ -52,8 +52,6 @@ const routes = {
   } },
   '/settings': { template: document.getElementById('settings-template'), async initialize () {
     console.log('initalize /settings')
-
-    document.getElementById('search').setAttribute('disabled', 'disabled')
     
     const $showThumbnails = document.getElementById('show-thumbnails')
     store.get(store.showThumbnailsKey) ? $showThumbnails.setAttribute('checked', 'true') : $showThumbnails.removeAttribute('checked')
@@ -77,6 +75,29 @@ const routes = {
     $showOriginalThumbnail.addEventListener('click', (event) => {
       store.toggle(store.showOriginalThumbnailKey)
     })
+    
+    const $reclaimDiskSpace = document.getElementById('reclaim-disk-space')
+    const $ignoredVideosDiskSpace = document.getElementById('ignored-videos-disk-space')
+    const $diskSpaceUsed = document.getElementById('disk-space-used')
+    window.fetch('/api/ignored-videos-disk-space')
+    .then(response => response.text())
+    .then((diskSpaceUsed) => {
+      $diskSpaceUsed.innerText = diskSpaceUsed
+    })
+    $reclaimDiskSpace.addEventListener('click', (event) => {
+      event.preventDefault()
+      console.log('reclaiming')
+      window.fetch('/api/reclaim-disk-space', {
+        method: 'POST'
+      })
+      .then(() => {
+        $ignoredVideosDiskSpace.innerText = 'Successfully reclaimed disk space'
+      })
+      .catch((error) => {
+        $ignoredVideosDiskSpace.innerHTML = `Failed to reclaim disk space: <br><pre>${error.message}</pre>`
+      })
+    })
+    
   } },
   '/404': { template: document.getElementById('not-found-template'), async initialize () {
     document.getElementById('search').setAttribute('disabled', 'disabled')
