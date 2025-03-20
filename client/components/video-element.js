@@ -146,6 +146,7 @@ class VideoElement extends HTMLElement {
       console.log('Video deleted')
       this.video.downloaded = false
       this.classList.remove('downloading')
+      this.querySelector('video') && this.unregisterVideoEvents(this.querySelector('video'))
       this.render()
     })
     .catch((error) => console.error('Error deleting video:', error))  
@@ -211,6 +212,7 @@ class VideoElement extends HTMLElement {
     video.addEventListener('play', () => {
       console.log('video event play')
       this.classList.add('big')
+      setTimeout(this.scrollIntoViewWithOffset.bind(this, 150), document.querySelector('body > header').clientHeight)
       this.pauseOtherVideos(video)
     })
   }
@@ -225,5 +227,11 @@ class VideoElement extends HTMLElement {
       }
     })
   }
+
+  scrollIntoViewWithOffset (offset, behavior = 'smooth') {
+    const top = this.getBoundingClientRect().top - offset - document.body.getBoundingClientRect().top
+    window.scrollTo({ top, behavior })
+  }  
 }
+
 customElements.define('video-element', VideoElement)
