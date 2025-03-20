@@ -223,6 +223,7 @@ video-element, video-element video {
   display: flex;
   align-items: center;
   justify-content: center;
+  cursor: pointer;
 }
 .play-icon {
   position: relative;
@@ -266,6 +267,16 @@ video-element, video-element video {
   border-left: 20px solid transparent;
   border-right: 20px solid transparent;
   border-top: 30px solid rgb(255, 255, 255);
+}
+.download-icon::before {
+  z-index: 98;
+  position: absolute;
+  top: -49px;
+  left: -12px;
+  content: "";
+  width: 12px;
+  height: 32px;
+  background-color: rgb(255, 255, 255);
 }
 
 .downloading .download-icon {
