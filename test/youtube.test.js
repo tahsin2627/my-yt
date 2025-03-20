@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'assert';
-import { getVideosFor, getVideo } from '../lib/youtube.js'
+import { getVideosFor, getVideo, extractIdFromUrl, isYouTubeUrl } from '../lib/youtube.js'
 
 test('gets videos for channel', async () => {
   const videos = await getVideosFor('veritasium')
@@ -29,4 +29,18 @@ test('gets single video', async () => {
   assert.equal(video.publishedTime, '2025-03-05')
   assert.ok(video.viewCount)
   assert.equal(video.duration, '33:36')
+})
+
+test('extracts id from url', () => {
+  assert.equal(extractIdFromUrl('https://www.youtube.com/watch?v=SOME_ID&pp=something'), 'SOME_ID')
+  assert.equal(extractIdFromUrl('https://www.youtube.com/watch?v=SOME_ID'), 'SOME_ID')
+  assert.equal(extractIdFromUrl('https://youtube.com/watch?v=SOME_ID'), 'SOME_ID')
+  assert.equal(extractIdFromUrl('https://youtu.be/watch?v=SOME_ID'), 'SOME_ID')
+})
+
+test('check if url is a youtube url', () => {
+  assert.ok(isYouTubeUrl('https://www.youtube.com/watch?v=SOME_ID&pp=something'))
+  assert.ok(isYouTubeUrl('https://www.youtube.com/watch?v=SOME_ID'))
+  assert.ok(isYouTubeUrl('https://youtube.com/watch?v=SOME_ID'))
+  assert.ok(isYouTubeUrl('https://youtu.be/watch?v=SOME_ID'))
 })
