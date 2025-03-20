@@ -52,8 +52,8 @@ class VideoElement extends HTMLElement {
     else this.dataset['ignored'] = "false"
     this.innerHTML = /*html*/`
       ${this.video.downloaded
-      ? /*html*/`<div class="play-video-placeholder" style="background-image: url(${this.video.thumbnail})"><div class="play-icon"></div></div>`
-      : /*html*/`<img loading="lazy" src="${this.video.thumbnail}"/>`}
+      ? /*html*/`<div class="play video-placeholder" style="background-image: url(${this.video.thumbnail})"><div class="play-icon"></div></div>`
+      : /*html*/`<div class="download video-placeholder" style="background-image: url(${this.video.thumbnail})"><div class="download-icon"></div></div>`}
       <span class="action ignore" tabindex="0">ignore</span>
       <div class="info">
         <span class="channel-name">${this.video.channelName}</span>
@@ -84,7 +84,8 @@ class VideoElement extends HTMLElement {
     handleClickAddListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
     handleClickAddListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
     handleClickAddListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
-    handleClickAddListener(this.querySelector('.play-video-placeholder'), this.watchVideoHandler.bind(this))
+    handleClickAddListener(this.querySelector('.play.video-placeholder'), this.watchVideoHandler.bind(this))
+    handleClickAddListener(this.querySelector('.download.video-placeholder'), this.downloadVideoHandler.bind(this))
   }
   unregisterEvents () {
     handleClickRemoveListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
@@ -93,11 +94,13 @@ class VideoElement extends HTMLElement {
     handleClickRemoveListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
     handleClickRemoveListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
     handleClickRemoveListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
+    handleClickRemoveListener(this.querySelector('.play.video-placeholder'), this.watchVideoHandler.bind(this))
+    handleClickRemoveListener(this.querySelector('.download.video-placeholder'), this.downloadVideoHandler.bind(this))
     this.querySelector('video') && this.unregisterVideoEvents(this.querySelector('video'))
   }
   watchVideoHandler (event) {
     event.preventDefault()
-    this.querySelector('.play-video-placeholder').outerHTML = /*html*/`<video controls width="400">
+    this.querySelector('.play.video-placeholder').outerHTML = /*html*/`<video controls width="400">
       <source src="/videos/${this.video.id}" type="video/mp4" />
       <track
         default
@@ -115,9 +118,14 @@ class VideoElement extends HTMLElement {
   }
   downloadVideoHandler (event) {
     event.preventDefault()
+    
     const downloadStartedText = '⚡️ Download started'
-    if (event.target.innerText === downloadStartedText) return console.log('already downloading')
-    event.target.innerText = downloadStartedText
+    let $downloadButton = event.target.classList.contains('.action') ? event.target : this.querySelector('.action.download')
+    if ($downloadButton.innerText === downloadStartedText) return console.log('already downloading')
+    else $downloadButton.innerText = downloadStartedText
+
+    this.classList.add('downloading')
+
     fetch('/api/download-video', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -137,6 +145,7 @@ class VideoElement extends HTMLElement {
     .then(() => {
       console.log('Video deleted')
       this.video.downloaded = false
+      this.classList.remove('downloading')
       this.render()
     })
     .catch((error) => console.error('Error deleting video:', error))  

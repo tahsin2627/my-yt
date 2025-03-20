@@ -209,14 +209,14 @@ video-element, video-element video {
 
 
 
-.play-video-placeholder:hover {
+.video-placeholder:hover {
   transform: scale(1.01);
   filter: drop-shadow(2px 4px 6px rgb(140, 138, 138));
 }
-.play-video-placeholder {
+.video-placeholder {
   transition: all .1s ease;
 }
-.play-video-placeholder {
+.video-placeholder {
   height: 225px;
   background-color: #ceaf80;
   background-size: cover;
@@ -244,6 +244,38 @@ video-element, video-element video {
   border-top: 20px solid transparent;
   border-bottom: 20px solid transparent;
   border-left: 30px solid rgb(255, 255, 255);
+}
+
+.download-icon {
+  position: relative;
+  width: 0; 
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 30px solid rgb(0, 0, 0);
+  z-index: 100;
+}
+.download-icon::after {
+  z-index: 98;
+  position: absolute;
+  top: -28px;
+  left: -26px;
+  content: "";
+  width: 0;
+  height: 0;
+  border-left: 20px solid transparent;
+  border-right: 20px solid transparent;
+  border-top: 30px solid rgb(255, 255, 255);
+}
+
+.downloading .download-icon {
+  /*wiggle up and down animation*/
+  animation: wiggle 2s infinite ease-in-out;
+}
+@keyframes wiggle {
+  0% { transform: translateY(0px); }
+  50% { transform: translateY(-10px); }
+  100% { transform: translateY(0px); }
 }
 
 
