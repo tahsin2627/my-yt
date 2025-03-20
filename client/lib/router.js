@@ -77,24 +77,25 @@ const routes = {
     })
     
     const $reclaimDiskSpace = document.getElementById('reclaim-disk-space')
-    const $ignoredVideosDiskSpace = document.getElementById('ignored-videos-disk-space')
+    const $diskUsage = document.getElementById('disk-usage')
     const $diskSpaceUsed = document.getElementById('disk-space-used')
-    window.fetch('/api/ignored-videos-disk-space')
+    window.fetch('/api/disk-usage')
     .then(response => response.text())
     .then((diskSpaceUsed) => {
       $diskSpaceUsed.innerText = diskSpaceUsed
     })
     $reclaimDiskSpace.addEventListener('click', (event) => {
       event.preventDefault()
+      if (!confirm('About to delete downloaded videos, are you sure?'))
       console.log('reclaiming')
       window.fetch('/api/reclaim-disk-space', {
         method: 'POST'
       })
       .then(() => {
-        $ignoredVideosDiskSpace.innerText = 'Successfully reclaimed disk space'
+        $diskUsage.innerText = 'Successfully reclaimed disk space'
       })
       .catch((error) => {
-        $ignoredVideosDiskSpace.innerHTML = `Failed to reclaim disk space: <br><pre>${error.message}</pre>`
+        $diskUsage.innerHTML = `Failed to reclaim disk space: <br><pre>${error.message}</pre>`
       })
     })
     
