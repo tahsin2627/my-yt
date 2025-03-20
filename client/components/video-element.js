@@ -53,7 +53,7 @@ class VideoElement extends HTMLElement {
     this.innerHTML = /*html*/`
       ${this.video.downloaded
       ? /*html*/`<div class="play video-placeholder" style="background-image: url(${this.video.thumbnail})"><div class="play-icon"></div></div>`
-      : /*html*/`<div class="download video-placeholder" style="background-image: url(${this.video.thumbnail})"><div class="download-icon"></div></div>`}
+      : /*html*/`<img loading="lazy" src="${this.video.thumbnail}"/>`}
       <span class="action ignore" tabindex="0">ignore</span>
       <div class="info">
         <span class="channel-name">${this.video.channelName}</span>
@@ -85,7 +85,6 @@ class VideoElement extends HTMLElement {
     handleClickAddListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
     handleClickAddListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
     handleClickAddListener(this.querySelector('.play.video-placeholder'), this.watchVideoHandler.bind(this))
-    handleClickAddListener(this.querySelector('.download.video-placeholder'), this.downloadVideoHandler.bind(this))
   }
   unregisterEvents () {
     handleClickRemoveListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
@@ -95,7 +94,6 @@ class VideoElement extends HTMLElement {
     handleClickRemoveListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
     handleClickRemoveListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
     handleClickRemoveListener(this.querySelector('.play.video-placeholder'), this.watchVideoHandler.bind(this))
-    handleClickRemoveListener(this.querySelector('.download.video-placeholder'), this.downloadVideoHandler.bind(this))
     this.querySelector('video') && this.unregisterVideoEvents(this.querySelector('video'))
   }
   watchVideoHandler (event) {
@@ -120,11 +118,8 @@ class VideoElement extends HTMLElement {
     event.preventDefault()
     
     const downloadStartedText = '⚡️ Download started'
-    let $downloadButton = event.target.classList.contains('.action') ? event.target : this.querySelector('.action.download')
-    if ($downloadButton.innerText === downloadStartedText) return console.log('already downloading')
-    else $downloadButton.innerText = downloadStartedText
-
-    this.classList.add('downloading')
+    if (event.target.innerText === downloadStartedText) return console.log('already downloading')
+    event.target.innerText = downloadStartedText
 
     fetch('/api/download-video', {
       method: 'POST',
@@ -145,7 +140,6 @@ class VideoElement extends HTMLElement {
     .then(() => {
       console.log('Video deleted')
       this.video.downloaded = false
-      this.classList.remove('downloading')
       this.render()
     })
     .catch((error) => console.error('Error deleting video:', error))  
