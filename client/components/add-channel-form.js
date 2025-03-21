@@ -21,8 +21,7 @@ class AddChannelForm extends HTMLElement {
         <div class="flex space-between">
           <label for="channel-name">Add a new channel</label>
           <input type="text" id="channel-name" placeholder="Channel Name" required>
-          <button type="submit">Add Channel</button>
-          <span class="loader"></span>
+          <button type="submit">Add Channel<span class="loader"></span></button>
         </div>
         <div class="status"></div>
       </form>
