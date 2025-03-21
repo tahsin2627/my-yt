@@ -1,0 +1,39 @@
+name: "Feature request"
+description: Describe why your feature request would be a nice addition
+labels:
+- feature-request
+body:
+- type: markdown
+  attributes:
+    value: Please also check the [contributor todo list](https://github.com/christian-fei/my-yt/issues/5) and ensure there isn't already an entry for feature request.
+
+- type: textarea
+  attributes:
+    label: Feature description
+    description: A brief description of your idea.
+    placeholder: ""
+  validations:
+    required: true
+    
+- type: textarea
+  attributes:
+    label: Why could this be helpful?
+    description: Explain the problem or need for this feature.
+    placeholder: ""
+  validations:
+    required: true
+
+- type: textarea
+  attributes:
+    label: Suggested solutions
+    description: Describe the ideal solution you'd like.
+    placeholder: ""
+  validations:
+    required: false
+
+- type: textarea
+  attributes:
+    label: Additional context
+    description: Add any other context or screenshots about the feature request here.
+  validations:
+    required: false
