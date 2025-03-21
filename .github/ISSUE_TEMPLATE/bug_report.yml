@@ -39,11 +39,11 @@ body:
     label: ✔️ Expected Behavior
     placeholder: What were you expecting?
   validations:
-    required: false
+    required: true
 
 - type: textarea
   attributes:
     label: ❌ Actual Behavior
     placeholder: What happened instead?
   validations:
-    required: false
+    required: true
