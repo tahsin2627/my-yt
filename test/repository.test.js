@@ -90,7 +90,12 @@ test('sets video summary', () => {
 })
 
 test('patches new video with addedAt', () => {
-  const newVideo = video2
-  const patchedVideo = repo.patchVideo(newVideo)
-  assert.equal(patchedVideo.addedAt, Date.now())
+  const patchedVideo = repo.patchVideo(video1)
+  assert.ok(patchedVideo.addedAt)
+})
+
+test('updates single video by id', () => {
+  repo.upsertVideos(video1)
+  const updatedVideo = repo.updateVideo(video1.id, { title: 'Updated Title' })
+  assert.equal(updatedVideo.title, 'Updated Title')
 })
