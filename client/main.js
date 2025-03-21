@@ -61,6 +61,15 @@ eventSource.onmessage = (message) => {
       })
       return
     }
+    if (data.type === 'ignored' && data.videoId && data.ignored !== undefined) {
+      ;[...document.querySelectorAll(`[data-video-id="${data.videoId}"]`)].forEach($video => {
+        if (!$video.dataset['data']) return
+        const videoData = JSON.parse($video.dataset['data'])
+        videoData.ignored = data.ignored
+        $video.dataset['data'] = JSON.stringify(videoData)
+      })
+      return
+    }
     console.warn('unhandled', data)
   } catch (err) {
     console.error('sse parse error', err)

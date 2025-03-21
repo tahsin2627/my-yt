@@ -189,11 +189,6 @@ class VideoElement extends HTMLElement {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: this.video.id }),
     })
-    .then(res => res.json())
-    .then((ignored) => {
-      this.video.ignored = ignored
-      this.render()
-    })
     .catch((error) => {
       console.error('Error ignoring video:', error)
       this.render()
