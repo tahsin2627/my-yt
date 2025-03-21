@@ -52,6 +52,8 @@ const routes = {
   } },
   '/settings': { template: document.getElementById('settings-template'), async initialize () {
     console.log('initalize /settings')
+
+    document.getElementById('search').setAttribute('disabled', 'disabled')
     
     const $showThumbnails = document.getElementById('show-thumbnails')
     store.get(store.showThumbnailsKey) ? $showThumbnails.setAttribute('checked', 'true') : $showThumbnails.removeAttribute('checked')
@@ -97,8 +99,7 @@ const routes = {
       .catch((error) => {
         $diskUsage.innerHTML = `Failed to reclaim disk space: <br><pre>${error.message}</pre>`
       })
-    })
-    
+    })    
   } },
   '/404': { template: document.getElementById('not-found-template'), async initialize () {
     document.getElementById('search').setAttribute('disabled', 'disabled')
