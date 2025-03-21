@@ -1,6 +1,5 @@
 name: "Bug report"
 description: Report errors or unexpected behavior
-type: Bug
 labels:
 - bug
 body:
