@@ -86,7 +86,7 @@ const routes = {
     })
     $reclaimDiskSpace.addEventListener('click', (event) => {
       event.preventDefault()
-      if (!confirm('About to delete downloaded videos, are you sure?'))
+      if (!confirm('About to delete downloaded videos, are you sure?')) return
       console.log('reclaiming')
       window.fetch('/api/reclaim-disk-space', {
         method: 'POST'
