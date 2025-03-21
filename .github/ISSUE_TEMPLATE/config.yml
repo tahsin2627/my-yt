@@ -4,9 +4,9 @@ issue_templates:
     description: "Report a bug in the system."
     title: "[Bug]: "
     labels: ["bug"]
-    body: "./ISSUE_TEMPLATE/bug_report.md"
+    body: "./ISSUE_TEMPLATE/bug_report.yml"
   - name: "Feature request"
     description: "Propose a feature request"
     title: "[Feature]: "
     labels: ["feature"]
-    body: "./ISSUE_TEMPLATE/feature_request.md"
+    body: "./ISSUE_TEMPLATE/feature_request.yml"
