@@ -11,7 +11,7 @@ body:
   attributes:
     label: Feature description
     description: A brief description of your idea.
-    placeholder: ""
+    placeholder: "..."
   validations:
     required: true
     
@@ -19,7 +19,7 @@ body:
   attributes:
     label: Why could this be helpful?
     description: Explain the problem or need for this feature.
-    placeholder: ""
+    placeholder: "..."
   validations:
     required: true
 
@@ -27,7 +27,7 @@ body:
   attributes:
     label: Suggested solutions
     description: Describe the ideal solution you'd like.
-    placeholder: ""
+    placeholder: "..."
   validations:
     required: false
 
