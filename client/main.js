@@ -52,11 +52,11 @@ eventSource.onmessage = (message) => {
       })
       return
     }
-    if (data.type === 'downloaded' && data.videoId) {
+    if (data.type === 'downloaded' && data.videoId && data.downloaded !== undefined) {
       ;[...document.querySelectorAll(`[data-video-id="${data.videoId}"]`)].forEach($video => {
         if (!$video.dataset['data']) return
         const videoData = JSON.parse($video.dataset['data'])
-        videoData.downloaded = true
+        videoData.downloaded = data.downloaded
         $video.dataset['data'] = JSON.stringify(videoData)
       })
       return
