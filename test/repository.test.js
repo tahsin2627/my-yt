@@ -40,6 +40,11 @@ test('upserts videos', () => {
   assert.equal(repo.getVideos().length, 2)
 })
 
+test('upserts single video', () => {
+  repo.upsertVideos(video1)
+  assert.equal(repo.getVideos().length, 1)
+})
+
 test('gets channel videos', () => {
   repo.upsertVideos([video1, video2])
   const videos = repo.getChannelVideos('tester')
