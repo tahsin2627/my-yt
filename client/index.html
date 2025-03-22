@@ -90,7 +90,12 @@
   </template>
 
   <template id="not-found-template">
-    <h1>404 Not Found</h1>
+    <div id="not-found" class="flex space-between direction-col user-select-none">
+      <h1>404 Not Found</h1>
+      <p>The page you are looking for does not exist.</p>
+      <a href="/">Go back to home</a>
+      <div class="extra-big">👻</div>
+    </div>
   </template>
 
   <script type="module" src="/lib/utils.js"></script>
