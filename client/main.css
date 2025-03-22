@@ -100,6 +100,12 @@ input[type="text"], input[type="url"], input[type="search"] {
 
 
 
+@media all and (max-width: 50em) {
+  channels-list {
+    display: none;
+  }
+}
+
 .channels-container {
   user-select: none;
   -webkit-user-select: none;
