@@ -1,11 +1,20 @@
-
+function handleClickAddListener ($el, handler) {
+  if (!$el) return
+  $el.addEventListener('click', handler)
+  $el.addEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
+}
+function handleClickRemoveListener ($el, handler) {
+  if (!$el) return
+  $el.removeEventListener('click', handler)
+  $el.removeEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
+}
 class ChannelsList extends HTMLElement {
   constructor () {
     super()
+    this.channels = []
   }
   connectedCallback () {
     this.render()
-    this.registerEvents()
   }
   static get observedAttributes() {
     return ['data-list'];
@@ -15,15 +24,8 @@ class ChannelsList extends HTMLElement {
     if (name === 'data-list') {
       const channels = newValue.split(',')
       channels.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
-      const $channelsContainer = this.querySelector('div')
-      channels.forEach(channel => {
-        const $existingChannel = $channelsContainer.querySelector(`[data-channel="${channel}"]`)
-        if ($existingChannel) {
-          $existingChannel.replaceWith(createChannelElement(channel))
-        } else {
-          $channelsContainer.appendChild(createChannelElement(channel))
-        }
-      })
+      this.channels = channels
+      this.render()
     }
   }
   disconnectedCallback () {
@@ -33,34 +35,39 @@ class ChannelsList extends HTMLElement {
   }
   deregisterEvents () {
   }
-  render () {
+  render () {    
+    if (this.channels.length === 0) return this.innerHTML = ``
+    
+    this.$searchInput = document.querySelector('#search')
+    this.unregisterEvents()
     this.innerHTML = /*html*/`
     <details class="channels-container">
       <summary>Channels</summary>
-      <div></div>
+      <div>${this.channels.map(channel => /*html*/`<span data-channel="${channel}" class="channel">${channel}</span>`).join('')}</div>
     </details>
     `
+    this.registerEvents()
+  }
+  registerEvents() {
+    const channels = this.querySelectorAll('.channel')
+    channels.forEach(channel => handleClickAddListener(channel, this.channelClick.bind(this)))
+  }
+  unregisterEvents() {
+    const channels = this.querySelectorAll('.channel')
+    channels.forEach(channel => handleClickRemoveListener(channel, this.channelClick.bind(this)))
+  }
+  channelClick(event) {
+    if (!this.$searchInput) return console.log('missing search field, skipping channel event register')
+    const channels = this.querySelectorAll('.channel')
+    if (this.$searchInput.value === event.target.innerText) {
+      this.$searchInput.value = ''
+      event.target.classList.remove('active')
+    } else {
+      this.$searchInput.value = event.target.innerText
+      channels.forEach(c => c.classList.remove('active'))
+      event.target.classList.add('active')
+    }
+    this.$searchInput.dispatchEvent(new Event('keyup'))
   }
 }
 customElements.define('channels-list', ChannelsList)
-
-
-function createChannelElement (channel = '') {
-  const $channel = document.createElement('span')
-  $channel.dataset.channel = channel
-  $channel.classList.add('channel')
-  $channel.innerText = channel
-  $channel.addEventListener('click', function (event) {
-    const $searchInput = document.querySelector('#search')
-    if ($searchInput.value === channel) {
-      $searchInput.value = ''
-      event.target.classList.remove('active')
-    } else {
-      $searchInput.value = channel
-      event.target.parentNode.querySelector('.active')?.classList.remove('active')
-      event.target.classList.add('active')
-    }
-    $searchInput.dispatchEvent(new Event('keyup'))
-  })
-  return $channel
-}

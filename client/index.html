@@ -9,9 +9,12 @@
 </head>
 <body>
   <header>
-    <h1><a href="/">My-YT</a></h1>
-    <search-videos></search-videos>
-    <a href="/settings">🔧 Settings</a>
+    <div class="flex space-between">
+      <h1><a href="/">My-YT</a></h1>
+      <search-videos></search-videos>
+      <a href="/settings">🔧 Settings</a>
+    </div>
+    <channels-list></channels-list>
   </header>
 
   <main></main>
@@ -27,7 +30,6 @@
   </dialog>
 
   <template id="main-template">
-    <channels-list></channels-list>
     <div id="filter-results-status"></div>
     <video-filters></video-filters>
     <div class="main-videos-container"></div>

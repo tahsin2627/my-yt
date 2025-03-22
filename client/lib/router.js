@@ -14,21 +14,21 @@ const routes = {
   '/': { template: document.getElementById('main-template'), async initialize() {
     console.log('initialize /')
 
+    document.querySelector('channels-list').classList.remove('hide')
+
     let $videosContainer = document.querySelector('.main-videos-container')
-    if (!$videosContainer) return
     let videos = await fetch('/api/videos').then(res => res.json())
     console.log('videos.length', videos.length)
     if (videos.length === 0) {
       document.querySelector('empty-state').style.display = ''
-      document.querySelector('channels-list').style.display = 'none'
       document.querySelector('video-filters').style.display = 'none'
     } else {
       document.querySelector('empty-state').style.display = 'none'
-      document.querySelector('channels-list').style.display = ''
       document.querySelector('video-filters').style.display = ''
     }
 
     document.getElementById('search').removeAttribute('disabled')
+    document.getElementById('search').classList.remove('hide')
     
     $videosContainer.innerHTML = ''
     const ignoredTerms = store.get(store.ignoreTermsKey)
@@ -40,6 +40,7 @@ const routes = {
     // .filter((_, i) => i < 1000)
 
     videos.forEach(video => $videosContainer.appendChild(createVideoElement(video, showOriginalThumbnail)))
+
 
     const channelsList = videos.reduce((acc, video) => {
       if (!acc.includes(video.channelName)) acc.push(video.channelName)
@@ -53,7 +54,10 @@ const routes = {
   '/settings': { template: document.getElementById('settings-template'), async initialize () {
     console.log('initalize /settings')
 
+    document.querySelector('channels-list').classList.add('hide')
+
     document.getElementById('search').setAttribute('disabled', 'disabled')
+    document.getElementById('search').classList.add('hide')
     
     const $showThumbnails = document.getElementById('show-thumbnails')
     store.get(store.showThumbnailsKey) ? $showThumbnails.setAttribute('checked', 'true') : $showThumbnails.removeAttribute('checked')
@@ -103,6 +107,9 @@ const routes = {
   } },
   '/404': { template: document.getElementById('not-found-template'), async initialize () {
     document.getElementById('search').setAttribute('disabled', 'disabled')
+    document.getElementById('search').classList.add('hide')
+
+    document.querySelector('channels-list').classList.add('hide')
   } }
 }
 
