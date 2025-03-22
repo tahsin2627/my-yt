@@ -17,10 +17,6 @@ jobs:
       uses: actions/setup-node@v4
       with:
         node-version: ${{ matrix.node-version }}
-    - uses: actions/setup-python@v4
-      with:
-        python-version: '3.13'
-        cache: 'pip'
     - run: pip install yt-dlp
     - run: npm ci
     - run: npm test
