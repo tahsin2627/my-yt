@@ -1,13 +1,3 @@
-function handleClickAddListener ($el, handler) {
-  if (!$el) return
-  $el.addEventListener('click', handler)
-  $el.addEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
-}
-function handleClickRemoveListener ($el, handler) {
-  if (!$el) return
-  $el.removeEventListener('click', handler)
-  $el.removeEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
-}
 function tryFormatDate(date) {
   try {
     return new Date(date).toISOString().substring(0, 10)
@@ -78,24 +68,24 @@ class VideoElement extends HTMLElement {
     this.registerEvents()
   }
   registerEvents () {
-    handleClickAddListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
-    handleClickAddListener(this.querySelector('img.download'), this.downloadVideoHandler.bind(this))
-    handleClickAddListener(this.querySelector('.action.delete'), this.deleteVideoHandler.bind(this))
-    handleClickAddListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
-    handleClickAddListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
-    handleClickAddListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
-    handleClickAddListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
-    handleClickAddListener(this.querySelector('.play.video-placeholder'), this.watchVideoHandler.bind(this))
+    window.utils.addClickListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
+    window.utils.addClickListener(this.querySelector('img.download'), this.downloadVideoHandler.bind(this))
+    window.utils.addClickListener(this.querySelector('.action.delete'), this.deleteVideoHandler.bind(this))
+    window.utils.addClickListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
+    window.utils.addClickListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
+    window.utils.addClickListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
+    window.utils.addClickListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
+    window.utils.addClickListener(this.querySelector('.play.video-placeholder'), this.watchVideoHandler.bind(this))
   }
   unregisterEvents () {
-    handleClickRemoveListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
-    handleClickRemoveListener(this.querySelector('img.download'), this.downloadVideoHandler.bind(this))
-    handleClickRemoveListener(this.querySelector('.action.delete'), this.deleteVideoHandler.bind(this))
-    handleClickRemoveListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
-    handleClickRemoveListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
-    handleClickRemoveListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
-    handleClickRemoveListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
-    handleClickRemoveListener(this.querySelector('.play.video-placeholder'), this.watchVideoHandler.bind(this))
+    window.utils.removeClickListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
+    window.utils.removeClickListener(this.querySelector('img.download'), this.downloadVideoHandler.bind(this))
+    window.utils.removeClickListener(this.querySelector('.action.delete'), this.deleteVideoHandler.bind(this))
+    window.utils.removeClickListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
+    window.utils.removeClickListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
+    window.utils.removeClickListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
+    window.utils.removeClickListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
+    window.utils.removeClickListener(this.querySelector('.play.video-placeholder'), this.watchVideoHandler.bind(this))
     this.querySelector('video') && this.unregisterVideoEvents(this.querySelector('video'))
   }
   watchVideoHandler (event) {

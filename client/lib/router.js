@@ -1,15 +1,3 @@
-
-function handleRoute(route = window.location.pathname) {
-  console.log('handling route', route)
-  if (routes[route]) {
-    document.querySelector('main').replaceChildren(routes[route].template.content.cloneNode(true))
-    routes[route].initialize && routes[route].initialize()
-  } else {
-    document.querySelector('main').replaceChildren(routes['/404'].template.content.cloneNode(true))
-    routes['/404'].initialize && routes['/404'].initialize()
-  }
-}
-
 const routes = {
   '/': { template: document.getElementById('main-template'), async initialize() {
     console.log('initialize /')
@@ -48,8 +36,8 @@ const routes = {
     }, []).join(',')
     document.querySelector('channels-list').dataset['list'] = channelsList
 
-    applyShowThumbnails(store.get(store.showThumbnailsKey))
-    applyShowBigPlayer(store.get(store.showBigPlayerKey))
+    window.utils.applyShowThumbnails(store.get(store.showThumbnailsKey))
+    window.utils.applyShowBigPlayer(store.get(store.showBigPlayerKey))
   } },
   '/settings': { template: document.getElementById('settings-template'), async initialize () {
     console.log('initalize /settings')
@@ -64,7 +52,7 @@ const routes = {
     
     $showThumbnails.addEventListener('click', (event) => {
       store.toggle(store.showThumbnailsKey)
-      applyShowThumbnails(store.get(store.showThumbnailsKey))
+      window.utils.applyShowThumbnails(store.get(store.showThumbnailsKey))
     })
 
     const $showBigPlayer = document.getElementById('show-big-player')
@@ -72,7 +60,7 @@ const routes = {
     
     $showBigPlayer.addEventListener('click', (event) => {
       store.toggle(store.showBigPlayerKey)
-      applyShowBigPlayer(store.get(store.showBigPlayerKey))
+      window.utils.applyShowBigPlayer(store.get(store.showBigPlayerKey))
     })
 
     const $showOriginalThumbnail = document.getElementById('show-original-thumbnail')
@@ -130,22 +118,13 @@ document.querySelectorAll('[href="/"],[href="/settings"]').forEach(($el) => {
 })
 
 
-
-function applyShowThumbnails(showThumbnails) {
-  if (showThumbnails) {
-    document.body.classList.remove('hide-thumbnails')
+function handleRoute(route = window.location.pathname) {
+  console.log('handling route', route)
+  if (routes[route]) {
+    document.querySelector('main').replaceChildren(routes[route].template.content.cloneNode(true))
+    routes[route].initialize && routes[route].initialize()
   } else {
-    document.body.classList.add('hide-thumbnails')
+    document.querySelector('main').replaceChildren(routes['/404'].template.content.cloneNode(true))
+    routes['/404'].initialize && routes['/404'].initialize()
   }
-  const $showThumbnailsCheckbox = document.getElementById('show-thumbnails')
-  if ($showThumbnailsCheckbox) $showThumbnailsCheckbox.checked = showThumbnails
-}
-function applyShowBigPlayer(showBigPlayer) {
-  if (showBigPlayer) {
-    document.body.classList.add('show-big-player')
-  } else {
-    document.body.classList.remove('show-big-player')
-  }
-  const $showBigPlayerCheckbox = document.getElementById('show-big-player')
-  if ($showBigPlayerCheckbox) $showBigPlayerCheckbox.checked = showBigPlayer
 }

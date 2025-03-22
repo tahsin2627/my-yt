@@ -1,18 +1,9 @@
-
 class EmptyState extends HTMLElement {
   constructor () {
     super()
   }
   connectedCallback () {
     this.render()
-    this.registerEvents()
-  }
-  disconnectedCallback () {
-    this.deregisterEvents()
-  }
-  registerEvents () {
-  }
-  deregisterEvents () {
   }
   render () {
     /* html for empty app state */

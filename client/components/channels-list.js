@@ -1,13 +1,3 @@
-function handleClickAddListener ($el, handler) {
-  if (!$el) return
-  $el.addEventListener('click', handler)
-  $el.addEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
-}
-function handleClickRemoveListener ($el, handler) {
-  if (!$el) return
-  $el.removeEventListener('click', handler)
-  $el.removeEventListener('keydown', (event) => event.key === 'Enter' && handler(event))
-}
 class ChannelsList extends HTMLElement {
   constructor () {
     super()
@@ -54,11 +44,11 @@ class ChannelsList extends HTMLElement {
   }
   registerEvents() {
     const channels = this.querySelectorAll('.channel')
-    channels.forEach(channel => handleClickAddListener(channel, this.channelClick.bind(this)))
+    channels.forEach(channel => window.utils.addClickListener(channel, this.channelClick.bind(this)))
   }
   unregisterEvents() {
     const channels = this.querySelectorAll('.channel')
-    channels.forEach(channel => handleClickRemoveListener(channel, this.channelClick.bind(this)))
+    channels.forEach(channel => window.utils.removeClickListener(channel, this.channelClick.bind(this)))
   }
   channelClick(event) {
     if (!this.$searchInput) return console.log('missing search field, skipping channel event register')
