@@ -207,7 +207,7 @@ class VideoElement extends HTMLElement {
     video.addEventListener('play', () => {
       console.log('video event play')
       this.classList.add('big')
-      setTimeout(this.scrollIntoViewWithOffset.bind(this, 150), document.querySelector('body > header').clientHeight)
+      setTimeout(this.scrollIntoViewWithOffset.bind(this, document.querySelector('body > header').clientHeight, "smooth"), 110)
       this.pauseOtherVideos(video)
     })
   }
