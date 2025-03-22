@@ -47,6 +47,9 @@ a {
 .space-between {
   justify-content: space-between;
 }
+.direction-col {
+  flex-direction: column;
+}
 
 
 .hide {
@@ -421,14 +424,12 @@ empty-state {
   display: flex;
   flex-direction: column;
 }
-.big-sad-emoji {
-  display: block;
-}
-.big-sad-emoji::after {
-  display: block;
+
+.extra-big {
   font-size: 10em;
   margin-top: 20px;
   margin-bottom: 20px;
-  animation: fadeIn 1s ease-in-out;
-  content: '🙈';
+}
+.user-select-none {
+  user-select: none;
 }
