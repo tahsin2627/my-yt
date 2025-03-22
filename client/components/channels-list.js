@@ -37,7 +37,7 @@ class ChannelsList extends HTMLElement {
     this.innerHTML = /*html*/`
     <details class="channels-container">
       <summary>Channels</summary>
-      <div>${this.channels.map(channel => /*html*/`<span data-channel="${channel}" class="channel">${channel}</span>`).join('')}</div>
+      <div>${this.channels.map(channel => /*html*/`<span tabindex=0 data-channel="${channel}" class="channel">${channel}</span>`).join('')}</div>
     </details>
     `
     this.registerEvents()
