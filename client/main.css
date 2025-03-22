@@ -416,6 +416,10 @@ empty-state {
   position: relative;
   max-width: 30em;
   margin: 2em auto;
+
+  align-items: center;
+  display: flex;
+  flex-direction: column;
 }
 .big-sad-emoji {
   display: block;
