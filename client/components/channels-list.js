@@ -22,7 +22,7 @@ class ChannelsList extends HTMLElement {
 
   attributeChangedCallback(name, _, newValue) {
     if (name === 'data-list') {
-      const channels = newValue.split(',')
+      const channels = newValue.split(',').filter(Boolean)
       channels.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
       this.channels = channels
       this.render()
@@ -35,8 +35,12 @@ class ChannelsList extends HTMLElement {
   }
   deregisterEvents () {
   }
-  render () {    
-    if (this.channels.length === 0) return this.innerHTML = ``
+  render () {
+    if (this.channels.length === 0) {
+      this.classList.add('hide')
+      return this.innerHTML = ``
+    }
+    this.classList.remove('hide')
     
     this.$searchInput = document.querySelector('#search')
     this.unregisterEvents()
