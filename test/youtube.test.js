@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'assert';
-import { getVideosFor, getVideo, extractIdFromUrl, isYouTubeUrl } from '../lib/youtube.js'
+import { getVideosFor, getVideo, extractIdFromUrl, isYouTubeUrl, isUnsupportedUrl, isVideoId } from '../lib/youtube.js'
 
 test('gets videos for channel', async () => {
   const videos = await getVideosFor('veritasium')
@@ -43,4 +43,16 @@ test('check if url is a youtube url', () => {
   assert.ok(isYouTubeUrl('https://www.youtube.com/watch?v=SOME_ID'))
   assert.ok(isYouTubeUrl('https://youtube.com/watch?v=SOME_ID'))
   assert.ok(isYouTubeUrl('https://youtu.be/watch?v=SOME_ID'))
+})
+
+test('checks if url is unsupported', () => {
+  assert.ok(isUnsupportedUrl('https://somesite.com/video'))
+  assert.ok(!isUnsupportedUrl('qJZ1Ez28C-A'))
+})
+
+test('checks if url is a video id', () => {
+  assert.ok(isVideoId('qJZ1Ez28C-A'))
+  assert.ok(isVideoId('SOME_ID'))
+  assert.ok(!isVideoId('https://www.youtube.com/watch?v=SOME_ID'))
+  assert.ok(!isVideoId('https://somesite.com/video'))
 })
