@@ -62,6 +62,7 @@ class ChannelsList extends HTMLElement {
       event.target.classList.add('active')
     }
     this.$searchInput.dispatchEvent(new Event('keyup'))
+    setTimeout(() => document.body.scrollIntoView({ top: 0, behavior: 'smooth' }), 10)
   }
 }
 customElements.define('channels-list', ChannelsList)
