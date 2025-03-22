@@ -2,6 +2,7 @@ import { test } from 'node:test'
 import assert from 'assert';
 import { getVideosFor, getVideo, extractIdFromUrl, isYouTubeUrl, isUnsupportedUrl, isVideoId } from '../lib/youtube.js'
 
+if (!process.env.CI) {
 test('gets videos for channel', async () => {
   const videos = await getVideosFor('veritasium')
   const video = videos[0]
@@ -30,6 +31,7 @@ test('gets single video', async () => {
   assert.ok(video.viewCount)
   assert.equal(video.duration, '33:36')
 })
+}
 
 test('extracts id from url', () => {
   assert.equal(extractIdFromUrl('https://www.youtube.com/watch?v=SOME_ID&pp=something'), 'SOME_ID')
