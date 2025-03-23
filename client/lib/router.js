@@ -69,29 +69,6 @@ const routes = {
     $showOriginalThumbnail.addEventListener('click', (event) => {
       store.toggle(store.showOriginalThumbnailKey)
     })
-    
-    const $reclaimDiskSpace = document.getElementById('reclaim-disk-space')
-    const $diskUsage = document.getElementById('disk-usage')
-    const $diskSpaceUsed = document.getElementById('disk-space-used')
-    window.fetch('/api/disk-usage')
-    .then(response => response.text())
-    .then((diskSpaceUsed) => {
-      $diskSpaceUsed.innerText = diskSpaceUsed
-    })
-    $reclaimDiskSpace.addEventListener('click', (event) => {
-      event.preventDefault()
-      if (!confirm('About to delete downloaded videos, are you sure?')) return
-      console.log('reclaiming')
-      window.fetch('/api/reclaim-disk-space', {
-        method: 'POST'
-      })
-      .then(() => {
-        $diskUsage.innerText = 'Successfully reclaimed disk space'
-      })
-      .catch((error) => {
-        $diskUsage.innerHTML = `Failed to reclaim disk space: <br><pre>${error.message}</pre>`
-      })
-    })    
   } },
   '/404': { template: document.getElementById('not-found-template'), async initialize () {
     document.getElementById('search').setAttribute('disabled', 'disabled')
