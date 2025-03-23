@@ -31,7 +31,6 @@ class ChannelsList extends HTMLElement {
     }
     this.classList.remove('hide')
     
-    this.$searchInput = document.querySelector('#search')
 
     this.innerHTML = /*html*/`
       <details class="channels-container">
@@ -51,17 +50,18 @@ class ChannelsList extends HTMLElement {
     channels.forEach(channel => window.utils.removeClickListener(channel, this.channelClick.bind(this)))
   }
   channelClick(event) {
-    if (!this.$searchInput) return console.log('missing search field, skipping channel event register')
+    const $searchInput = document.querySelector('#search')
+    if (!$searchInput) return console.log('missing search field, skipping channel event register')
     const channels = this.querySelectorAll('.channel')
-    if (this.$searchInput.value === event.target.innerText) {
-      this.$searchInput.value = ''
+    if ($searchInput.value === event.target.innerText) {
+      $searchInput.value = ''
       event.target.classList.remove('active')
     } else {
-      this.$searchInput.value = event.target.innerText
+      $searchInput.value = event.target.innerText
       channels.forEach(c => c.classList.remove('active'))
       event.target.classList.add('active')
     }
-    this.$searchInput.dispatchEvent(new Event('keyup'))
+    $searchInput.dispatchEvent(new Event('keyup'))
     setTimeout(() => document.body.scrollIntoView({ top: 0, behavior: 'smooth' }), 10)
   }
 }
