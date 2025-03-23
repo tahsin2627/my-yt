@@ -5,19 +5,24 @@ class SearchVideos extends HTMLElement {
   }
   connectedCallback () {
     this.render()
-    this.registerEvents()
   }
   disconnectedCallback () {
-    this.deregisterEvents()
+    this.unregisterEvents()
   }
   registerEvents () {
-    this.querySelector('input').addEventListener('keyup', this.searchHandler.bind(this))
+    if (this.querySelector('input'))
+      this.querySelector('input').addEventListener('keyup', this.searchHandler.bind(this))
   }
-  deregisterEvents () {
-    this.querySelector('input').removeEventListener('keyup', this.searchHandler.bind(this))
+  unregisterEvents () {
+    if (this.querySelector('input'))
+      this.querySelector('input').removeEventListener('keyup', this.searchHandler.bind(this))
   }
   render () {
+    this.unregisterEvents()
+
     this.innerHTML = /*html*/`<input type="search" incremental="incremental" id="search" placeholder="Search videos or paste video url" autofocus>`
+
+    this.registerEvents()
   }
   searchHandler (event) {
     event.preventDefault()

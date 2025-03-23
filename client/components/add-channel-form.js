@@ -4,18 +4,21 @@ class AddChannelForm extends HTMLElement {
   }
   connectedCallback () {
     this.render()
-    this.registerEvents()
   }
   disconnectedCallback () {
     this.unregisterEvents()
   }
   registerEvents () {
-    this.querySelector('form').addEventListener('submit', this.addChannelHandler.bind(this))
+    if (this.querySelector('form'))
+      this.querySelector('form').addEventListener('submit', this.addChannelHandler.bind(this))
   }
   unregisterEvents () {
-    this.querySelector('form').removeEventListener('submit', this.addChannelHandler.bind(this))
+    if (this.querySelector('form'))
+      this.querySelector('form').removeEventListener('submit', this.addChannelHandler.bind(this))
   }
   render () {
+    this.unregisterEvents()
+
     this.innerHTML = /*html*/`
       <form id="add-channel-form">
         <div class="flex space-between">
@@ -26,6 +29,8 @@ class AddChannelForm extends HTMLElement {
         <div class="status"></div>
       </form>
     `
+
+    this.registerEvents()
   }
 
   addChannelHandler (event) {

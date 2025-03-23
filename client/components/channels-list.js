@@ -6,6 +6,10 @@ class ChannelsList extends HTMLElement {
   connectedCallback () {
     this.render()
   }
+  disconnectedCallback () {
+    this.unregisterEvents()
+  }
+
   static get observedAttributes() {
     return ['data-list'];
   }
@@ -18,14 +22,9 @@ class ChannelsList extends HTMLElement {
       this.render()
     }
   }
-  disconnectedCallback () {
-    this.deregisterEvents()
-  }
-  registerEvents () {
-  }
-  deregisterEvents () {
-  }
   render () {
+    this.unregisterEvents()
+
     if (this.channels.length === 0) {
       this.classList.add('hide')
       return this.innerHTML = ``
@@ -33,13 +32,14 @@ class ChannelsList extends HTMLElement {
     this.classList.remove('hide')
     
     this.$searchInput = document.querySelector('#search')
-    this.unregisterEvents()
+
     this.innerHTML = /*html*/`
-    <details class="channels-container">
-      <summary>Channels</summary>
-      <div>${this.channels.map(channel => /*html*/`<span tabindex=0 data-channel="${channel}" class="channel">${channel}</span>`).join('')}</div>
-    </details>
+      <details class="channels-container">
+        <summary>Channels</summary>
+        <div>${this.channels.map(channel => /*html*/`<span tabindex=0 data-channel="${channel}" class="channel">${channel}</span>`).join('')}</div>
+      </details>
     `
+
     this.registerEvents()
   }
   registerEvents() {

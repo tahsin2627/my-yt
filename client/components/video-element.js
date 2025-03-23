@@ -30,7 +30,9 @@ class VideoElement extends HTMLElement {
   }
   render () {
     if (!this.video) return
+
     this.unregisterEvents()
+
     this.classList.add('video')
     this.dataset['videoId'] = this.video.id
     this.dataset['date'] = this.video.publishedAt
@@ -65,6 +67,7 @@ class VideoElement extends HTMLElement {
         <a href="https://www.youtube.com/watch?v=${this.video.id}" target="_blank">📺 external</a>
       </div>
     `
+    
     this.registerEvents()
   }
   registerEvents () {

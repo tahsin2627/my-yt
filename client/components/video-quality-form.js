@@ -4,7 +4,6 @@ class VideoQualityForm extends HTMLElement {
   }
   connectedCallback () {
     this.render()
-    this.registerEvents()
 
     window.fetch('/api/video-quality', {
       method: 'GET'
@@ -19,14 +18,16 @@ class VideoQualityForm extends HTMLElement {
     this.unregisterEvents()
   }
   registerEvents () {
-    this.querySelector('#video-quality')
-    .addEventListener('change', this.setVideoQualityHandler.bind(this))
+    if (this.querySelector('#video-quality'))
+      this.querySelector('#video-quality').addEventListener('change', this.setVideoQualityHandler.bind(this))
   }
   unregisterEvents () {
-    this.querySelector('#video-quality')
-    .removeEventListener('change', this.setVideoQualityHandler.bind(this))
+    if (this.querySelector('#video-quality'))
+      this.querySelector('#video-quality').removeEventListener('change', this.setVideoQualityHandler.bind(this))
   }
   render () {
+    this.unregisterEvents()
+
     this.innerHTML = /*html*/`
       <form>
         <div class="flex space-between">
@@ -44,6 +45,8 @@ class VideoQualityForm extends HTMLElement {
         </div>
       </form>
     `
+
+    this.registerEvents()
   }
 
   setVideoQualityHandler (event) {
