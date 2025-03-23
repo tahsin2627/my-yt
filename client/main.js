@@ -105,29 +105,3 @@ function createVideoElement (video, showOriginalThumbnail = false) {
   $video.dataset['videoId'] = video.id
   return $video
 }
-
-// settings ui
-// const $addIgnoredTerm = document.getElementById('add-ignored-term')
-// $addIgnoredTerm.addEventListener('keyup', (event) => {
-//   event.preventDefault()
-//   if (event.key !== 'Enter') return
-//   const ignoredTerm = $addIgnoredTerm.value.trim().toLowerCase()
-//   if (ignoredTerm) {
-//     store.push(store.ignoreTermsKey, ignoredTerm)
-//     $addIgnoredTerm.value = ''
-//   }
-//   applyIgnoredTerms(store.get(store.ignoreTermsKey))
-// })
-
-// function applyIgnoredTerms (ignoredTerms) {
-//   const $ignoredTerms = document.getElementById('ignored-terms')
-//   if (!$ignoredTerms) return
-//   $ignoredTerms.innerHTML = ignoredTerms.map(term => /*html*/`<li class="ignored-term">${term}</li>`).join('')
-//   if (ignoredTerms.length === 0) {
-//     $ignoredTerms.innerHTML = /*html*/`<li>No ignored terms</li>`
-//   }
-// }
-
-
-// applyIgnoredTerms(store.get(store.ignoreTermsKey))
-
