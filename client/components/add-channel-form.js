@@ -9,16 +9,12 @@ class AddChannelForm extends HTMLElement {
     this.unregisterEvents()
   }
   registerEvents () {
-    if (this.querySelector('form'))
-      this.querySelector('form').addEventListener('submit', this.addChannelHandler.bind(this))
+    this.querySelector('form').addEventListener('submit', this.addChannelHandler.bind(this))
   }
   unregisterEvents () {
-    if (this.querySelector('form'))
-      this.querySelector('form').removeEventListener('submit', this.addChannelHandler.bind(this))
+    this.querySelector('form').removeEventListener('submit', this.addChannelHandler.bind(this))
   }
   render () {
-    this.unregisterEvents()
-
     this.innerHTML = /*html*/`
       <form id="add-channel-form">
         <div class="flex space-between">
