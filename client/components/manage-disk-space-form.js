@@ -28,9 +28,15 @@ class ManageDiskSpaceForm extends HTMLElement {
       <form>
         <div class="flex space-between">
           <div>
-            Delete downloaded videos you ignored to reclaim disk space
+            Delete downloaded videos to reclaim disk space
           </div>
-          <button id="reclaim-disk-space" type="submit">Delete videos</button>
+          <div>
+            <label for="delete-only-ignored">
+              Only ignored videos
+            </label>
+            <input type="checkbox" id="delete-only-ignored"/>
+            <button id="reclaim-disk-space" type="submit">Delete videos</button>
+          </div>
         </div>
         <div><small id="disk-usage">Currently <span id="disk-space-used"></span> of disk space used</small></div>
       </form>
@@ -41,9 +47,12 @@ class ManageDiskSpaceForm extends HTMLElement {
     event.preventDefault()
     if (!confirm('About to delete downloaded videos, are you sure?')) return
     console.log('reclaiming')
+    const onlyIgnored = this.querySelector('#delete-only-ignored').checked
+    console.log({onlyIgnored})
     const $diskUsage = this.querySelector('#disk-usage')
     window.fetch('/api/reclaim-disk-space', {
-      method: 'POST'
+      method: 'POST',
+      body: JSON.stringify({ onlyIgnored })
     })
     .then(() => {
       $diskUsage.innerText = 'Successfully reclaimed disk space'
