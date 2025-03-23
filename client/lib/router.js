@@ -69,6 +69,29 @@ const routes = {
     $showOriginalThumbnail.addEventListener('click', (event) => {
       store.toggle(store.showOriginalThumbnailKey)
     })
+
+    const $videoQuality = document.getElementById('video-quality')
+    $videoQuality.addEventListener('change', (event) => {
+      console.log('change video quality', event.target.value)
+      window.fetch('/api/video-quality', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: event.target.value
+      })
+    })
+    window.fetch('/api/video-quality', {
+      method: 'GET'
+    }).then(response => response.json())
+    .then((videoQuality) => {
+      console.log('video quality', videoQuality)
+      $videoQuality.value = +videoQuality
+    })
+    .catch(error => console.error('Error:', error))
+
+
+
     
     const $reclaimDiskSpace = document.getElementById('reclaim-disk-space')
     const $diskUsage = document.getElementById('disk-usage')

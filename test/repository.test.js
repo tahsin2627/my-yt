@@ -99,3 +99,11 @@ test('updates single video by id', () => {
   const updatedVideo = repo.updateVideo(video1.id, { title: 'Updated Title' })
   assert.equal(updatedVideo.title, 'Updated Title')
 })
+
+test('gets video quality', () => {
+  assert.equal(repo.getVideoQuality(), 720)
+})
+test('sets video quality', () => {
+  assert.ok(repo.setVideoQuality(1080))
+  assert.equal(repo.getVideoQuality(), 1080)
+})
