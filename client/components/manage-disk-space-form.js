@@ -5,23 +5,18 @@ class ManageDiskSpaceForm extends HTMLElement {
   connectedCallback () {
     this.render()
     this.registerEvents()
-
-    const $diskSpaceUsed = document.getElementById('disk-space-used')
-    window.fetch('/api/disk-usage')
-    .then(response => response.text())
-    .then((diskSpaceUsed) => {
-      $diskSpaceUsed.innerText = diskSpaceUsed
-    })
-    .catch(err => console.error(err))
+    this.updateDiskSpaceUsed()
   }
   disconnectedCallback () {
     this.unregisterEvents()
   }
   registerEvents () {
     this.querySelector('#reclaim-disk-space').addEventListener('click', this.reclaimDiskSpace.bind(this))
+    this.querySelector('#delete-only-ignored').addEventListener('change', this.updateDiskSpaceUsed.bind(this))
   }
   unregisterEvents () {
     this.querySelector('#reclaim-disk-space').removeEventListener('click', this.reclaimDiskSpace.bind(this))
+    this.querySelector('#delete-only-ignored').removeEventListener('change', this.updateDiskSpaceUsed.bind(this))
   }
   render () {
     this.innerHTML = /*html*/`
@@ -30,7 +25,7 @@ class ManageDiskSpaceForm extends HTMLElement {
           <div>
             Delete downloaded videos to reclaim disk space
           </div>
-          <div>
+          <div class="user-select-none">
             <label for="delete-only-ignored">
               Only ignored videos
             </label>
@@ -43,12 +38,21 @@ class ManageDiskSpaceForm extends HTMLElement {
     `
   }
 
+  updateDiskSpaceUsed() {
+    const onlyIgnored = this.querySelector('#delete-only-ignored').checked
+    const $diskSpaceUsed = this.querySelector('#disk-space-used')
+    window.fetch(onlyIgnored ? '/api/disk-usage?onlyIgnored=true' : '/api/disk-usage')
+    .then(response => response.text())
+    .then((diskSpaceUsed) => {
+      $diskSpaceUsed.innerText = diskSpaceUsed
+    })
+    .catch(err => console.error(err))
+  }
+
   reclaimDiskSpace (event) {
     event.preventDefault()
     if (!confirm('About to delete downloaded videos, are you sure?')) return
-    console.log('reclaiming')
     const onlyIgnored = this.querySelector('#delete-only-ignored').checked
-    console.log({onlyIgnored})
     const $diskUsage = this.querySelector('#disk-usage')
     window.fetch('/api/reclaim-disk-space', {
       method: 'POST',
