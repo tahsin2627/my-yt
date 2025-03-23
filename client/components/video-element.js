@@ -36,12 +36,10 @@ class VideoElement extends HTMLElement {
     this.classList.add('video')
     this.dataset['videoId'] = this.video.id
     this.dataset['date'] = this.video.publishedAt
-    if (this.video.summary) this.dataset['summarized'] = "true"
-    else this.dataset['summarized'] = "false"
-    if (this.video.downloaded) this.dataset['downloaded'] = "true"
-    else this.dataset['downloaded'] = "false"
-    if (this.video.ignored) this.dataset['ignored'] = "true"
-    else this.dataset['ignored'] = "false"
+    this.dataset['summarized'] = this.video.summary ? "true" : "false"
+    this.dataset['downloaded'] = this.video.downloaded ? "true" : "false"
+    this.dataset['ignored'] = this.video.ignored ? "true" : "false"
+
     this.innerHTML = /*html*/`
       ${this.video.downloaded
       ? /*html*/`<div class="play video-placeholder" style="background-image: url(${this.video.thumbnail})"><div class="play-icon"></div></div>`
@@ -94,7 +92,8 @@ class VideoElement extends HTMLElement {
   watchVideoHandler (event) {
     event.preventDefault()
     this.querySelector('.play.video-placeholder').outerHTML = /*html*/`<video controls width="400">
-      <source src="/videos/${this.video.id}" type="video/${this.video.format}" />
+      <source src="/videos/${this.video.id}" type="video/webm" />
+      <source src="/videos/${this.video.id}" type="video/mp4" />
       <track
         default
         kind="captions"
