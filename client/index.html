@@ -68,21 +68,7 @@
         <div><small>Show the creators chosen thumbnail, or a neutral one based on the actual video frames</small></div>
       </form>
       <br>
-      <form>
-        <div class="flex space-between">
-          <div>
-            Video quality
-          </div>
-          <select name="video-quality" id="video-quality">
-            <option value="360">360</option>
-            <option value="480">480</option>
-            <option value="720">720</option>
-            <option value="1080">1080</option>
-            <option value="1440">1440</option>
-            <option value="2160">2160</option>
-          </select>
-        </div>
-      </form>
+      <video-quality-form></video-quality-form>
       <br>
       <form>
         <div class="flex space-between">
@@ -121,6 +107,7 @@
   <script type="module" src="/components/channels-list.js"></script>
   <script type="module" src="/components/video-element.js"></script>
   <script type="module" src="/components/add-channel-form.js"></script>
+  <script type="module" src="/components/video-quality-form.js"></script>
   <script type="module" src="/main.js"></script>
   <script type="module" src="/lib/router.js"></script>
 </body>
