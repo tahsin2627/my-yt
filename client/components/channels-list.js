@@ -12,7 +12,7 @@ class ChannelsList extends HTMLElement {
 
   attributeChangedCallback(name, _, newValue) {
     if (name === 'data-list') {
-      const channels = newValue.split(',').filter(Boolean)
+      const channels = JSON.parse(newValue).filter(Boolean)
       channels.sort((a, b) => a.toLowerCase().localeCompare(b.toLowerCase()))
       this.channels = channels
       this.render()

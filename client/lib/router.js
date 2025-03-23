@@ -33,8 +33,8 @@ const routes = {
     const channelsList = videos.reduce((acc, video) => {
       if (!acc.includes(video.channelName)) acc.push(video.channelName)
       return acc
-    }, []).join(',')
-    document.querySelector('channels-list').dataset['list'] = channelsList
+    }, [])
+    document.querySelector('channels-list').dataset['list'] = JSON.stringify(channelsList)
 
     window.utils.applyShowThumbnails(store.get(store.showThumbnailsKey))
     window.utils.applyShowBigPlayer(store.get(store.showBigPlayerKey))
