@@ -136,6 +136,7 @@ class VideoElement extends HTMLElement {
       console.log('Video deleted')
       this.video.downloaded = false
       this.classList.remove('downloading')
+      this.classList.remove('big')
       this.querySelector('video') && this.unregisterVideoEvents(this.querySelector('video'))
       this.render()
     })
