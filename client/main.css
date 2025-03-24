@@ -260,7 +260,8 @@ video-element, video-element video {
   position: fixed;
   bottom: 10px;
   right: 10px;
-  width: 300px;
+  width: fit-content;
+  max-width: 90%;
   overflow: hidden;
   z-index: 9000;
   /* height: 200px; */
