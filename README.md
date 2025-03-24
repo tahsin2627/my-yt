@@ -11,6 +11,7 @@ A clean and minimal youtube frontend supported by yt-dlp, and optionally your lo
 - Ignore videos you don't want to watch
 - Remove sponsors automatically thanks to SponsorBlock
 - Offline media playback
+- Native Google Chromecast support
 - Disable clickbait thumbnails
 - Play videos in background
 - Summarize video content using your local AI model
