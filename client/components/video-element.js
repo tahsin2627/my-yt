@@ -92,13 +92,8 @@ class VideoElement extends HTMLElement {
   watchVideoHandler (event) {
     event.preventDefault()
     this.querySelector('.play.video-placeholder').outerHTML = /*html*/`<video controls width="400">
-      <source src="/videos/${this.video.id}" type="video/webm" />
-      <source src="/videos/${this.video.id}" type="video/mp4" />
-      <track
-        default
-        kind="captions"
-        srclang="en"
-        src="/captions/${this.video.id}" />
+      <source src="/videos/${this.video.id}" type="video/${this.video.format}" />
+      <track default kind="captions" srclang="en" src="/captions/${this.video.id}" />
       <p>
         Your browser does not support the video tag.
         Download the video instead <a href="/videos/${this.video.id}" target="_blank">here</a>

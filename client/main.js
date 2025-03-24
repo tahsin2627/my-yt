@@ -57,6 +57,7 @@ eventSource.onmessage = (message) => {
         if (!$video.dataset['data']) return
         const videoData = JSON.parse($video.dataset['data'])
         videoData.downloaded = data.downloaded
+        if (data.video) Object.assign(videoData, data.video)
         $video.dataset['data'] = JSON.stringify(videoData)
       })
       return
