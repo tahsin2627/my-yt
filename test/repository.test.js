@@ -27,6 +27,12 @@ test('adds channel', () => {
   assert.equal(repo.getChannels().length, 1)
   assert.equal(repo.channelExists('veritasium'), true)
 })
+test('delete channel', () => {
+  repo.addChannel('veritasium')
+  repo.deleteChannel('veritasium')
+  assert.equal(repo.getChannels().length, 0)
+  assert.equal(repo.channelExists('veritasium'), false)
+})
 
 test('gets channels', () => {
   repo.addChannel('veritasium')
