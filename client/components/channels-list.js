@@ -9,10 +9,21 @@ class ChannelsList extends HTMLElement {
   disconnectedCallback () {
     this.unregisterEvents()
   }
+  static get observedAttributes() {
+    return ['data-list'];
+  }
+
+  attributeChangedCallback(name, _, newValue) {
+    if (name === 'data-list') {
+      this.channels = JSON.parse(this.dataset['list'])
+      this.render()
+    }
+  }
   
   render () {
     if (this.channels.length === 0) this.classList.add('hide')
     else this.classList.remove('hide')
+    this.unregisterEvents()
     
     this.innerHTML = /*html*/`
       <details class="channels-container">
@@ -24,7 +35,6 @@ class ChannelsList extends HTMLElement {
     this.registerEvents()
   }
   registerEvents() {
-
     const channels = this.querySelectorAll('.channel')
     channels.forEach(channel => window.utils.addClickListener(channel, this.channelClick.bind(this)))
   }
