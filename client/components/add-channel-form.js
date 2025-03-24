@@ -47,9 +47,10 @@ class AddChannelForm extends HTMLElement {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ name: channelName })
     })
-    .then(() => {
+    .then(res => res.text())
+    .then((text) => {
       form.reset()
-      status.innerText = `Successfully added ${channelName}`
+      status.innerText = text // `Successfully added ${channelName}`
     })
     .catch(error => {
       console.error('Error adding channel:', error)
