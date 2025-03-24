@@ -123,3 +123,19 @@ Handles persistence of video information (set video as downloaded, summary, igno
 dependency less, bare HTML5, CSS3 and JS for a basic frontend
 
 Handles SSE updates, interacting with the API
+
+
+## development
+
+run tests
+
+```
+npm t
+```
+
+
+build docker image
+
+```bash
+docker build . -t my-yt:latest
+```
