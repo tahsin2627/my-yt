@@ -4,6 +4,11 @@ A clean and minimal youtube frontend supported by yt-dlp, and optionally your lo
 
 ![preview my-yt](/preview.png)
 
+
+
+
+
+
 ## Features
 
 - Channel management/Subscriptions
@@ -27,6 +32,10 @@ A clean and minimal youtube frontend supported by yt-dlp, and optionally your lo
 
 > Application runs on http://localhost:3000 
 
+
+
+
+
 ## Installation (node.js)
 
 ```bash
@@ -38,6 +47,13 @@ npm i
 
 npm start
 ```
+
+
+
+
+
+
+
 
 ## Installation (docker)
 
@@ -78,21 +94,8 @@ docker run -e AI_MODEL=gpt-4o-mini -e AI_HOST=https://api.openai.com -e AI_APIKE
 docker run -e AI_MODEL=gpt-4o-mini -e AI_HOST=https://api.openai.com -e AI_APIKEY=sk-proj-123 --rm -it -p 3000:3000 christianfei/my-yt:latest
 ```
 
-## Why?
 
-- wanted to get back my chronological feed, instead of a "algorithmically curated" one
-- no distractions
-- no clickbait thumbnails (using `mq2` instead of `mqdefault` thumbnail, thanks @drcheap)
-- no comments
-- no related videos, or any algorithmically determined videos pushed in your face
-- no sponsors, thanks to SponsorBlock
-- just videos and a clean UI
-- wanted to dabble with [Server-sent Events](https://github.com/christian-fei/my-yt/blob/main/lib/sse.js)
-- wanted to try integrate the so much hyped AI in a personal project
-- wanted to try out `yt-dlp`
-- wanted to experiment with the HTML5 [`<track>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track) element and [WebVTT API](https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API)
-- feedback was awesome on [HackerNews](https://news.ycombinator.com/item?id=43373242), so here we are
-- I am even paying for YouTube Premium, so it's not a matter of money, but a matter of control over my attention and enhanced offline experience
+
 
 
 
@@ -133,6 +136,29 @@ Handles persistence of video information (set video as downloaded, summary, igno
 dependency less, bare HTML5, CSS3 and JS for a basic frontend
 
 Handles SSE updates, interacting with the API
+
+
+
+
+
+
+## Why?
+
+- wanted to get back my chronological feed, instead of a "algorithmically curated" one
+- no distractions
+- no clickbait thumbnails (using `mq2` instead of `mqdefault` thumbnail, thanks @drcheap)
+- no comments
+- no related videos, or any algorithmically determined videos pushed in your face
+- no sponsors, thanks to SponsorBlock
+- just videos and a clean UI
+- wanted to dabble with [Server-sent Events](https://github.com/christian-fei/my-yt/blob/main/lib/sse.js)
+- wanted to try integrate the so much hyped AI in a personal project
+- wanted to try out `yt-dlp`
+- wanted to experiment with the HTML5 [`<track>`](https://developer.mozilla.org/en-US/docs/Web/HTML/Element/track) element and [WebVTT API](https://developer.mozilla.org/en-US/docs/Web/API/WebVTT_API)
+- feedback was awesome on [HackerNews](https://news.ycombinator.com/item?id=43373242), so here we are
+- I am even paying for YouTube Premium, so it's not a matter of money, but a matter of control over my attention and enhanced offline experience
+
+
 
 
 ## development
