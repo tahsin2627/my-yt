@@ -4,10 +4,14 @@ import assert from 'assert'
 import { createServer } from '../lib/server.js'
 import Repository from '../lib/repository.js'
 
-if (fs.existsSync('./test/data')) {
-  fs.rmSync('./test/data', { recursive: true })
-}
-const repo = new Repository('./test/data')
+
+let repo
+test.beforeEach(() => {
+  if (fs.existsSync('./test/data')) {
+    fs.rmSync('./test/data', { recursive: true })
+  }
+  repo = new Repository('./test/data')
+})
 test('starts server', async () => {
   const server = createServer({updateVideos: false, repo})
   await new Promise(resolve => server.listen(3001, resolve))
@@ -17,11 +21,11 @@ test('starts server', async () => {
 
 describe('server', () => {
   let server
-  test.before(async () => {
+  test.beforeEach(async () => {
     server = createServer({updateVideos: false, repo})
     await new Promise(resolve => server.listen(3001, resolve))
   }, {timeout: 1000})
-  test.after(async () => {
+  test.afterEach(async () => {
     await new Promise(resolve => server.close(resolve))
   }, {timeout: 1000})
 
