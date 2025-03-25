@@ -7,9 +7,7 @@ import Repository from '../lib/repository.js'
 
 let repo
 test.beforeEach(() => {
-  console.log('======= repo init')
   if (fs.existsSync('./test/data')) {
-    console.log('=========cleaning')
     fs.rmSync('./test/data', { recursive: true })
   }
   repo = new Repository('./test/data')
