@@ -19,7 +19,7 @@ class SearchVideos extends HTMLElement {
       this.querySelector('input').removeEventListener('keyup', this.searchHandler.bind(this))
   }
   render () {
-    this.innerHTML = /*html*/`<input type="search" incremental="incremental" id="search" placeholder="Search videos or paste video url" autofocus>`
+    this.innerHTML = /*html*/`<input type="search" incremental="incremental" id="search" class="p-v" placeholder="🔍 Search videos or paste video url" autofocus>`
   }
   searchHandler (event) {
     event.preventDefault()

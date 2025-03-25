@@ -34,6 +34,10 @@ a {
 .p-1 {
   padding: 0.5rem;
 }
+.p-v {
+  padding-top: 0.5rem;
+  padding-bottom: 0.5rem;
+}
 .m-0 {
   margin: 0;
 }
@@ -42,13 +46,21 @@ a {
   display: flex;
   justify-content: space-around;
   align-items: center;
-  margin-top: 0.3em;
+}
+.flex-1 {
+  flex: 1;
+}
+.flex-2 {
+  flex: 2;
 }
 .space-between {
   justify-content: space-between;
 }
 .direction-col {
   flex-direction: column;
+}
+.tar {
+  text-align: right;
 }
 
 
@@ -67,13 +79,10 @@ form {
   margin-bottom: 20px;
 }
 input[type="text"], input[type="url"], input[type="search"] {
-  /*basic styles so that the user can enter text easily, keep in mind that the body background is white*/
   background-color: #f5f5f5;
   color: #000;
-  padding: 5px;
+  /* padding: 5px; */
   border-radius: 3px;
-  /* width: 100%; */
-  box-sizing: border-box; /*so that padding doesn't affect the width*/
 }
 
 .loader {
@@ -319,17 +328,15 @@ body > header {
   position: sticky;
   top: 0;
   z-index: 9000;
-  /*
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  */
   padding: 1em 0.5em;
   margin-bottom: 3rem;
   overflow: hidden;
   background-color: inherit;
-  /* box-shadow on the bottom border */
-  box-shadow: 0px 5px 10px rgba(119, 118, 118, 0.2);
+  font-size: 1.15rem;
+}
+body > header > * {
+  padding-top: .5rem;
+  padding-bottom: .5rem;
 }
 
 search-videos {
@@ -339,10 +346,11 @@ search-videos {
 #search {
   display: block;
   margin: 0 auto;
-  width: 90%;
-  flex: 2;
-  padding: 1em;
-  font-size: 1.1rem;
+  width: 100%;
+  border: 0;
+  outline: 0;
+  margin: 0;
+  padding: 0 .5rem;
 }
 
 

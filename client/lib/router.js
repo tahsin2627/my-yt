@@ -2,7 +2,7 @@ const routes = {
   '/': { template: document.getElementById('main-template'), async initialize() {
     console.log('initialize /')
 
-    document.querySelector('channels-list').classList.remove('hide')
+    document.getElementById('home-link').classList.add('hide')
 
     let $videosContainer = document.querySelector('.main-videos-container')
     let videos = await fetch('/api/videos').then(res => res.json())
@@ -42,7 +42,7 @@ const routes = {
   '/settings': { template: document.getElementById('settings-template'), async initialize () {
     console.log('initalize /settings')
 
-    document.querySelector('channels-list').classList.add('hide')
+    document.getElementById('home-link').classList.remove('hide')
 
     document.getElementById('search').setAttribute('disabled', 'disabled')
     document.getElementById('search').classList.add('hide')
@@ -73,8 +73,6 @@ const routes = {
   '/404': { template: document.getElementById('not-found-template'), async initialize () {
     document.getElementById('search').setAttribute('disabled', 'disabled')
     document.getElementById('search').classList.add('hide')
-
-    document.querySelector('channels-list').classList.add('hide')
   } }
 }
 

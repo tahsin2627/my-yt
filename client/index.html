@@ -9,15 +9,15 @@
 </head>
 <body>
   <header>
-    <div class="flex space-between">
-      <h1><a href="/">My-YT</a></h1>
+    <div class="flex space-between p-1">
+      <a id="home-link" class="hide p-v" href="/">go back home</a></h1>
+      <div class="flex-1 p-v"></div>
       <search-videos></search-videos>
-      <div>
+      <div class="flex-1 tar p-v">
         <a href="/settings">Settings</a>
         <a tabindex="-1" href="https://github.com/christian-fei/my-yt" target="_blank">📖</a>
       </div>
     </div>
-    <channels-list></channels-list>
   </header>
 
   <main></main>
@@ -33,6 +33,7 @@
   </dialog>
 
   <template id="main-template">
+    <channels-list></channels-list>
     <div id="filter-results-status"></div>
     <video-filters></video-filters>
     <div class="main-videos-container"></div>
