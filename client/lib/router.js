@@ -1,12 +1,10 @@
 const routes = {
   '/': { template: document.getElementById('main-template'), async initialize() {
-    console.log('initialize /')
-
     document.getElementById('home-link').classList.add('hide')
 
     let $videosContainer = document.querySelector('.main-videos-container')
     let videos = await fetch('/api/videos').then(res => res.json())
-    console.log('videos.length', videos.length)
+
     if (videos.length === 0) {
       document.querySelector('empty-state').style.display = ''
     } else {
@@ -31,8 +29,6 @@ const routes = {
     utils.applyShowBigPlayer(store.get(store.showBigPlayerKey))
   } },
   '/settings': { template: document.getElementById('settings-template'), async initialize () {
-    console.log('initalize /settings')
-
     document.getElementById('home-link').classList.remove('hide')
 
     document.querySelector('search-videos #search').setAttribute('disabled', 'disabled')
@@ -68,15 +64,11 @@ const routes = {
 }
 
 handleRoute()
-addEventListener('popstate', (event) => {
-  console.log('popstate', location.pathname)
-  handleRoute()
-})
+addEventListener('popstate', handleRoute)
 document.querySelectorAll('[href="/"],[href="/settings"]').forEach(($el) => {
   $el.addEventListener('click', (event) => {
     event.preventDefault()
     const path = new URL($el.href, location.origin).pathname
-    console.log('navigating ->', path)
     history.pushState({}, '', path)
     var popStateEvent = new PopStateEvent('popstate', {})
     dispatchEvent(popStateEvent)
@@ -84,8 +76,8 @@ document.querySelectorAll('[href="/"],[href="/settings"]').forEach(($el) => {
 })
 
 
-function handleRoute(route = location.pathname) {
-  console.log('handling route', route)
+function handleRoute() {
+  const route = location.pathname
   if (routes[route]) {
     document.querySelector('main').replaceChildren(routes[route].template.content.cloneNode(true))
     routes[route].initialize && routes[route].initialize()

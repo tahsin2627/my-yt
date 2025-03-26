@@ -37,7 +37,6 @@ class SearchVideos extends HTMLElement {
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ id: searchTerm, external: true }),
       })
-      .then(() => console.log('Download started'))
       .catch((error) => console.error('Error starting download:', error))
       event.target.value = ''
       return

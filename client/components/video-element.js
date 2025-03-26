@@ -100,7 +100,7 @@ class VideoElement extends HTMLElement {
     
     const downloadStartedText = '⚡️ Download started'
     let $downloadButton = event.target.classList.contains('.action') ? event.target : this.querySelector('.action.download')
-    if ($downloadButton.innerText === downloadStartedText) return console.log('already downloading')
+    if ($downloadButton.innerText === downloadStartedText) return
     else $downloadButton.innerText = downloadStartedText
 
     this.classList.add('downloading')
@@ -110,7 +110,6 @@ class VideoElement extends HTMLElement {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: this.video.id }),
     })
-    .then(() => console.log('Download started'))
     .catch((error) => console.error('Error starting download:', error))
   }
   deleteVideoHandler (event) {
@@ -122,7 +121,6 @@ class VideoElement extends HTMLElement {
       body: JSON.stringify({ id: this.video.id }),
     })
     .then(() => {
-      console.log('Video deleted')
       this.video.downloaded = false
       this.classList.remove('downloading')
       this.classList.remove('big')
@@ -134,14 +132,13 @@ class VideoElement extends HTMLElement {
   summarizeVideoHandler (event) {
     event.preventDefault()
     const summaryStartedText = '⚡️ summary started'
-    if (event.target.innerText === summaryStartedText) return console.log('already summarizing')
+    if (event.target.innerText === summaryStartedText) return
     event.target.innerText = summaryStartedText
     fetch('/api/summarize-video', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: this.video.id }),
     })
-    .then(() => console.log('summary started'))
     .catch((error) => console.error('Error starting summary:', error))
   }
   showSummaryHandler (event) {
@@ -177,16 +174,11 @@ class VideoElement extends HTMLElement {
   filterByChannelHandler (event) {
     const $searchInput = document.querySelector('#search')
     const channel = `@${this.video.channelName}`
-    if ($searchInput && $searchInput.value !== channel) {
-      $searchInput.value = channel
-    } else {
-      $searchInput.value = ''
-    }
+    $searchInput.value = ($searchInput && $searchInput.value !== channel) ? channel : ''
     $searchInput.dispatchEvent(new Event('keyup'))
   }
   registerVideoEvents (video) {
     video.addEventListener('play', () => {
-      console.log('video event play')
       this.classList.add('big')
       setTimeout(this.scrollIntoViewWithOffset.bind(this, document.querySelector('body > header').clientHeight, "smooth"), 110)
       this.pauseOtherVideos(video)

@@ -44,7 +44,7 @@ class ChannelsList extends HTMLElement {
   }
   channelClick(event) {
     const $searchInput = document.querySelector('#search')
-    if (!$searchInput) return console.log('missing search field, skipping channel event register')
+    if (!$searchInput) return
     const channel = `@${event.target.innerText}`
 
     const channels = this.querySelectorAll('.channel')
