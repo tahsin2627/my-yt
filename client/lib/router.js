@@ -1,3 +1,5 @@
+import { createVideoElement, applyShowBigPlayer, applyShowThumbnails } from "/lib/utils.js"
+
 const routes = {
   '/': { template: document.getElementById('main-template'), async initialize() {
     document.getElementById('home-link').classList.add('hide')
@@ -20,13 +22,13 @@ const routes = {
     videos = videos
     .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
 
-    videos.forEach(video => $videosContainer.appendChild(utils.createVideoElement(video, showOriginalThumbnail)))
+    videos.forEach(video => $videosContainer.appendChild(createVideoElement(video, showOriginalThumbnail)))
 
     const channels = await fetch('/api/channels').then(res => res.json())
     document.querySelector('channels-list').dataset['list'] = JSON.stringify(channels.map(c => c.name).filter(Boolean))
 
-    utils.applyShowThumbnails(store.get(store.showThumbnailsKey))
-    utils.applyShowBigPlayer(store.get(store.showBigPlayerKey))
+    applyShowThumbnails(store.get(store.showThumbnailsKey))
+    applyShowBigPlayer(store.get(store.showBigPlayerKey))
   } },
   '/settings': { template: document.getElementById('settings-template'), async initialize () {
     document.getElementById('home-link').classList.remove('hide')
@@ -39,7 +41,7 @@ const routes = {
     
     $showThumbnails.addEventListener('click', (event) => {
       store.toggle(store.showThumbnailsKey)
-      utils.applyShowThumbnails(store.get(store.showThumbnailsKey))
+      applyShowThumbnails(store.get(store.showThumbnailsKey))
     })
 
     const $showBigPlayer = document.getElementById('show-big-player')
@@ -47,7 +49,7 @@ const routes = {
     
     $showBigPlayer.addEventListener('click', (event) => {
       store.toggle(store.showBigPlayerKey)
-      utils.applyShowBigPlayer(store.get(store.showBigPlayerKey))
+      applyShowBigPlayer(store.get(store.showBigPlayerKey))
     })
 
     const $showOriginalThumbnail = document.getElementById('show-original-thumbnail')

@@ -1,4 +1,4 @@
-
+import { createVideoElement } from "/lib/utils.js"
 class SearchVideos extends HTMLElement {
   constructor () {
     super()
@@ -53,7 +53,7 @@ class SearchVideos extends HTMLElement {
       $videosContainer.innerHTML = ''
       const showOriginalThumbnail = store.get(store.showOriginalThumbnailKey)
       videos.forEach(video => 
-        $videosContainer.appendChild(utils.createVideoElement(video, showOriginalThumbnail))
+        $videosContainer.appendChild(createVideoElement(video, showOriginalThumbnail))
       )
       if (!searchTerm) {
         $status.innerText = ''

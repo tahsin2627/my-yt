@@ -1,3 +1,4 @@
+import { addClickListener, removeClickListener } from "/lib/utils.js"
 class VideoElement extends HTMLElement {
   constructor () {
     super()
@@ -61,24 +62,24 @@ class VideoElement extends HTMLElement {
     this.registerEvents()
   }
   registerEvents () {
-    utils.addClickListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
-    utils.addClickListener(this.querySelector('img.download'), this.downloadVideoHandler.bind(this))
-    utils.addClickListener(this.querySelector('.action.delete'), this.deleteVideoHandler.bind(this))
-    utils.addClickListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
-    utils.addClickListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
-    utils.addClickListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
-    utils.addClickListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
-    utils.addClickListener(this.querySelector('.play.video-placeholder'), this.watchVideoHandler.bind(this))
+    addClickListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
+    addClickListener(this.querySelector('img.download'), this.downloadVideoHandler.bind(this))
+    addClickListener(this.querySelector('.action.delete'), this.deleteVideoHandler.bind(this))
+    addClickListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
+    addClickListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
+    addClickListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
+    addClickListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
+    addClickListener(this.querySelector('.play.video-placeholder'), this.watchVideoHandler.bind(this))
   }
   unregisterEvents () {
-    utils.removeClickListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
-    utils.removeClickListener(this.querySelector('img.download'), this.downloadVideoHandler.bind(this))
-    utils.removeClickListener(this.querySelector('.action.delete'), this.deleteVideoHandler.bind(this))
-    utils.removeClickListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
-    utils.removeClickListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
-    utils.removeClickListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
-    utils.removeClickListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
-    utils.removeClickListener(this.querySelector('.play.video-placeholder'), this.watchVideoHandler.bind(this))
+    removeClickListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
+    removeClickListener(this.querySelector('img.download'), this.downloadVideoHandler.bind(this))
+    removeClickListener(this.querySelector('.action.delete'), this.deleteVideoHandler.bind(this))
+    removeClickListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
+    removeClickListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
+    removeClickListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
+    removeClickListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
+    removeClickListener(this.querySelector('.play.video-placeholder'), this.watchVideoHandler.bind(this))
     this.querySelector('video') && this.unregisterVideoEvents(this.querySelector('video'))
   }
   watchVideoHandler (event) {

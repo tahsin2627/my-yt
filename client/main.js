@@ -1,4 +1,5 @@
 import Store from '/lib/store.js'
+import { createVideoElement } from '/lib/utils.js'
 const store = new Store()
 window.store = store
 
@@ -31,8 +32,8 @@ eventSource.onmessage = (message) => {
 
       data.videos.forEach(video => {
         const $videoElement = $videosContainer.querySelector('video-element')
-        if (!$videoElement) return $videosContainer.appendChild(utils.createVideoElement(video, showOriginalThumbnail))
-        $videoElement.parentNode.insertBefore(utils.createVideoElement(video, showOriginalThumbnail), $videoElement.nextSibling)
+        if (!$videoElement) return $videosContainer.appendChild(createVideoElement(video, showOriginalThumbnail))
+        $videoElement.parentNode.insertBefore(createVideoElement(video, showOriginalThumbnail), $videoElement.nextSibling)
       })
       return
     }
