@@ -4,7 +4,6 @@ import assert from 'assert'
 import { createServer } from '../lib/server.js'
 import Repository from '../lib/repository.js'
 
-
 let repo
 test.beforeEach(() => {
   if (fs.existsSync('./test/data')) {
