@@ -2,6 +2,7 @@
 class SearchVideos extends HTMLElement {
   constructor () {
     super()
+    this.previousSearchTerm = ''
   }
   connectedCallback () {
     this.render()
@@ -24,6 +25,9 @@ class SearchVideos extends HTMLElement {
   searchHandler (event) {
     event.preventDefault()
     let searchTerm = event.target.value.trim()
+    if (this.previousSearchTerm === searchTerm) return
+    this.previousSearchTerm = searchTerm
+
     const $status = document.querySelector('#filter-results-status')
     $status.innerText = ''
 
@@ -52,9 +56,12 @@ class SearchVideos extends HTMLElement {
       videos.forEach(video => 
         $videosContainer.appendChild(window.createVideoElement(video, showOriginalThumbnail))
       )
-      
-      if (videos.length > 0) $status.innerText = `Found ${videos.length} videos`
-      else $status.innerText = `No videos found`
+      if (!searchTerm) {
+        $status.innerText = ''
+      } else {
+        if (videos.length > 0) $status.innerText = `Found ${videos.length} videos`
+        else $status.innerText = `No videos found`
+      }
     })
     .catch(err => {
       console.error(err)

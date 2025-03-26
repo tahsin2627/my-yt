@@ -44,7 +44,7 @@ class VideoElement extends HTMLElement {
       ${this.video.downloaded
       ? /*html*/`<div class="play video-placeholder" style="background-image: url(${this.video.thumbnail})"><div class="play-icon"></div></div>`
       : /*html*/`<img title="Download video" class="download" loading="lazy" src="${this.video.thumbnail}"/>`}
-      <span class="action ignore" tabindex="0">ignore</span>
+      <span class="action ignore" tabindex="0">${this.video.ignored ? 'unignore' : 'ignore'}</span>
       <div class="info">
         <span class="channel-name">${this.video.channelName}</span>
         <br>
