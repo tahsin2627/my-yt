@@ -113,7 +113,7 @@ Implements HTTP Ranged requests for video playback
 
 ### [llm.js](https://github.com/christian-fei/my-yt/blob/main/lib/llm.js)
 
-Makes requests using the chat completions API of LMStudio.
+Makes requests using the chat completions API of your favorite LLM provider that has a "standard" /v1/chat/completions endpoint (e.g. Ollama/LMStudio/OpenAI and others)
 
 ### [sse.js](https://github.com/christian-fei/my-yt/blob/main/lib/sse.js)
 
@@ -121,7 +121,7 @@ Utility functions for Server-sent events
 
 ### [subtitles-summary.js](https://github.com/christian-fei/my-yt/blob/main/lib/subtitles-summary.js)
 
-Summarizes video transcript using LMStudio API
+Summarizes video transcript using LLM provider
 
 ### [youtube.js](https://github.com/christian-fei/my-yt/blob/main/lib/youtube.js)
 
