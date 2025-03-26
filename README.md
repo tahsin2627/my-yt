@@ -19,7 +19,7 @@ A clean and minimal youtube frontend supported by yt-dlp, and optionally your lo
 - Native Google Chromecast support
 - Disable clickbait thumbnails
 - Play videos in background
-- Summarize video content using your local AI model
+- Summarize video content using your local AI model (e.g. Ollama/LMStudio) or hosted provider (e.g. OpenAI)
 - Native Picture-in-Picture support
 - No dependencies (except for `nano-spawn`, which itself has no transient deps)
 - HTML/CSS only, no JS frameworks on client/server side
