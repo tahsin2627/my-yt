@@ -1,11 +1,3 @@
-function tryFormatDate(date) {
-  try {
-    return new Date(date).toISOString().substring(0, 10)
-  } catch (err) {
-    return 'N/A'
-  }
-}
-
 class VideoElement extends HTMLElement {
   constructor () {
     super()
@@ -219,3 +211,11 @@ class VideoElement extends HTMLElement {
 }
 
 customElements.define('video-element', VideoElement)
+
+function tryFormatDate(date) {
+  try {
+    return new Date(date).toISOString().substring(0, 10)
+  } catch (err) {
+    return 'N/A'
+  }
+}
