@@ -41,7 +41,7 @@ class ManageDiskSpaceForm extends HTMLElement {
   updateDiskSpaceUsed() {
     const onlyIgnored = this.querySelector('#delete-only-ignored').checked
     const $diskSpaceUsed = this.querySelector('#disk-space-used')
-    window.fetch(onlyIgnored ? '/api/disk-usage?onlyIgnored=true' : '/api/disk-usage')
+    fetch(onlyIgnored ? '/api/disk-usage?onlyIgnored=true' : '/api/disk-usage')
     .then(response => response.text())
     .then((diskSpaceUsed) => {
       $diskSpaceUsed.innerText = diskSpaceUsed
@@ -54,7 +54,7 @@ class ManageDiskSpaceForm extends HTMLElement {
     if (!confirm('About to delete downloaded videos, are you sure?')) return
     const onlyIgnored = this.querySelector('#delete-only-ignored').checked
     const $diskUsage = this.querySelector('#disk-usage')
-    window.fetch('/api/reclaim-disk-space', {
+    fetch('/api/reclaim-disk-space', {
       method: 'POST',
       body: JSON.stringify({ onlyIgnored })
     })

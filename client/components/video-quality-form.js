@@ -6,7 +6,7 @@ class VideoQualityForm extends HTMLElement {
     this.render()
     this.registerEvents()
 
-    window.fetch('/api/video-quality', {
+    fetch('/api/video-quality', {
       method: 'GET'
     }).then(response => response.json())
     .then((videoQuality) => {
@@ -47,7 +47,7 @@ class VideoQualityForm extends HTMLElement {
   setVideoQualityHandler (event) {
     event.preventDefault()
     console.log('change video quality', event.target.value)
-    window.fetch('/api/video-quality', {
+    fetch('/api/video-quality', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json'

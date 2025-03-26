@@ -69,24 +69,24 @@ class VideoElement extends HTMLElement {
     this.registerEvents()
   }
   registerEvents () {
-    window.utils.addClickListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
-    window.utils.addClickListener(this.querySelector('img.download'), this.downloadVideoHandler.bind(this))
-    window.utils.addClickListener(this.querySelector('.action.delete'), this.deleteVideoHandler.bind(this))
-    window.utils.addClickListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
-    window.utils.addClickListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
-    window.utils.addClickListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
-    window.utils.addClickListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
-    window.utils.addClickListener(this.querySelector('.play.video-placeholder'), this.watchVideoHandler.bind(this))
+    utils.addClickListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
+    utils.addClickListener(this.querySelector('img.download'), this.downloadVideoHandler.bind(this))
+    utils.addClickListener(this.querySelector('.action.delete'), this.deleteVideoHandler.bind(this))
+    utils.addClickListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
+    utils.addClickListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
+    utils.addClickListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
+    utils.addClickListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
+    utils.addClickListener(this.querySelector('.play.video-placeholder'), this.watchVideoHandler.bind(this))
   }
   unregisterEvents () {
-    window.utils.removeClickListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
-    window.utils.removeClickListener(this.querySelector('img.download'), this.downloadVideoHandler.bind(this))
-    window.utils.removeClickListener(this.querySelector('.action.delete'), this.deleteVideoHandler.bind(this))
-    window.utils.removeClickListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
-    window.utils.removeClickListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
-    window.utils.removeClickListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
-    window.utils.removeClickListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
-    window.utils.removeClickListener(this.querySelector('.play.video-placeholder'), this.watchVideoHandler.bind(this))
+    utils.removeClickListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
+    utils.removeClickListener(this.querySelector('img.download'), this.downloadVideoHandler.bind(this))
+    utils.removeClickListener(this.querySelector('.action.delete'), this.deleteVideoHandler.bind(this))
+    utils.removeClickListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
+    utils.removeClickListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
+    utils.removeClickListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
+    utils.removeClickListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
+    utils.removeClickListener(this.querySelector('.play.video-placeholder'), this.watchVideoHandler.bind(this))
     this.querySelector('video') && this.unregisterVideoEvents(this.querySelector('video'))
   }
   watchVideoHandler (event) {
@@ -214,7 +214,7 @@ class VideoElement extends HTMLElement {
 
   scrollIntoViewWithOffset (offset, behavior = 'smooth') {
     const top = this.getBoundingClientRect().top - offset - document.body.getBoundingClientRect().top
-    window.scrollTo({ top, behavior })
+    scrollTo({ top, behavior })
   }  
 }
 

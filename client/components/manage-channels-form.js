@@ -23,11 +23,11 @@ class ManageChannelsForm extends HTMLElement {
   }
   registerEvents () {
     this.querySelectorAll('[data-channel]')
-    .forEach($channel => window.utils.addClickListener($channel, this.removeChannel.bind(this)))
+    .forEach($channel => utils.addClickListener($channel, this.removeChannel.bind(this)))
   }
   unregisterEvents () {
     this.querySelectorAll('[data-channel]')
-    .forEach($channel => window.utils.removeClickListener($channel, this.removeChannel.bind(this)))
+    .forEach($channel => utils.removeClickListener($channel, this.removeChannel.bind(this)))
   }
   render () {
     this.innerHTML = /*html*/`

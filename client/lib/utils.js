@@ -1,4 +1,13 @@
 window.utils = {
+  createVideoElement (video, showOriginalThumbnail = false) {
+    const $video = document.createElement('video-element')
+    $video.dataset['data'] = JSON.stringify(Object.assign(video, showOriginalThumbnail ? {
+      thumbnail: video.thumbnail.replace('mq2.jpg', 'mqdefault.jpg')
+    } : {}))
+    $video.dataset['videoId'] = video.id
+    return $video
+  },
+
   applyShowThumbnails(showThumbnails) {
     if (showThumbnails) {
       document.body.classList.remove('hide-thumbnails')

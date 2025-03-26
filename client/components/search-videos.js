@@ -52,9 +52,9 @@ class SearchVideos extends HTMLElement {
       const $videosContainer = document.querySelector('.main-videos-container')
       if (!$videosContainer) return
       $videosContainer.innerHTML = ''
-      const showOriginalThumbnail = window.store.get(store.showOriginalThumbnailKey)
+      const showOriginalThumbnail = store.get(store.showOriginalThumbnailKey)
       videos.forEach(video => 
-        $videosContainer.appendChild(window.createVideoElement(video, showOriginalThumbnail))
+        $videosContainer.appendChild(utils.createVideoElement(video, showOriginalThumbnail))
       )
       if (!searchTerm) {
         $status.innerText = ''

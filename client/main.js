@@ -1,11 +1,9 @@
 import Store from '/lib/store.js'
 const store = new Store()
 window.store = store
-window.createVideoElement = createVideoElement
-
 
 // app: sse updates and renders
-const eventSource = new window.EventSource('/')
+const eventSource = new EventSource('/')
 let $videosContainer = document.querySelector('.main-videos-container')
 
 eventSource.onmessage = (message) => {
@@ -33,8 +31,8 @@ eventSource.onmessage = (message) => {
 
       data.videos.forEach(video => {
         const $videoElement = $videosContainer.querySelector('video-element')
-        if (!$videoElement) return $videosContainer.appendChild(createVideoElement(video, showOriginalThumbnail))
-        $videoElement.parentNode.insertBefore(createVideoElement(video, showOriginalThumbnail), $videoElement.nextSibling)
+        if (!$videoElement) return $videosContainer.appendChild(utils.createVideoElement(video, showOriginalThumbnail))
+        $videoElement.parentNode.insertBefore(utils.createVideoElement(video, showOriginalThumbnail), $videoElement.nextSibling)
       })
       return
     }
@@ -96,13 +94,4 @@ function observeDialogOpenPreventScroll (dialog) {
       }
     }
   }).observe(dialog, { attributes: true, childList: true, subtree: true })
-}
-
-function createVideoElement (video, showOriginalThumbnail = false) {
-  const $video = document.createElement('video-element')
-  $video.dataset['data'] = JSON.stringify(Object.assign(video, showOriginalThumbnail ? {
-    thumbnail: video.thumbnail.replace('mq2.jpg', 'mqdefault.jpg')
-  } : {}))
-  $video.dataset['videoId'] = video.id
-  return $video
 }

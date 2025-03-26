@@ -36,11 +36,11 @@ class ChannelsList extends HTMLElement {
   }
   registerEvents() {
     const channels = this.querySelectorAll('.channel')
-    channels.forEach(channel => window.utils.addClickListener(channel, this.channelClick.bind(this)))
+    channels.forEach(channel => utils.addClickListener(channel, this.channelClick.bind(this)))
   }
   unregisterEvents() {
     const channels = this.querySelectorAll('.channel')
-    channels.forEach(channel => window.utils.removeClickListener(channel, this.channelClick.bind(this)))
+    channels.forEach(channel => utils.removeClickListener(channel, this.channelClick.bind(this)))
   }
   channelClick(event) {
     const $searchInput = document.querySelector('#search')

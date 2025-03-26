@@ -22,13 +22,13 @@ const routes = {
     videos = videos
     .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
 
-    videos.forEach(video => $videosContainer.appendChild(createVideoElement(video, showOriginalThumbnail)))
+    videos.forEach(video => $videosContainer.appendChild(utils.createVideoElement(video, showOriginalThumbnail)))
 
     const channels = await fetch('/api/channels').then(res => res.json())
     document.querySelector('channels-list').dataset['list'] = JSON.stringify(channels.map(c => c.name).filter(Boolean))
 
-    window.utils.applyShowThumbnails(store.get(store.showThumbnailsKey))
-    window.utils.applyShowBigPlayer(store.get(store.showBigPlayerKey))
+    utils.applyShowThumbnails(store.get(store.showThumbnailsKey))
+    utils.applyShowBigPlayer(store.get(store.showBigPlayerKey))
   } },
   '/settings': { template: document.getElementById('settings-template'), async initialize () {
     console.log('initalize /settings')
@@ -43,7 +43,7 @@ const routes = {
     
     $showThumbnails.addEventListener('click', (event) => {
       store.toggle(store.showThumbnailsKey)
-      window.utils.applyShowThumbnails(store.get(store.showThumbnailsKey))
+      utils.applyShowThumbnails(store.get(store.showThumbnailsKey))
     })
 
     const $showBigPlayer = document.getElementById('show-big-player')
@@ -51,7 +51,7 @@ const routes = {
     
     $showBigPlayer.addEventListener('click', (event) => {
       store.toggle(store.showBigPlayerKey)
-      window.utils.applyShowBigPlayer(store.get(store.showBigPlayerKey))
+      utils.applyShowBigPlayer(store.get(store.showBigPlayerKey))
     })
 
     const $showOriginalThumbnail = document.getElementById('show-original-thumbnail')
@@ -68,23 +68,23 @@ const routes = {
 }
 
 handleRoute()
-window.addEventListener('popstate', (event) => {
-  console.log('popstate', window.location.pathname)
+addEventListener('popstate', (event) => {
+  console.log('popstate', location.pathname)
   handleRoute()
 })
 document.querySelectorAll('[href="/"],[href="/settings"]').forEach(($el) => {
   $el.addEventListener('click', (event) => {
     event.preventDefault()
-    const path = new URL($el.href, window.location.origin).pathname
+    const path = new URL($el.href, location.origin).pathname
     console.log('navigating ->', path)
-    window.history.pushState({}, '', path)
+    history.pushState({}, '', path)
     var popStateEvent = new PopStateEvent('popstate', {})
     dispatchEvent(popStateEvent)
   })
 })
 
 
-function handleRoute(route = window.location.pathname) {
+function handleRoute(route = location.pathname) {
   console.log('handling route', route)
   if (routes[route]) {
     document.querySelector('main').replaceChildren(routes[route].template.content.cloneNode(true))
