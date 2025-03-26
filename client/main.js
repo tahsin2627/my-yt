@@ -1,7 +1,6 @@
 import Store from '/lib/store.js'
 import { createVideoElement } from '/lib/utils.js'
 const store = new Store()
-window.store = store
 
 // app: sse updates and renders
 const eventSource = new EventSource('/')

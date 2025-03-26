@@ -1,4 +1,6 @@
 import { createVideoElement, applyShowBigPlayer, applyShowThumbnails } from "/lib/utils.js"
+import Store from '/lib/store.js'
+const store = new Store()
 
 const routes = {
   '/': { template: document.getElementById('main-template'), async initialize() {

@@ -1,4 +1,7 @@
 import { createVideoElement } from "/lib/utils.js"
+import Store from '/lib/store.js'
+const store = new Store()
+
 class SearchVideos extends HTMLElement {
   constructor () {
     super()
