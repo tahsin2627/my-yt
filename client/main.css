@@ -353,6 +353,11 @@ search-videos {
   padding: 0 .5rem;
 }
 
+@media all and (max-width: 50em) {
+  .header-spacer {
+    display: none;
+  }
+}
 
 
 details {

@@ -15,8 +15,8 @@ const routes = {
       document.querySelector('video-filters').style.display = ''
     }
 
-    document.getElementById('search').removeAttribute('disabled')
-    document.getElementById('search').classList.remove('hide')
+    document.querySelector('search-videos #search').removeAttribute('disabled', 'disabled')
+    document.querySelector('search-videos').classList.remove('hide')
     
     $videosContainer.innerHTML = ''
     const ignoredTerms = store.get(store.ignoreTermsKey)
@@ -44,8 +44,8 @@ const routes = {
 
     document.getElementById('home-link').classList.remove('hide')
 
-    document.getElementById('search').setAttribute('disabled', 'disabled')
-    document.getElementById('search').classList.add('hide')
+    document.querySelector('search-videos #search').setAttribute('disabled', 'disabled')
+    document.querySelector('search-videos').classList.add('hide')
     
     const $showThumbnails = document.getElementById('show-thumbnails')
     store.get(store.showThumbnailsKey) ? $showThumbnails.setAttribute('checked', 'true') : $showThumbnails.removeAttribute('checked')
@@ -71,8 +71,8 @@ const routes = {
     })
   } },
   '/404': { template: document.getElementById('not-found-template'), async initialize () {
-    document.getElementById('search').setAttribute('disabled', 'disabled')
-    document.getElementById('search').classList.add('hide')
+    document.querySelector('search-videos #search').setAttribute('disabled', 'disabled')
+    document.querySelector('search-videos').classList.add('hide')
   } }
 }
 
