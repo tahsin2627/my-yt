@@ -17,22 +17,15 @@ const routes = {
     document.querySelector('search-videos').classList.remove('hide')
     
     $videosContainer.innerHTML = ''
-    const ignoredTerms = store.get(store.ignoreTermsKey)
     const showOriginalThumbnail = store.get(store.showOriginalThumbnailKey)
     
     videos = videos
-    .filter(video => video.title.split(' ').every(word => !ignoredTerms.includes(word.toLowerCase().replace(/('s|"|,|:)/,''))))
     .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
-    // .filter((_, i) => i < 1000)
 
     videos.forEach(video => $videosContainer.appendChild(createVideoElement(video, showOriginalThumbnail)))
 
-
-    const channelsList = videos.reduce((acc, video) => {
-      if (!acc.includes(video.channelName)) acc.push(video.channelName)
-      return acc
-    }, [])
-    document.querySelector('channels-list').dataset['list'] = JSON.stringify(channelsList)
+    const channels = await fetch('/api/channels').then(res => res.json())
+    document.querySelector('channels-list').dataset['list'] = JSON.stringify(channels.map(c => c.name).filter(Boolean))
 
     window.utils.applyShowThumbnails(store.get(store.showThumbnailsKey))
     window.utils.applyShowBigPlayer(store.get(store.showBigPlayerKey))
