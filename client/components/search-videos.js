@@ -25,13 +25,7 @@ class SearchVideos extends HTMLElement {
     event.preventDefault()
     let searchTerm = event.target.value.trim()
     const $status = document.querySelector('#filter-results-status')
-    const $videos = document.querySelectorAll('.video')
-    if (!searchTerm) {
-      if ($status) $status.innerText = ''
-      $videos.forEach($video => $video.style.display = '')
-      document.body.classList.remove('searching')
-      return console.log('no search term')
-    }
+    $status.innerText = ''
 
     if (searchTerm.match('https?://')) {
       fetch('/api/download-video', {
@@ -47,24 +41,27 @@ class SearchVideos extends HTMLElement {
 
     searchTerm = searchTerm.toLowerCase()
     document.body.classList.add('searching')
-    let filteredCount = 0
-    $videos.forEach($video => {
-      const videoData = JSON.parse($video.dataset['data'])
-      if (
-        videoData.title.toLowerCase().includes(searchTerm)
-         || videoData.summary?.toLowerCase().includes(searchTerm)
-         || videoData.channelName?.toLowerCase().includes(searchTerm)
-        ) {
-        $video.style.display = ''
-        filteredCount++
-      } else {
-        $video.style.display = 'none'
-      }
-    })
-    if ($status) {
-      if (filteredCount > 0) $status.innerText = `Found ${filteredCount} videos`
+
+    fetch(`/api/videos?filter=${encodeURIComponent(searchTerm)}`)
+    .then(res => res.json())
+    .then((videos) => {
+      const $videosContainer = document.querySelector('.main-videos-container')
+      if (!$videosContainer) return
+      $videosContainer.innerHTML = ''
+      const showOriginalThumbnail = window.store.get(store.showOriginalThumbnailKey)
+      videos.forEach(video => 
+        $videosContainer.appendChild(window.createVideoElement(video, showOriginalThumbnail))
+      )
+      
+      if (videos.length > 0) $status.innerText = `Found ${videos.length} videos`
       else $status.innerText = `No videos found`
-    }
+    })
+    .catch(err => {
+      console.error(err)
+    })
+    .finally(() => {
+      document.body.classList.remove('searching')
+    })
   }
 }
 customElements.define('search-videos', SearchVideos)

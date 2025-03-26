@@ -394,9 +394,9 @@ details {
 body.searching [data-ignored="true"] {
   display: block;
 }
-[data-ignored="true"] {
+/* [data-ignored="true"] {
   display: none;
-}
+} */
 #show-summarized-videos.active, #show-downloaded-videos.active, #show-ignored-videos.active {
   background-color: #545454;
   color: #f0f0f0;
