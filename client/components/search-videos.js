@@ -65,6 +65,7 @@ class SearchVideos extends HTMLElement {
     })
     .catch(err => {
       console.error(err)
+      $status.innerText = `An error occurred: ${err.message}`
     })
     .finally(() => {
       document.body.classList.remove('searching')
