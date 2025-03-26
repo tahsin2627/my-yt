@@ -52,7 +52,7 @@ test('gets all videos without filters, show only not ignored videos', () => {
   }), repo)
 })
 test('filters videos by channel name', () => {
-  searchVideosHandler({url: '?filter=SomeChannel'}, assertRes(data => {
+  searchVideosHandler({url: '?filter=@SomeChannel'}, assertRes(data => {
     assert.deepEqual(JSON.parse(data).length, 1)
   }), repo)
 })

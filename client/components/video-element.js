@@ -184,8 +184,9 @@ class VideoElement extends HTMLElement {
   }
   filterByChannelHandler (event) {
     const $searchInput = document.querySelector('#search')
-    if ($searchInput && $searchInput.value !== this.video.channelName) {
-      $searchInput.value = this.video.channelName
+    const channel = `@${this.video.channelName}`
+    if ($searchInput && $searchInput.value !== channel) {
+      $searchInput.value = channel
     } else {
       $searchInput.value = ''
     }
