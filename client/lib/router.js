@@ -9,10 +9,8 @@ const routes = {
     console.log('videos.length', videos.length)
     if (videos.length === 0) {
       document.querySelector('empty-state').style.display = ''
-      document.querySelector('video-filters').style.display = 'none'
     } else {
       document.querySelector('empty-state').style.display = 'none'
-      document.querySelector('video-filters').style.display = ''
     }
 
     document.querySelector('search-videos #search').removeAttribute('disabled', 'disabled')
