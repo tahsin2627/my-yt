@@ -2,10 +2,7 @@ import Store from '/lib/store.js'
 import { createVideoElement } from '/lib/utils.js'
 const store = new Store()
 
-// app: sse updates and renders
 const eventSource = new EventSource('/')
-let $videosContainer = document.querySelector('.main-videos-container')
-
 eventSource.onmessage = (message) => {
   if (!message || !message.data) return console.error('skipping empty message')
   try {
@@ -25,7 +22,7 @@ eventSource.onmessage = (message) => {
     }
     
     if (data.type === 'new-videos' && data.videos) {
-      $videosContainer = document.querySelector('.main-videos-container')
+      const $videosContainer = document.querySelector('.main-videos-container')
       if (!$videosContainer) return
       const showOriginalThumbnail = store.get(store.showOriginalThumbnailKey)
 
@@ -76,8 +73,6 @@ eventSource.onmessage = (message) => {
 }
 
 
-
-// summary modal
 const $summary = document.querySelector('dialog#summary')
 const $closeSummary = $summary.querySelector("button")
 $closeSummary.addEventListener("click", () => $summary.close())
