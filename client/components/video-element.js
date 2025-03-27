@@ -89,8 +89,9 @@ class VideoElement extends HTMLElement {
   }
   watchVideoHandler (event) {
     event.preventDefault()
-    this.querySelector('.play.video-placeholder').outerHTML = /*html*/`<video controls width="400">
-      <source src="/videos/${this.video.id}" type="video/${this.video.format}" />
+    this.querySelector('.play.video-placeholder').outerHTML = /*html*/`
+    <video controls playsinline style="user-select: none; width: 400px; width: -webkit-fill-available;">
+      <source src="/videos/${this.video.id}.${this.video.format || 'mp4'}" type="video/${this.video.format || 'mp4'}" />
       <track default kind="captions" srclang="en" src="/captions/${this.video.id}" />
       <p>
         Your browser does not support the video tag.
