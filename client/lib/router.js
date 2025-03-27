@@ -60,6 +60,13 @@ const routes = {
     $showOriginalThumbnail.addEventListener('click', (event) => {
       store.toggle(store.showOriginalThumbnailKey)
     })
+
+    const $useTLDWTube = document.getElementById('use-tldw-tube')
+    store.get(store.useTLDWTubeKey) ? $useTLDWTube.setAttribute('checked', 'true') : $useTLDWTube.removeAttribute('checked')
+    
+    $useTLDWTube.addEventListener('click', (event) => {
+      store.toggle(store.useTLDWTubeKey)
+    })
   } },
   '/404': { template: document.getElementById('not-found-template'), async initialize () {
     document.querySelector('search-videos #search').setAttribute('disabled', 'disabled')

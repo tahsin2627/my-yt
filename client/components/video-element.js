@@ -1,4 +1,7 @@
 import { addClickListener, removeClickListener } from "/lib/utils.js"
+import Store from "/lib/store.js"
+const store = new Store()
+
 class VideoElement extends HTMLElement {
   constructor () {
     super()
@@ -52,7 +55,9 @@ class VideoElement extends HTMLElement {
         ${this.video.downloaded
           ? /*html*/`<span tabindex="0"  class="action delete" data-video-id="${this.video.id}">🗑️ Delete</span>`
           : /*html*/`<span tabindex="0"  class="action download" data-video-id="${this.video.id}">⬇️ Download</span>`}
-        ${!this.video.summary
+        ${store.get(store.useTLDWTubeKey) ? 
+          /*html*/`<a target="_blank" href="https://tldw.tube/?v=${this.video.id}">📖 tldw.tube</a>` 
+          : !this.video.summary
           ? /*html*/`<span tabindex="0"  class="action summarize" data-video-id="${this.video.id}">📖 Summarize</span>`
           : /*html*/`<span tabindex="0"  class="action show-summary" data-video-id="${this.video.id}">📖 Summary</span>`}
         <a href="https://www.youtube.com/watch?v=${this.video.id}" target="_blank">📺 external</a>
