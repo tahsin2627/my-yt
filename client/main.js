@@ -29,7 +29,7 @@ eventSource.onmessage = (message) => {
       data.videos.forEach(video => {
         const $videoElement = $videosContainer.querySelector('video-element')
         if (!$videoElement) return $videosContainer.appendChild(createVideoElement(video, showOriginalThumbnail))
-        $videoElement.parentNode.insertBefore(createVideoElement(video, showOriginalThumbnail), $videoElement.nextSibling)
+        $videoElement.parentNode.insertBefore(createVideoElement(video, showOriginalThumbnail), $videoElement)
       })
       return
     }
