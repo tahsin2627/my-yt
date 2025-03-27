@@ -45,6 +45,7 @@ test('check if url is a youtube url', () => {
   assert.ok(isYouTubeUrl('https://www.youtube.com/watch?v=SOME_ID'))
   assert.ok(isYouTubeUrl('https://youtube.com/watch?v=SOME_ID'))
   assert.ok(isYouTubeUrl('https://youtu.be/watch?v=SOME_ID'))
+  assert.ok(isYouTubeUrl('https://youtu.be/SOME_ID?si=something'))
 })
 
 test('checks if url is unsupported', () => {
