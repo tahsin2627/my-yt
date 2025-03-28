@@ -37,8 +37,8 @@ test('extracts id from url', () => {
   assert.equal(extractIdFromUrl('https://www.youtube.com/watch?v=SOME_ID&pp=something'), 'SOME_ID')
   assert.equal(extractIdFromUrl('https://www.youtube.com/watch?v=SOME_ID'), 'SOME_ID')
   assert.equal(extractIdFromUrl('https://youtube.com/watch?v=SOME_ID'), 'SOME_ID')
-  // assert.equal(extractIdFromUrl('https://youtu.be/watch?v=SOME_ID'), 'SOME_ID')
-  // assert.equal(extractIdFromUrl('https://youtu.be/SOME_ID?si=something'), 'SOME_ID')
+  assert.equal(extractIdFromUrl('https://youtu.be/watch?v=SOME_ID'), 'SOME_ID')
+  assert.equal(extractIdFromUrl('https://youtu.be/SOME_ID?si=something'), 'SOME_ID')
 })
 
 test('check if url is a youtube url', () => {
