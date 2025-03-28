@@ -9,12 +9,6 @@ const routes = {
     let $videosContainer = document.querySelector('.main-videos-container')
     let videos = await fetch('/api/videos').then(res => res.json())
 
-    if (videos.length === 0) {
-      document.querySelector('empty-state').style.display = ''
-    } else {
-      document.querySelector('empty-state').style.display = 'none'
-    }
-
     document.querySelector('search-videos #search').removeAttribute('disabled', 'disabled')
     document.querySelector('search-videos').classList.remove('hide')
     
@@ -28,6 +22,14 @@ const routes = {
 
     const channels = await fetch('/api/channels').then(res => res.json())
     document.querySelector('channels-list').dataset['list'] = JSON.stringify(channels.map(c => c.name).filter(Boolean))
+
+
+    if (videos.length === 0) {
+      document.querySelector('empty-state').style.display = ''
+      document.querySelector('empty-state').dataset['hasChannels'] = channels.length > 0
+    } else {
+      document.querySelector('empty-state').style.display = 'none'
+    }
 
     applyShowThumbnails(store.get(store.showThumbnailsKey))
     applyShowBigPlayer(store.get(store.showBigPlayerKey))
