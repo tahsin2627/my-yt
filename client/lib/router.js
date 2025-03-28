@@ -23,13 +23,14 @@ const routes = {
     const channels = await fetch('/api/channels').then(res => res.json())
     document.querySelector('channels-list').dataset['list'] = JSON.stringify(channels.map(c => c.name).filter(Boolean))
 
+    document.querySelector('empty-state').dataset['hasChannels'] = channels.length > 0
+    handleEmptyState()
 
-    if (videos.length === 0) {
-      document.querySelector('empty-state').style.display = ''
-      document.querySelector('empty-state').dataset['hasChannels'] = channels.length > 0
-    } else {
-      document.querySelector('empty-state').style.display = 'none'
-    }
+    new MutationObserver((mutationList, observer) => {
+      for (const mutation of mutationList) {
+        handleEmptyState()
+      }
+    }).observe($videosContainer, { attributes: false, childList: true, subtree: true })
 
     applyShowThumbnails(store.get(store.showThumbnailsKey))
     applyShowBigPlayer(store.get(store.showBigPlayerKey))
@@ -97,5 +98,13 @@ function handleRoute() {
   } else {
     document.querySelector('main').replaceChildren(routes['/404'].template.content.cloneNode(true))
     routes['/404'].initialize && routes['/404'].initialize()
+  }
+}
+
+function handleEmptyState () {
+  if (document.querySelectorAll('video-element').length === 0) {
+    document.querySelector('empty-state').style.display = ''
+  } else {
+    document.querySelector('empty-state').style.display = 'none'
   }
 }
