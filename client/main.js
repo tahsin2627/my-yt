@@ -11,7 +11,7 @@ eventSource.onmessage = (message) => {
 
     if (data.type === 'download-log-line' && data.line) {
       const $downloadLog = document.querySelector('.download-log')
-      $downloadLog.open = true
+      // $downloadLog.open = true
       const $downloadLogLines = document.querySelector('.download-log .lines')
       const text = $downloadLogLines.innerText
       let lines = text.split('\n')
