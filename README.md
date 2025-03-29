@@ -24,6 +24,7 @@ A clean and minimal youtube frontend supported by yt-dlp, and optionally your lo
 - No dependencies (except for `nano-spawn`, which itself has no transient deps)
 - HTML/CSS only, no JS frameworks on client/server side
 - Subtitles using `<track>` element and WebVTT API
+- Automatic transcoding to h264 for max compat (especially for iOS devices)
 - Host it in your home network to playback videos on all your devices
 - Just JSON files for persistence, stupid simple management and backup
 
@@ -94,7 +95,13 @@ docker run -e AI_MODEL=gpt-4o-mini -e AI_HOST=https://api.openai.com -e AI_APIKE
 docker run -e AI_MODEL=gpt-4o-mini -e AI_HOST=https://api.openai.com -e AI_APIKEY=sk-proj-123 --rm -it -p 3000:3000 -v $HOME/my-yt-data:/app/data christianfei/my-yt:latest
 ```
 
+## Environment variable to skip transcoding to h264
 
+If your system is under stress when downloading a video, that could be because of the automatic transcoding that's happening behind the scenes.
+
+This is a feature to make the video compatible with most devices (especially iOS)
+
+If you don't have the need, you can skip the transcoding process by setting `SKIP_TRANSCODING=true`.
 
 
 
