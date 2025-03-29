@@ -140,3 +140,5 @@ data
 data.old
 data.bkp
 cookies.txt
+
+*.clbin
