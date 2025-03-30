@@ -279,7 +279,7 @@ video-element, video-element video {
   overflow: hidden;
   overflow-y: auto;
   z-index: 9000;
-  max-height: 8rem;
+  max-height: 10rem;
   font-size: 1rem;
   padding: 0.5rem;
   background-color: white;
