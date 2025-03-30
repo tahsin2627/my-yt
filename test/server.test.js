@@ -1,9 +1,10 @@
-import {test, describe} from 'node:test'
+import {test, describe, mock} from 'node:test'
 import fs from 'fs'
 import assert from 'assert'
 import { createServer } from '../lib/server.js'
 import Repository from '../lib/repository.js'
 
+mock.timers.enable({ apis: ['setInterval'] });
 let repo
 test.beforeEach(() => {
   if (fs.existsSync('./test/data')) {
@@ -23,8 +24,12 @@ describe('server - user flow', () => {
   test.before((cb) => {
     server = createServer({updateVideos: false, repo, connections: []})
     server.listen(3001, cb)
+    console.log('listening server')
   }, {timeout: 10000})
-  test.after((cb) => server.close(cb), {timeout: 10000})
+  test.after((cb) => {
+    server.close(cb)
+    console.log('closed server')
+  }, {timeout: 10000})
 
   test('get channels', {timeout: 5000}, async () => {
     const res = await fetch('http://0.0.0.0:3001/api/channels')
