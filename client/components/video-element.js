@@ -39,7 +39,7 @@ class VideoElement extends HTMLElement {
     this.innerHTML = /*html*/`
       ${this.video.downloaded
       ? /*html*/`<div class="play video-placeholder" style="background-image: url(${this.video.thumbnail})"><div class="play-icon"></div></div>`
-      : /*html*/`<img title="Download video" class="download" loading="lazy" src="${this.video.thumbnail}"/>`}
+      : /*html*/`<img title="Download video" class="download!" loading="lazy" src="${this.video.thumbnail}"/>`}
       <span class="action ignore" tabindex="0">${this.video.ignored ? 'unignore' : 'ignore'}</span>
       <div class="info">
         <span class="channel-name">${this.video.channelName}</span>
@@ -68,7 +68,7 @@ class VideoElement extends HTMLElement {
   }
   registerEvents () {
     addClickListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
-    addClickListener(this.querySelector('img.download'), this.downloadVideoHandler.bind(this))
+    // addClickListener(this.querySelector('img.download'), this.downloadVideoHandler.bind(this))
     addClickListener(this.querySelector('.action.delete'), this.deleteVideoHandler.bind(this))
     addClickListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
     addClickListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
@@ -78,7 +78,7 @@ class VideoElement extends HTMLElement {
   }
   unregisterEvents () {
     removeClickListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
-    removeClickListener(this.querySelector('img.download'), this.downloadVideoHandler.bind(this))
+    // removeClickListener(this.querySelector('img.download'), this.downloadVideoHandler.bind(this))
     removeClickListener(this.querySelector('.action.delete'), this.deleteVideoHandler.bind(this))
     removeClickListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
     removeClickListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
