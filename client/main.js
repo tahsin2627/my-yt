@@ -9,10 +9,22 @@ eventSource.onmessage = (message) => {
     const data = JSON.parse(message.data, {})
     console.log('[sse] message', data)
 
+    if (data.type === 'state' && data.state) {
+      const $state = document.querySelector('.state')
+      if (!$state) { return console.warn('missing $state') }
+      const $downloading = $state.querySelector('.downloading')
+      const $summarizing = $state.querySelector('.summarizing')
+      const downloadingCount = Object.keys(data.state.downloading || {}).length
+      $downloading.innerText = `Downloading: ${downloadingCount}`
+      const summarizingCount = Object.keys(data.state.summarizing || {}).length
+      $summarizing.innerText = `Summarizing: ${summarizingCount}`
+      return
+    }
     if (data.type === 'download-log-line' && data.line) {
-      const $downloadLog = document.querySelector('.download-log')
-      // $downloadLog.open = true
-      const $downloadLogLines = document.querySelector('.download-log .lines')
+      const $state = document.querySelector('.state')
+      if (!$state) { return console.warn('missing $state') }
+
+      const $downloadLogLines = $state.querySelector(' .lines')
       const text = $downloadLogLines.innerText
       let lines = text.split('\n')
       lines = lines.join('\n') + '\n' + data.line
