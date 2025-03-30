@@ -13,7 +13,7 @@ test.beforeEach(() => {
   repo = new Repository('./test/data')
 })
 test('starts server', async () => {
-  const server = createServer({updateVideos: false, repo, connections: []})
+  const server = createServer({repo, connections: []})
   await new Promise(resolve => server.listen(3001, resolve))
   assert.equal(server.address().port, 3001)
   await new Promise(resolve => server.close(resolve))
@@ -22,7 +22,7 @@ test('starts server', async () => {
 describe('server - user flow', () => {
   let server
   test.before((cb) => {
-    server = createServer({updateVideos: false, repo, connections: []})
+    server = createServer({repo, connections: []})
     server.listen(3001, cb)
     console.log('listening server')
   }, {timeout: 10000})
