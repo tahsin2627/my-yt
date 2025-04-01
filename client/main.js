@@ -19,14 +19,16 @@ eventSource.onmessage = (message) => {
       const summarizingCount = Object.keys(data.state.summarizing || {}).length
       $summarizing.innerText = `Summarizing: ${summarizingCount}`
 
-      Object.keys(data.state.summarizing || {}).map((videoId) => {
-        const $video = document.querySelector(`video-element[data-video-id="${videoId}"]`)
-        if ($video) $video.dataset['summarizing'] = "true"
-      })
-      Object.keys(data.state.downloading || {}).map((videoId) => {
-        const $video = document.querySelector(`video-element[data-video-id="${videoId}"]`)
-        if ($video) $video.dataset['downloading'] = "true"
-      })
+      setTimeout(() => {
+        Object.keys(data.state.summarizing || {}).map((videoId) => {
+          const $video = document.querySelector(`video-element[data-video-id="${videoId}"]`)
+          if ($video) $video.dataset['summarizing'] = "true"
+        })
+        Object.keys(data.state.downloading || {}).map((videoId) => {
+          const $video = document.querySelector(`video-element[data-video-id="${videoId}"]`)
+          if ($video) $video.dataset['downloading'] = "true"
+        })
+      }, 500)
       return
     }
     if (data.type === 'download-log-line' && data.line) {
