@@ -5,6 +5,8 @@ const store = new Store()
 class VideoElement extends HTMLElement {
   constructor () {
     super()
+    this.downloadStartedText = '⚡️ Downloading..'
+    this.summaryStartedText = '⚡️ Summarizing..'
   }
 
   connectedCallback () {
@@ -15,13 +17,19 @@ class VideoElement extends HTMLElement {
     this.unregisterEvents()
   }
   static get observedAttributes() {
-    return ['data-data'];
+    return ['data-data', 'data-summarizing', 'data-downloading'];
   }
 
   attributeChangedCallback(name, _, newValue) {
     if (name === 'data-data') {
       this.video = JSON.parse(this.dataset['data'])
       this.render()
+    }
+    if (name === 'data-summarizing') {
+      this.querySelector('.action.summarize').innerText = this.summaryStartedText
+    }
+    if (name === 'data-downloading') {
+      this.querySelector('.action.download').innerText = this.downloadStartedText
     }
   }
   render () {
@@ -105,7 +113,7 @@ class VideoElement extends HTMLElement {
   downloadVideoHandler (event) {
     event.preventDefault()
     
-    const downloadStartedText = '⚡️ Download started'
+    const downloadStartedText = '⚡️ Downloading..'
     let $downloadButton = event.target.classList.contains('.action') ? event.target : this.querySelector('.action.download')
     if ($downloadButton.innerText === downloadStartedText) return
     else $downloadButton.innerText = downloadStartedText
@@ -138,7 +146,7 @@ class VideoElement extends HTMLElement {
   }
   summarizeVideoHandler (event) {
     event.preventDefault()
-    const summaryStartedText = '⚡️ summary started'
+    const summaryStartedText = '⚡️ Summarizing..'
     if (event.target.innerText === summaryStartedText) return
     event.target.innerText = summaryStartedText
     fetch('/api/summarize-video', {
