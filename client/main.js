@@ -12,6 +12,7 @@ eventSource.onmessage = (message) => {
     if (data.type === 'state' && data.state) {
       const $state = document.querySelector('.state')
       if (!$state) { return console.warn('missing $state') }
+      const $count = $state.querySelector('.count')
       const $downloading = $state.querySelector('.downloading')
       const $summarizing = $state.querySelector('.summarizing')
       const downloadingCount = Object.keys(data.state.downloading || {}).length
@@ -20,14 +21,16 @@ eventSource.onmessage = (message) => {
       $summarizing.innerText = `Summarizing: ${summarizingCount}`
 
       setTimeout(() => {
-        Object.keys(data.state.summarizing || {}).map((videoId) => {
-          const $video = document.querySelector(`video-element[data-video-id="${videoId}"]`)
-          if ($video) $video.dataset['summarizing'] = "true"
-        })
         Object.keys(data.state.downloading || {}).map((videoId) => {
           const $video = document.querySelector(`video-element[data-video-id="${videoId}"]`)
           if ($video) $video.dataset['downloading'] = "true"
         })
+        Object.keys(data.state.summarizing || {}).map((videoId) => {
+          const $video = document.querySelector(`video-element[data-video-id="${videoId}"]`)
+          if ($video) $video.dataset['summarizing'] = "true"
+        })
+        const count = Object.keys(data.state.summarizing).length + Object.keys(data.state.downloading).length
+        $count.innerText = count > 0 ? `(${count})` : ''
       }, 500)
       return
     }
