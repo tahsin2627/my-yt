@@ -76,7 +76,6 @@ docker run -d -p 3000:3000 -v $HOME/my-yt-data:/app/data christianfei/my-yt:late
 
 | Variable  |  Type |  Default |
 |---|---|---|
-| SKIP_TRANSCODING | boolean  | false  |   |
 | AI_APIKEY | string  |   |
 | AI_MODEL |  string |  meta-llama-3.1-8b-instruct |
 | AI_HOST | string  |  http://127.0.0.1:1234 |
