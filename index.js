@@ -5,7 +5,10 @@ import { createServer } from './lib/server.js'
 
 async function main ({port = 3000, connections = []} = {}) {
   const repo = new Repository()
-  const state = {}
+  const state = {
+    downloading: {},
+    summarizing: {},
+  }
 
   createServer({repo, state, port, connections})
   .listen(port, () => {
