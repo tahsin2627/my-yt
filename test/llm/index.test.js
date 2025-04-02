@@ -26,6 +26,11 @@ test('should use Anthropic provider', async () => {
     .get('https://api.anthropic.com')
     .intercept({
       path: '/v1/messages',
+      headers: {
+        'Content-Type': 'application/json',
+        'anthropic-version': '2023-06-01',
+        'x-api-key': 'your-api-key'
+      },
       method: 'POST'
     })
     .reply(200, {
@@ -65,6 +70,10 @@ test('should use OpenAI provider', async () => {
     .get('https://api.openai.com')
     .intercept({
       path: '/v1/chat/completions',
+      headers: {
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer your-api-key'
+      },
       method: 'POST'
     })
     .reply(200, {
