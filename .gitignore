@@ -142,3 +142,5 @@ data.bkp
 cookies.txt
 
 *.clbin
+.DS_Store
+
