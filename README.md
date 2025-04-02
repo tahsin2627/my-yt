@@ -31,7 +31,7 @@ A clean and minimal youtube frontend supported by yt-dlp, and optionally your lo
 [Check out the todo list](https://github.com/christian-fei/my-yt/issues/5)
 
 
-> Application runs on http://localhost:3000 
+> Application runs on http://localhost:3000
 
 
 
@@ -74,13 +74,15 @@ docker run -d -p 3000:3000 -v $HOME/my-yt-data:/app/data christianfei/my-yt:late
 
 ## Environment variables for LLM integration
 
-The default values are
-```
-AI_MODEL       meta-llama-3.1-8b-instruct
-AI_HOST        http://127.0.0.1:1234
-AI_ENDPOINT    /v1/chat/completions
-AI_APIKEY
-```
+| Variable  |  Type |  Default |
+|---|---|---|
+| SKIP_TRANSCODING | boolean  | false  |   |
+| AI_APIKEY | string  |   |
+| AI_MODEL |  string |  meta-llama-3.1-8b-instruct |
+| AI_HOST | string  |  http://127.0.0.1:1234 |
+| AI_ENDPOINT | string  |  /v1/chat/completions |
+| AI_TEMPERATURE | string  |  0 |
+
 
 Simply set the env variables to your needs, by following the format above (e.g. url starting with "http", no ending slash, AI_ENDPOINT with leading slash and path)
 
