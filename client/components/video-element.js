@@ -40,9 +40,9 @@ class VideoElement extends HTMLElement {
     this.classList.add('video')
     this.dataset['videoId'] = this.video.id
     this.dataset['date'] = this.video.publishedAt
-    this.dataset['summarized'] = this.video.summary ? "true" : "false"
-    this.dataset['downloaded'] = this.video.downloaded ? "true" : "false"
-    this.dataset['ignored'] = this.video.ignored ? "true" : "false"
+    this.dataset['summarized'] = this.video.summary ? 'true' : 'false'
+    this.dataset['downloaded'] = this.video.downloaded ? 'true' : 'false'
+    this.dataset['ignored'] = this.video.ignored ? 'true' : 'false'
 
     this.innerHTML = /*html*/`
       ${this.video.downloaded
@@ -112,13 +112,12 @@ class VideoElement extends HTMLElement {
   }
   downloadVideoHandler (event) {
     event.preventDefault()
-    
-    const downloadStartedText = '⚡️ Downloading..'
-    let $downloadButton = event.target.classList.contains('.action') ? event.target : this.querySelector('.action.download')
-    if ($downloadButton.innerText === downloadStartedText) return
-    else $downloadButton.innerText = downloadStartedText
 
-    this.classList.add('downloading')
+    if (this.dataset['downloading'] === 'true') return
+    this.dataset['downloading'] = 'true'
+    
+    let $downloadButton = event.target.classList.contains('.action') ? event.target : this.querySelector('.action.download')
+    $downloadButton.innerText = this.downloadStartedText
 
     fetch('/api/download-video', {
       method: 'POST',
@@ -146,9 +145,12 @@ class VideoElement extends HTMLElement {
   }
   summarizeVideoHandler (event) {
     event.preventDefault()
-    const summaryStartedText = '⚡️ Summarizing..'
-    if (event.target.innerText === summaryStartedText) return
-    event.target.innerText = summaryStartedText
+
+    if (this.dataset['summarizing'] === 'true') return
+    this.dataset['summarizing'] = 'true'
+
+    event.target.innerText = this.summaryStartedText
+
     fetch('/api/summarize-video', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
