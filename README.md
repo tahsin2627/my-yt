@@ -3,6 +3,7 @@
 A clean and minimal youtube frontend supported by yt-dlp, and optionally your local AI model, to make your youtube experience local, mindful and succint.
 
 ![preview my-yt](/preview.png)
+![preview my-yt dark](/preview-dark.png)
 
 
 
