@@ -70,6 +70,13 @@ const routes = {
     $useTLDWTube.addEventListener('click', (event) => {
       store.toggle(store.useTLDWTubeKey)
     })
+
+    const $showCaptions = document.getElementById('show-captions')
+    store.get(store.showCaptionsKey) ? $showCaptions.setAttribute('checked', 'true') : $showCaptions.removeAttribute('checked')
+    
+    $showCaptions.addEventListener('click', (event) => {
+      store.toggle(store.showCaptionsKey)
+    })
   } },
   '/404': { template: document.getElementById('not-found-template'), async initialize () {
     document.querySelector('search-videos #search').setAttribute('disabled', 'disabled')

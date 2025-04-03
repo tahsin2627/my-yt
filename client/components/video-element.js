@@ -100,7 +100,9 @@ class VideoElement extends HTMLElement {
     this.querySelector('.play.video-placeholder').outerHTML = /*html*/`
     <video controls playsinline style="user-select: none; width: 400px; width: -webkit-fill-available;">
       <source src="/api/videos/${this.video.id}.${this.video.format || 'mp4'}" type="video/${this.video.format || 'mp4'}" />
-      <track default kind="captions" srclang="en" src="/api/captions/${this.video.id}" />
+      ${store.get(store.showCaptionsKey) ? /*html*/`
+        <track default kind="captions" srclang="en" src="/api/captions/${this.video.id}" />
+      ` : ''}
       <p>
         Your browser does not support the video tag.
         Download the video instead <a href="/api/videos/${this.video.id}" target="_blank">here</a>
