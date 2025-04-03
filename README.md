@@ -93,7 +93,7 @@ AI_MODEL=gpt-4o-mini AI_HOST=https://api.openai.com AI_APIKEY=sk-proj-123 npm st
 # or with docker in background using OpenAI
 docker run -e AI_MODEL=gpt-4o-mini -e AI_HOST=https://api.openai.com -e AI_APIKEY=sk-proj-123 -d -p 3000:3000 -v $HOME/my-yt-data:/app/data christianfei/my-yt:latest
 # or with docker in background using Anthropic
-docker run -e AI_MODEL=claude-xyz -e AI_HOST=https://api.anthropic.com -e AI_APIKEY=your-key --rm -it -p 3000:3000 -v $HOME/my-yt-data:/app/data christianfei/my-yt:latest
+docker run -e AI_MODEL=claude-xyz -e AI_HOST=https://api.anthropic.com -e AI_ENDPOINT=/v1/messages -e AI_APIKEY=your-key --rm -it -p 3000:3000 -v $HOME/my-yt-data:/app/data christianfei/my-yt:latest
 ```
 
 ## Environment variable to skip transcoding to h264
