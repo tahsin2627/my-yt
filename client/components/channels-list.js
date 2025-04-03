@@ -57,7 +57,7 @@ class ChannelsList extends HTMLElement {
       channels.forEach(c => c.classList.remove('active'))
       event.target.classList.add('active')
     }
-    $searchInput.dispatchEvent(new Event('keyup'))
+    $searchInput.dispatchEvent(new Event('input'))
     setTimeout(() => document.body.scrollIntoView({ top: 0, behavior: 'smooth' }), 10)
   }
 }

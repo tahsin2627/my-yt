@@ -192,7 +192,7 @@ class VideoElement extends HTMLElement {
     const $searchInput = document.querySelector('#search')
     const channel = `@${this.video.channelName}`
     $searchInput.value = ($searchInput && $searchInput.value !== channel) ? channel : ''
-    $searchInput.dispatchEvent(new Event('keyup'))
+    $searchInput.dispatchEvent(new Event('input'))
   }
   registerVideoEvents (video) {
     video.addEventListener('play', () => {
