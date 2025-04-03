@@ -223,8 +223,12 @@ customElements.define('video-element', VideoElement)
 
 function tryFormatDate(date) {
   try {
-    return new Date(date).toLocaleDateString(navigator.language || 'en-US').substring(0, 10)
+    return new Intl.DateTimeFormat(navigator.language, {
+      year: "numeric",
+      month: "numeric",
+      day: "numeric",
+    }).format(new Date(date))
   } catch (err) {
-    return 'N/A'
+    return (date || '').substring(0, 10)
   }
 }
