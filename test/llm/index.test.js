@@ -33,6 +33,7 @@ test('should use Anthropic provider', async () => {
         'anthropic-version': '2023-06-01',
         'x-api-key': 'your-api-key'
       },
+      body: '{"model":"claude-v1","temperature":0.7,"system":"You are a helpful assistant.","maxTokens":1000,"messages":[{"role":"user","content":"Just tell me something"}]}',
       method: 'POST'
     })
     .reply(200, {
@@ -78,6 +79,7 @@ test('should use OpenAI provider', async () => {
         'Content-Type': 'application/json',
         'Authorization': 'Bearer your-api-key'
       },
+      body: '{"model":"gpt-4o","temperature":0.7,"maxTokens":1000,"messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Just tell me something"}]}',
       method: 'POST'
     })
     .reply(200, {
