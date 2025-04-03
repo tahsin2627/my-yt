@@ -1,4 +1,4 @@
-import {test, beforeEach} from "node:test"
+import {test, beforeEach, afterEach} from "node:test"
 import assert from "node:assert"
 import { MockAgent, setGlobalDispatcher } from 'undici'
 
@@ -10,6 +10,8 @@ let agent;
 beforeEach(() => {
   agent = new MockAgent()
   setGlobalDispatcher(agent)
+  agent.enableCallHistory()
+  agent.disableNetConnect()
 })
 
 test('should use Anthropic provider', async () => {
@@ -54,6 +56,8 @@ test('should use Anthropic provider', async () => {
 
   const result = await summarize(system, prompt, llmSettings)
   assert.equal(result, 'something')
+  agent.assertNoPendingInterceptors()
+  assert.equal(agent.getCallHistory().logs.length, 1)
 })
 
 test('should use OpenAI provider', async () => {
@@ -114,4 +118,6 @@ test('should use OpenAI provider', async () => {
 
   const result = await summarize(system, prompt, llmSettings)
   assert.equal(result, 'something')
+  agent.assertNoPendingInterceptors()
+  assert.equal(agent.getCallHistory().logs.length, 1)
 })
