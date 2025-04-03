@@ -273,7 +273,7 @@ button:disabled, select:disabled, input[type="checkbox"]:disabled, input[type="r
   font-weight: bold;
   padding: 5px;
   align-self: flex-start;
-  margin: 5px;
+  margin: 5px 0 10px 0;
   user-select: none;
   -webkit-user-select: none;
 }
@@ -289,7 +289,7 @@ button:disabled, select:disabled, input[type="checkbox"]:disabled, input[type="r
   cursor: pointer;
 }
 .video .title {
-  margin-top: 5px;
+  margin-top: 7px;
   margin-bottom: 5px;
   min-height: 2rem;
   max-height: 2.5rem;
@@ -328,11 +328,13 @@ button:disabled, select:disabled, input[type="checkbox"]:disabled, input[type="r
 
 .video .actions {
   font-size: 0.9rem;
+  justify-content: space-between;
+  margin-top: 10px;
 }
+
 .video .actions > * {
   cursor: pointer;
 }
-
 
 video-element, video-element video {
   transition: width 0.1s ease-in;
@@ -566,4 +568,38 @@ empty-state {
 }
 .user-select-none {
   user-select: none;
+}
+
+.video-wrapper {
+  position: relative;
+}
+
+.info {
+  display: flex;
+  flex-wrap: wrap;
+  color: var(--text-secondary);
+  gap: 4px;
+}
+
+.info .channel-name {
+  flex-basis: 100%;
+}
+
+.info .flex {
+  justify-content: space-between;
+  flex-basis: 100%;
+}
+
+.info .flex span:first-child {
+  margin-left: 0;
+}
+
+.info-duration {
+  position: absolute;
+  bottom: 12px;
+  right: 12px;
+  background: var(--bg-primary);
+  border-radius: 2px;
+  padding: 2px 3px;
+  opacity: 0.8;
 }

@@ -46,32 +46,30 @@ class VideoElement extends HTMLElement {
 
     this.innerHTML = /*html*/`
       ${this.video.downloaded
-      ? /*html*/`<div class="play video-placeholder" style="background-image: url(${this.video.thumbnail})"><div class="play-icon"></div></div>`
-      : /*html*/`<img title="Download video" class="download!" loading="lazy" src="${this.video.thumbnail}"/>`}
+      ? /*html*/`<div class="video-wrapper"><div class="play video-placeholder" style="background-image: url(${this.video.thumbnail})"><div class="play-icon"></div></div><span class="info-duration">${this.video.duration || 'N/A'}</span></div>`
+      : /*html*/`<div class="video-wrapper"><img title="Download video" class="download!" loading="lazy" src="${this.video.thumbnail}"/><span class="info-duration">${this.video.duration || 'N/A'}</span></div>`}
       <span class="action ignore" tabindex="0">${this.video.ignored ? 'unignore' : 'ignore'}</span>
+      <h4 class="title">${this.video.title}</h4>
       <div class="info">
         <span class="channel-name">${this.video.channelName}</span>
-        <br>
         <div class="flex">
-          <span>${tryFormatDate(this.video.publishedAt)}</span>
           <span>${this.video.viewCount}</span>
-          <span>${this.video.duration || 'N/A'}</span><br/>
+          <span>${tryFormatDate(this.video.publishedAt)}</span>
         </div>
       </div>
-      <h4 class="title">${this.video.title}</h4>
       <div class="actions flex">
         ${this.video.downloaded
           ? /*html*/`<span tabindex="0"  class="action delete" data-video-id="${this.video.id}">🗑️ Delete</span>`
           : /*html*/`<span tabindex="0"  class="action download" data-video-id="${this.video.id}">⬇️ Download</span>`}
-        ${store.get(store.useTLDWTubeKey) ? 
-          /*html*/`<a target="_blank" href="https://tldw.tube/?v=${this.video.id}">📖 tldw.tube</a>` 
+        ${store.get(store.useTLDWTubeKey) ?
+          /*html*/`<a target="_blank" href="https://tldw.tube/?v=${this.video.id}">📖 tldw.tube</a>`
           : !this.video.summary
           ? /*html*/`<span tabindex="0"  class="action summarize" data-video-id="${this.video.id}">📖 Summarize</span>`
           : /*html*/`<span tabindex="0"  class="action show-summary" data-video-id="${this.video.id}">📖 Summary</span>`}
         <a href="https://www.youtube.com/watch?v=${this.video.id}" target="_blank">📺 external</a>
       </div>
     `
-    
+
     this.registerEvents()
   }
   registerEvents () {
@@ -117,7 +115,7 @@ class VideoElement extends HTMLElement {
 
     if (this.dataset['downloading'] === 'true') return
     this.dataset['downloading'] = 'true'
-    
+
     let $downloadButton = event.target.classList.contains('.action') ? event.target : this.querySelector('.action.download')
     $downloadButton.innerText = this.downloadStartedText
 
@@ -143,7 +141,7 @@ class VideoElement extends HTMLElement {
       this.querySelector('video') && this.unregisterVideoEvents(this.querySelector('video'))
       this.render()
     })
-    .catch((error) => console.error('Error deleting video:', error))  
+    .catch((error) => console.error('Error deleting video:', error))
   }
   summarizeVideoHandler (event) {
     event.preventDefault()
@@ -177,7 +175,7 @@ class VideoElement extends HTMLElement {
   toggleIgnoreVideoHandler (event) {
     event.preventDefault()
 
-    
+
     fetch('/api/ignore-video', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -218,14 +216,14 @@ class VideoElement extends HTMLElement {
   scrollIntoViewWithOffset (offset, behavior = 'smooth') {
     const top = this.getBoundingClientRect().top - offset - document.body.getBoundingClientRect().top
     scrollTo({ top, behavior })
-  }  
+  }
 }
 
 customElements.define('video-element', VideoElement)
 
 function tryFormatDate(date) {
   try {
-    return new Date(date).toISOString().substring(0, 10)
+    return new Date(date).toLocaleDateString(navigator.language || 'en-US').substring(0, 10)
   } catch (err) {
     return 'N/A'
   }
