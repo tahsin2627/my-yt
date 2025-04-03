@@ -2,6 +2,9 @@ import { createVideoElement } from "/lib/utils.js"
 import Store from '/lib/store.js'
 const store = new Store()
 
+const searchEventSupported = 'search' in document.createElement('input')
+console.log({searchEventSupported})
+
 class SearchVideos extends HTMLElement {
   constructor () {
     super()
@@ -15,18 +18,17 @@ class SearchVideos extends HTMLElement {
     this.unregisterEvents()
   }
   registerEvents () {
-    if (this.querySelector('input'))
-      this.querySelector('input').addEventListener('keyup', this.searchHandler.bind(this))
+    this.querySelector('input').addEventListener('input', this.searchHandler.bind(this))
   }
   unregisterEvents () {
-    if (this.querySelector('input'))
-      this.querySelector('input').removeEventListener('keyup', this.searchHandler.bind(this))
+    this.querySelector('input').removeEventListener('input', this.searchHandler.bind(this))
   }
   render () {
     this.innerHTML = /*html*/`<input type="search" incremental="incremental" id="search" placeholder="🔍 Search videos or paste video url" autofocus>`
   }
   searchHandler (event) {
     event.preventDefault()
+    console.log('searchHandler')
     let searchTerm = event.target.value.trim()
     if (this.previousSearchTerm === searchTerm) return
     this.previousSearchTerm = searchTerm
