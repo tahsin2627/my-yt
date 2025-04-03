@@ -119,9 +119,9 @@ Handles SSE for client updates
 
 Implements HTTP Ranged requests for video playback
 
-### [llm.js](https://github.com/christian-fei/my-yt/blob/main/lib/llm.js)
+### [llm/index.js](https://github.com/christian-fei/my-yt/blob/main/lib/llm/index.js)
 
-Makes requests using the chat completions API of your favorite LLM provider that has a "standard" /v1/chat/completions endpoint (e.g. Ollama/LMStudio/OpenAI and others)
+Makes requests using the chat completions API of your favorite LLM provider (either locally using LMStudio/Ollama, or hosted like OpenAI/Anthropic)
 
 ### [sse.js](https://github.com/christian-fei/my-yt/blob/main/lib/sse.js)
 
