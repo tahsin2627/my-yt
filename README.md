@@ -107,7 +107,11 @@ This is a feature to make the video compatible with most devices (especially iOS
 If you don't have the need, you can skip the transcoding process by setting `SKIP_TRANSCODING=true`.
 
 
+# Contributing
 
+[Check out the todo list](https://github.com/christian-fei/my-yt/issues/5)
+
+If you want to work on something, don't hesitate to open an issue and pull-request
 
 ## Project
 
