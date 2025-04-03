@@ -19,7 +19,7 @@ A clean and minimal youtube frontend supported by yt-dlp, and optionally your lo
 - Native Google Chromecast support
 - Disable clickbait thumbnails
 - Play videos in background
-- Summarize video content using your local AI model (e.g. Ollama/LMStudio) or hosted provider (e.g. OpenAI)
+- Summarize video content using your local AI model (e.g. Ollama/LMStudio) or hosted provider (e.g. OpenAI, Anthropic)
 - Native Picture-in-Picture support
 - No dependencies (except for `nano-spawn`, which itself has no transient deps)
 - HTML/CSS only, no JS frameworks on client/server side
@@ -83,17 +83,17 @@ docker run -d -p 3000:3000 -v $HOME/my-yt-data:/app/data christianfei/my-yt:late
 | AI_TEMPERATURE | string  |  0 |
 
 
-Simply set the env variables to your needs, by following the format above (e.g. url starting with "http", no ending slash, AI_ENDPOINT with leading slash and path)
+**Simply set the env variables to your needs, by following the format above (e.g. url starting with "http", no ending slash, AI_ENDPOINT with leading slash and path)**
 
 Some examples:
 
 ```bash
 AI_MODEL=gpt-4o-mini AI_HOST=https://api.openai.com AI_APIKEY=sk-proj-123 npm start
 
-# or with docker in background
+# or with docker in background using OpenAI
 docker run -e AI_MODEL=gpt-4o-mini -e AI_HOST=https://api.openai.com -e AI_APIKEY=sk-proj-123 -d -p 3000:3000 -v $HOME/my-yt-data:/app/data christianfei/my-yt:latest
-# running in foreground
-docker run -e AI_MODEL=gpt-4o-mini -e AI_HOST=https://api.openai.com -e AI_APIKEY=sk-proj-123 --rm -it -p 3000:3000 -v $HOME/my-yt-data:/app/data christianfei/my-yt:latest
+# or with docker in background using Anthropic
+docker run -e AI_MODEL=claude-xyz -e AI_HOST=https://api.anthropic.com -e AI_APIKEY=your-key --rm -it -p 3000:3000 -v $HOME/my-yt-data:/app/data christianfei/my-yt:latest
 ```
 
 ## Environment variable to skip transcoding to h264
