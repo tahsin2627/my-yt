@@ -301,9 +301,6 @@ button:disabled, select:disabled, input[type="checkbox"]:disabled, input[type="r
   width: 100%;
   height: auto;
 }
-.video img.download {
-  /* cursor: pointer; */
-}
 .hide-thumbnails .video img {
   display: none !important;
   visibility: hidden !important;

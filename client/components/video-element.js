@@ -56,7 +56,7 @@ class VideoElement extends HTMLElement {
         `
       : /*html*/`
         <div class="video-wrapper">
-          <img title="Download video" class="download!" loading="lazy" src="${this.video.thumbnail}"/>
+          <img title="Download video" loading="lazy" src="${this.video.thumbnail}"/>
           <span class="info-duration">${this.video.duration || 'N/A'}</span>
         </div>
       `}
@@ -86,7 +86,6 @@ class VideoElement extends HTMLElement {
   }
   registerEvents () {
     addClickListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
-    // addClickListener(this.querySelector('img.download'), this.downloadVideoHandler.bind(this))
     addClickListener(this.querySelector('.action.delete'), this.deleteVideoHandler.bind(this))
     addClickListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
     addClickListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
@@ -96,7 +95,6 @@ class VideoElement extends HTMLElement {
   }
   unregisterEvents () {
     removeClickListener(this.querySelector('.action.download'), this.downloadVideoHandler.bind(this))
-    // removeClickListener(this.querySelector('img.download'), this.downloadVideoHandler.bind(this))
     removeClickListener(this.querySelector('.action.delete'), this.deleteVideoHandler.bind(this))
     removeClickListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
     removeClickListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
