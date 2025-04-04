@@ -114,6 +114,15 @@ describe('repository', () => {
     assert.ok(repo.setVideoQuality(1080))
     assert.equal(repo.getVideoQuality(), 1080)
   })
+  test('gets transcode videos setting', () => {
+    assert.equal(repo.getTranscodeVideos(), true)
+  })
+  test('sets transcode videos setting', () => {
+    repo.setTranscodeVideos(false)
+    assert.equal(repo.getTranscodeVideos(), false)
+    repo.setTranscodeVideos(true)
+    assert.equal(repo.getTranscodeVideos(), true)
+  })
 })
 
 describe('search', () => {

@@ -116,13 +116,13 @@ docker run -e AI_MODEL=claude-xyz -e AI_HOST=https://api.anthropic.com -e AI_END
 
 
 
-## Environment variable to skip transcoding to h264
+## Skip transcoding to h264
 
 If your system is under stress when downloading a video, that could be because of the automatic transcoding that's happening behind the scenes.
 
 This is a feature to make the video compatible with most devices (especially iOS)
 
-If you don't have the need, you can skip the transcoding process by setting `SKIP_TRANSCODING=true`.
+If you don't have the need, you can skip the transcoding process in the settings page.
 
 
 
