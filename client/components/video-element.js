@@ -50,13 +50,13 @@ class VideoElement extends HTMLElement {
         <div class="video-wrapper">
           <div class="play video-placeholder" style="background-image: url(${this.video.thumbnail})">
             <div class="play-icon"></div>
+            <span class="info-duration">${this.video.duration || 'N/A'}</span>
           </div>
-          <span class="info-duration">${this.video.duration || 'N/A'}</span>
         </div>
         `
       : /*html*/`
         <div class="video-wrapper">
-          <img title="Download video" loading="lazy" src="${this.video.thumbnail}"/>
+          <img title="${this.video.title}" loading="lazy" src="${this.video.thumbnail}"/>
           <span class="info-duration">${this.video.duration || 'N/A'}</span>
         </div>
       `}
