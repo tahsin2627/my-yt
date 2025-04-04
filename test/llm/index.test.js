@@ -15,15 +15,6 @@ beforeEach(() => {
 })
 
 test('should use Anthropic provider', async () => {
-  const llmSettings = {
-    host: 'https://api.anthropic.com',
-    model: 'claude-v1',
-    endpoint: '/v1/messages',
-    apiKey: 'your-api-key',
-    temperature: 0.7,
-    maxTokens: 1000
-  }
-  
   agent
     .get('https://api.anthropic.com')
     .intercept({
@@ -55,6 +46,15 @@ test('should use Anthropic provider', async () => {
       }
     })
 
+  const llmSettings = {
+    host: 'https://api.anthropic.com',
+    model: 'claude-v1',
+    endpoint: '/v1/messages',
+    apiKey: 'your-api-key',
+    temperature: 0.7,
+    maxTokens: 1000
+  }
+
   const result = await summarize(system, prompt, llmSettings)
   assert.equal(result, 'something')
   agent.assertNoPendingInterceptors()
@@ -62,15 +62,6 @@ test('should use Anthropic provider', async () => {
 })
 
 test('should use OpenAI provider', async () => {
-  const llmSettings = {
-    host: 'https://api.openai.com',
-    model: 'gpt-4o',
-    endpoint: '/v1/chat/completions',
-    apiKey: 'your-api-key',
-    temperature: 0.7,
-    maxTokens: 1000
-  }
-  
   agent
     .get('https://api.openai.com')
     .intercept({
@@ -118,6 +109,15 @@ test('should use OpenAI provider', async () => {
       "service_tier": "default"
     })
 
+  const llmSettings = {
+    host: 'https://api.openai.com',
+    model: 'gpt-4o',
+    endpoint: '/v1/chat/completions',
+    apiKey: 'your-api-key',
+    temperature: 0.7,
+    maxTokens: 1000
+  }
+  
   const result = await summarize(system, prompt, llmSettings)
   assert.equal(result, 'something')
   agent.assertNoPendingInterceptors()
