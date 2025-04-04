@@ -357,6 +357,7 @@ video-element, video-element video {
   height: 225px;
   background-color: var(--video-placeholder);
   background-size: cover;
+  background-position: center center;
   display: flex;
   align-items: center;
   justify-content: center;
