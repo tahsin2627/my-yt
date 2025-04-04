@@ -8,9 +8,6 @@ A clean and minimal youtube frontend supported by yt-dlp, and optionally your lo
 
 
 
-
-
-
 ## Features
 
 - Channel management/Subscriptions
@@ -33,10 +30,25 @@ A clean and minimal youtube frontend supported by yt-dlp, and optionally your lo
 [Check out the todo list](https://github.com/christian-fei/my-yt/issues/5)
 
 
-> Application runs on http://localhost:3000
+## How it works
 
+You start the application.
 
+Add your favourite channels in the settings page.
 
+The app will fetch the latest videos from your subscribed channels and display them in chronological order.
+
+Your subscriptions will be scraped from youtube every 10 minutes. No API key needed.
+
+Then you can download a video to watch it locally. If you host `my-yt` on your local network you can watch videos on all your devices.
+
+You can ignore videos that you don't want to watch.
+
+You can search for videos based on your subscriptions.
+
+If you want, the app can also generate a summary of the video content using your local AI model or hosted provider.
+
+Additionally, in the settings page you can set the video quality of the downloaded videos, clean up disk space used, avoid seeing clickbait thumbnails and much more.
 
 
 ## Installation (node.js)
@@ -52,8 +64,7 @@ npm start
 ```
 
 
-
-
+> Application runs on http://localhost:3000
 
 
 
@@ -73,6 +84,9 @@ docker run -p 3000:3000 -v /path/to/your/data/folder/for/persistence:/app/data c
 # ok calm down, here is an actual example command to copy-n-paste, jeez
 docker run -d -p 3000:3000 -v $HOME/my-yt-data:/app/data christianfei/my-yt:latest
 ```
+
+
+
 
 ## Environment variables for LLM integration
 
@@ -98,6 +112,10 @@ docker run -e AI_MODEL=gpt-4o-mini -e AI_HOST=https://api.openai.com -e AI_APIKE
 docker run -e AI_MODEL=claude-xyz -e AI_HOST=https://api.anthropic.com -e AI_ENDPOINT=/v1/messages -e AI_APIKEY=your-key --rm -it -p 3000:3000 -v $HOME/my-yt-data:/app/data christianfei/my-yt:latest
 ```
 
+
+
+
+
 ## Environment variable to skip transcoding to h264
 
 If your system is under stress when downloading a video, that could be because of the automatic transcoding that's happening behind the scenes.
@@ -107,11 +125,16 @@ This is a feature to make the video compatible with most devices (especially iOS
 If you don't have the need, you can skip the transcoding process by setting `SKIP_TRANSCODING=true`.
 
 
+
 # Contributing
 
 [Check out the todo list](https://github.com/christian-fei/my-yt/issues/5)
 
 If you want to work on something, don't hesitate to open an issue and pull-request
+
+
+
+
 
 ## Project
 
