@@ -31,8 +31,8 @@ class TranscodeVideosForm extends HTMLElement {
           </div>
           <input type="checkbox" id="transcode-videos"/>
         </div>
-        <div><small>If you're having issues playing back videos, this can help to maximize compatibility across devices</small></div>
-        <div><small>The download of videos will be slower, because transcoding is quite resource intensive</small></div>
+        <div><small>Maximize compatibility across devices</small></div>
+        <div><small>The download of videos will be slower, transcoding is quite resource intensive</small></div>
       </form>
     `
   }
