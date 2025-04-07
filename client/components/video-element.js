@@ -78,7 +78,7 @@ class VideoElement extends HTMLElement {
           : !this.video.summary
           ? /*html*/`<span tabindex="0"  class="action summarize" data-video-id="${this.video.id}">📖 Summarize</span>`
           : /*html*/`<span tabindex="0"  class="action show-summary" data-video-id="${this.video.id}">📖 Summary</span>`}
-        <a href="https://www.youtube.com/watch?v=${this.video.id}" target="_blank">📺 external</a>
+        <a href="https://www.youtube.com/watch?v=${this.video.id}" class="action open-externally" target="_blank">📺 external</a>
       </div>
     `
 
@@ -90,6 +90,7 @@ class VideoElement extends HTMLElement {
     addClickListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
     addClickListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
     addClickListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
+    addClickListener(this.querySelector('.action.open-externally'), this.openExternallyHandler.bind(this))
     addClickListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
     addClickListener(this.querySelector('.play.video-placeholder'), this.watchVideoHandler.bind(this))
   }
@@ -99,6 +100,7 @@ class VideoElement extends HTMLElement {
     removeClickListener(this.querySelector('.action.summarize'), this.summarizeVideoHandler.bind(this))
     removeClickListener(this.querySelector('.action.show-summary'), this.showSummaryHandler.bind(this))
     removeClickListener(this.querySelector('.action.ignore'), this.toggleIgnoreVideoHandler.bind(this))
+    removeClickListener(this.querySelector('.action.open-externally'), this.openExternallyHandler.bind(this))
     removeClickListener(this.querySelector('.channel-name'), this.filterByChannelHandler.bind(this))
     removeClickListener(this.querySelector('.play.video-placeholder'), this.watchVideoHandler.bind(this))
     this.querySelector('video') && this.unregisterVideoEvents(this.querySelector('video'))
@@ -197,6 +199,9 @@ class VideoElement extends HTMLElement {
       this.classList.remove('hide')
       this.render()
     })
+  }
+  openExternallyHandler (event) {
+    this.querySelector('video') && this.querySelector('video').pause()
   }
   filterByChannelHandler (event) {
     const $searchInput = document.querySelector('#search')
