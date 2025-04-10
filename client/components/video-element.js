@@ -83,11 +83,11 @@ class VideoElement extends HTMLElement {
     `
 
 
-    if (window.state && window.state.downloading[this.video.id]) {
+    if (window.state && window.state.downloading && window.state.downloading[this.video.id]) {
       this.dataset['downloading'] = 'true'
       this.querySelector('.action.download').innerText = this.downloadStartedText
     }
-    if (window.state && window.state.summarizing[this.video.id]) {
+    if (window.state && window.state.summarizing && window.state.summarizing[this.video.id]) {
       this.dataset['summarizing'] = 'true'
       this.querySelector('.action.summarize').innerText = this.summaryStartedText
     }
