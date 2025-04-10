@@ -1,6 +1,7 @@
 import Store from '/lib/store.js'
 import { createVideoElement } from '/lib/utils.js'
 const store = new Store()
+window.state = {}
 
 const eventSource = new EventSource('/')
 eventSource.onmessage = (message) => {
@@ -10,6 +11,7 @@ eventSource.onmessage = (message) => {
     console.log('[sse] message', data)
 
     if (data.type === 'state' && data.state) {
+      Object.assign(state, data.state)
       const $state = document.querySelector('.state')
       if (!$state) { return console.warn('missing $state') }
       const $count = $state.querySelector('.count')
