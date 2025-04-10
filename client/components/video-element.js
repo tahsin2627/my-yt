@@ -25,11 +25,11 @@ class VideoElement extends HTMLElement {
       this.video = JSON.parse(this.dataset['data'])
       this.render()
     }
-    if (name === 'data-summarizing') {
-      this.querySelector('.action.summarize').innerText = this.summaryStartedText
-    }
-    if (name === 'data-downloading') {
+    if (name === 'data-downloading' && this.querySelector('.action.download')) {
       this.querySelector('.action.download').innerText = this.downloadStartedText
+    }
+    if (name === 'data-summarizing' && this.querySelector('.action.summarize')) {
+      this.querySelector('.action.summarize').innerText = this.summaryStartedText
     }
   }
   render () {
