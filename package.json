@@ -15,6 +15,6 @@
     "nano-spawn": "^0.2.0"
   },
   "devDependencies": {
-    "undici": "^7.7.0"
+    "undici": "^7.8.0"
   }
 }
