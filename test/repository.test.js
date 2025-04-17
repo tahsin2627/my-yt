@@ -28,6 +28,7 @@ describe('repository', () => {
     assert.equal(repo.getChannels().length, 1)
     assert.equal(repo.channelExists('veritasium'), true)
   })
+
   test('delete channel', () => {
     repo.addChannel('veritasium')
     repo.deleteChannel('veritasium')
@@ -122,6 +123,35 @@ describe('repository', () => {
     assert.equal(repo.getTranscodeVideosSetting(), false)
     repo.setTranscodeVideosSetting(true)
     assert.equal(repo.getTranscodeVideosSetting(), true)
+  })
+})
+
+describe('excluded terms', () => {
+  test('gets excluded terms', () => {
+    assert.deepEqual(repo.getExcludedTerms(), [])
+  })
+
+  test('adds excluded term', () => {
+    repo.addExcludedTerm('trump')
+    assert.deepEqual(repo.getExcludedTerms(), ['trump'])
+  })
+
+  test('avoids adding duplicate excluded term', () => {
+    repo.addExcludedTerm('trump')
+    assert.deepEqual(repo.getExcludedTerms(), ['trump'])
+    repo.addExcludedTerm('trump')
+    assert.deepEqual(repo.getExcludedTerms(), ['trump'])
+  })
+
+  test('removes term', () => {
+    repo.addExcludedTerm('trump')
+    assert.deepEqual(repo.getExcludedTerms(), ['trump'])
+    repo.removeExcludedTerm('trump')
+    assert.deepEqual(repo.getExcludedTerms(), [])
+  })
+
+  test('returns videos based on excluded terms', () => {
+    
   })
 })
 
