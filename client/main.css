@@ -445,6 +445,9 @@ body > header {
   background-color: inherit;
   font-size: 1.15rem;
 }
+.align-start {
+  align-items: flex-start;
+}
 
 body > header > * {
   padding-top: .5rem;
@@ -453,6 +456,7 @@ body > header > * {
 
 search-videos {
   flex: 2;
+  padding-bottom: 1em;
 }
 
 #search {
