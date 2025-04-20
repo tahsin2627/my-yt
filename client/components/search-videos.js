@@ -1,4 +1,4 @@
-import { createVideoElement } from "/lib/utils.js"
+import { createVideoElement, addToast } from "/lib/utils.js"
 import Store from '/lib/store.js'
 const store = new Store()
 
@@ -45,6 +45,7 @@ class SearchVideos extends HTMLElement {
     $status.innerText = ''
 
     if (searchTerm.match('https?://')) {
+      addToast('Downloading video...')
       fetch('/api/download-video', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },

@@ -1,5 +1,6 @@
 import { addClickListener, removeClickListener } from "/lib/utils.js"
 import Store from "/lib/store.js"
+import { addToast } from "/lib/utils.js"
 const store = new Store()
 
 class VideoElement extends HTMLElement {
@@ -139,6 +140,8 @@ class VideoElement extends HTMLElement {
     let $downloadButton = event.target.classList.contains('.action') ? event.target : this.querySelector('.action.download')
     $downloadButton.innerText = this.downloadStartedText
 
+    addToast('Downloading video...')
+
     fetch('/api/download-video', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -171,6 +174,8 @@ class VideoElement extends HTMLElement {
 
     event.target.innerText = this.summaryStartedText
 
+    addToast('Summarizing video...')
+
     fetch('/api/summarize-video', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -194,7 +199,6 @@ class VideoElement extends HTMLElement {
   }
   toggleIgnoreVideoHandler (event) {
     event.preventDefault()
-
 
     fetch('/api/ignore-video', {
       method: 'POST',

@@ -7,6 +7,19 @@ export function createVideoElement (video, showOriginalThumbnail = false) {
   return $video
 }
 
+export function addToast (text) {
+  const $notificationsContainer = document.getElementById('notifications-container')
+  if ($notificationsContainer) {
+    const $toast = document.createElement('div')
+    $toast.classList.add('toast')
+    $toast.textContent = text
+    $notificationsContainer.appendChild($toast)
+    setTimeout(() => {
+      $toast.remove()
+    }, 5000)
+  }
+}
+
 export function applyShowThumbnails(showThumbnails) {
   if (showThumbnails) {
     document.body.classList.remove('hide-thumbnails')
