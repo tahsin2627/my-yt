@@ -29,7 +29,7 @@ class SearchVideos extends HTMLElement {
     this.innerHTML = /*html*/`
       <input type="search" incremental="incremental" id="search" placeholder="🔍 Search videos or paste video url" autofocus>
       <div>
-        <label for="with-excluded">Show excluded videos</label>
+        <label for="with-excluded">Search excluded videos</label>
         <input type="checkbox" id="with-excluded"/>
       </div>
     `
@@ -60,7 +60,7 @@ class SearchVideos extends HTMLElement {
     document.body.classList.add('searching')
     let withExcluded = this.querySelector('#with-excluded').checked
 
-    fetch(`/api/videos?filter=${encodeURIComponent(searchTerm)}${withExcluded ? '&withExcluded=true' : ''}`)
+    fetch(`/api/videos?filter=${encodeURIComponent(searchTerm)}${withExcluded ? '&excluded=true' : ''}`)
     .then(res => res.json())
     .then((videos) => {
       const $videosContainer = document.querySelector('.main-videos-container')
