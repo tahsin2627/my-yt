@@ -1,7 +1,10 @@
 import Store from '/lib/store.js'
 import { createVideoElement } from '/lib/utils.js'
 const store = new Store()
-window.state = {}
+window.state = {
+  downloading: {}, 
+  summarizing: {}
+}
 
 const eventSource = new EventSource('/')
 eventSource.onmessage = (message) => {
@@ -48,7 +51,6 @@ eventSource.onmessage = (message) => {
       $downloadLogLines.scrollTop = $downloadLogLines.scrollHeight
       return
     }
-    
     if (data.type === 'new-videos' && data.videos) {
       const $videosContainer = document.querySelector('.main-videos-container')
       if (!$videosContainer) return
