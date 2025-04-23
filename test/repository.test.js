@@ -150,8 +150,16 @@ describe('excluded terms', () => {
     assert.deepEqual(repo.getExcludedTerms(), [])
   })
 
-  test('returns videos based on excluded terms', () => {
-    
+  test('returns videos based on excluded terms', async () => {
+    repo.addExcludedTerm('trump')
+    const videos = [{title: 'The Trump Show', channel: 'CNN'}, {title: 'The Biden Report', channel: 'NBC'}]
+    repo.upsertVideos(videos)
+    const results = await repo.getVideos()
+    assert.equal(results.length, 1)
+    assert.deepEqual(results[0], {
+      "channel": "NBC",
+      "title": "The Biden Report",
+    })
   })
 })
 
