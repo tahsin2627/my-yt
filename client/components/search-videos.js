@@ -20,17 +20,25 @@ class SearchVideos extends HTMLElement {
   registerEvents () {
     this.querySelector('#search').addEventListener('input', this.searchHandler.bind(this))
     this.querySelector('#with-excluded').addEventListener('change', this.searchHandler.bind(this))
+    this.querySelector('#only-downloaded').addEventListener('change', this.searchHandler.bind(this))
   }
   unregisterEvents () {
     this.querySelector('#search').removeEventListener('input', this.searchHandler.bind(this))
     this.querySelector('#with-excluded').removeEventListener('change', this.searchHandler.bind(this))
+    this.querySelector('#only-downloaded').removeEventListener('change', this.searchHandler.bind(this))
   }
   render () {
     this.innerHTML = /*html*/`
       <input type="search" incremental="incremental" id="search" placeholder="🔍 Search videos or paste video url" autofocus>
-      <div>
-        <label for="with-excluded">Search excluded videos</label>
-        <input type="checkbox" id="with-excluded"/>
+      <div class="flex">
+        <div class="flex-1">
+          <label for="with-excluded">Show excluded</label>
+          <input type="checkbox" id="with-excluded"/>
+        </div>
+        <div class="flex-1">
+          <label for="only-downloaded">Only downloaded</label>
+          <input type="checkbox" id="only-downloaded"/>
+        </div>
       </div>
     `
   }
@@ -59,8 +67,20 @@ class SearchVideos extends HTMLElement {
     searchTerm = searchTerm.toLowerCase()
     document.body.classList.add('searching')
     let withExcluded = this.querySelector('#with-excluded').checked
+    let onlyDownloaded = this.querySelector('#only-downloaded').checked
 
-    fetch(`/api/videos?filter=${encodeURIComponent(searchTerm)}${withExcluded ? '&excluded=true' : ''}`)
+    if (withExcluded) {
+      this.querySelector('#only-downloaded').disabled = true
+    } else {
+      this.querySelector('#only-downloaded').disabled = false
+    }
+    if (onlyDownloaded) {
+      this.querySelector('#with-excluded').disabled = true
+    } else {
+      this.querySelector('#with-excluded').disabled = false
+    }
+
+    fetch(`/api/videos?filter=${encodeURIComponent(searchTerm)}${withExcluded ? '&excluded=true' : ''}${onlyDownloaded ? '&downloaded=true' : ''}`)
     .then(res => res.json())
     .then((videos) => {
       const $videosContainer = document.querySelector('.main-videos-container')
