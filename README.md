@@ -59,6 +59,7 @@ cd my-yt
 npm i
 # install yt-dlp, https://github.com/yt-dlp/yt-dlp
 # install ffmpeg, https://ffmpeg.org/
+# optionally, create an .env file (you can copy .env.example as a template)
 
 npm start
 ```
@@ -106,9 +107,11 @@ Some examples:
 ```bash
 AI_MODEL=gpt-4o-mini AI_HOST=https://api.openai.com AI_APIKEY=sk-proj-123 npm start
 
-# or with docker in background using OpenAI
+# you can also set them in the `.env` file (you can copy .env.example as a template)
+
+# or with docker in background, using OpenAI
 docker run -e AI_MODEL=gpt-4o-mini -e AI_HOST=https://api.openai.com -e AI_APIKEY=sk-proj-123 -d -p 3000:3000 -v $HOME/my-yt-data:/app/data christianfei/my-yt:latest
-# or with docker in background using Anthropic
+# or with docker in background, using Anthropic
 docker run -e AI_MODEL=claude-xyz -e AI_HOST=https://api.anthropic.com -e AI_ENDPOINT=/v1/messages -e AI_APIKEY=your-key --rm -it -p 3000:3000 -v $HOME/my-yt-data:/app/data christianfei/my-yt:latest
 ```
 
