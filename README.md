@@ -38,7 +38,7 @@ Add your favourite channels in the settings page.
 
 The app will fetch the latest videos from your subscribed channels and display them in chronological order.
 
-Your subscriptions will be scraped from youtube every 10 minutes. No API key needed.
+Your subscriptions will be scraped from youtube every 30 minutes. No API key needed.
 
 Then you can download a video to watch it locally. If you host `my-yt` on your local network you can watch videos on all your devices.
 
