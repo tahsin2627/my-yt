@@ -1,4 +1,4 @@
-import { test, beforeEach, afterEach } from 'node:test'
+import { test, beforeEach } from 'node:test'
 import assert from 'node:assert'
 import { MockAgent, setGlobalDispatcher } from 'undici'
 
