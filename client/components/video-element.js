@@ -52,7 +52,7 @@ class VideoElement extends HTMLElement {
       ${this.video.downloaded
       ? /* html */`
         <div class="video-wrapper">
-          <div class="play video-placeholder" style="background-image: url(${this.video.thumbnail})">
+          <div tabindex="0" class="play video-placeholder" style="background-image: url(${this.video.thumbnail})">
             <div class="play-icon"></div>
             <span class="info-duration">${this.video.duration || 'N/A'}</span>
           </div>
