@@ -5,7 +5,7 @@
   "main": "index.js",
   "scripts": {
     "start": "node --env-file-if-exists=.env index.js",
-    "test": "node --test --test-concurrency 1",
+    "test": "npm run lint && node --test --test-concurrency 1",
     "lint": "standard"
   },
   "keywords": [],
