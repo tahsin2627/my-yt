@@ -1,4 +1,4 @@
-import { test, describe } from 'node:test'
+import { test } from 'node:test'
 import fs from 'fs'
 import assert from 'assert'
 import { searchVideosHandler } from '../lib/router/api.js'

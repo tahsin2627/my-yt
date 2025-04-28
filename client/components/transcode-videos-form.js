@@ -1,8 +1,5 @@
+/* global HTMLElement, customElements */
 class TranscodeVideosForm extends HTMLElement {
-  constructor () {
-    super()
-  }
-
   connectedCallback () {
     this.render()
     this.registerEvents()

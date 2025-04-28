@@ -1,8 +1,5 @@
+/* global HTMLElement, customElements, confirm */
 class ExcludedTermsForm extends HTMLElement {
-  constructor () {
-    super()
-  }
-
   connectedCallback () {
     this.render()
     this.registerEvents()

@@ -1,8 +1,5 @@
+/* global HTMLElement, customElements, confirm */
 class ManageDiskSpaceForm extends HTMLElement {
-  constructor () {
-    super()
-  }
-
   connectedCallback () {
     this.render()
     this.registerEvents()

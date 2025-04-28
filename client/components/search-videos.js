@@ -1,3 +1,4 @@
+/* global HTMLElement, customElements */
 import { createVideoElement, addToast } from '../../../../../../lib/utils.js'
 import Store from '../../../../../../lib/store.js'
 const store = new Store()

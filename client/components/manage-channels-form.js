@@ -1,9 +1,6 @@
+/* global HTMLElement, customElements, alert, confirm */
 import { addClickListener, removeClickListener } from '../../../../../../lib/utils.js'
 class ManageChannelsForm extends HTMLElement {
-  constructor () {
-    super()
-  }
-
   connectedCallback () {
     this.render()
     this.fetchData()
@@ -64,7 +61,7 @@ class ManageChannelsForm extends HTMLElement {
       })
       .catch(error => {
         console.error('Error deleting channel:', error)
-        status.innerText = `There was an error deleting the channel ${channelName}, please check your application logs`
+        // status.innerText = `There was an error deleting the channel ${channelName}, please check your application logs`
       })
   }
 }

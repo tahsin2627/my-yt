@@ -1,8 +1,5 @@
+/* global HTMLElement, customElements, alert */
 class AddChannelForm extends HTMLElement {
-  constructor () {
-    super()
-  }
-
   connectedCallback () {
     this.render()
   }

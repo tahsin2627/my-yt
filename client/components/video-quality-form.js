@@ -1,15 +1,14 @@
+/* global HTMLElement, customElements */
 class VideoQualityForm extends HTMLElement {
-  constructor () {
-    super()
-  }
-
   connectedCallback () {
     this.render()
     this.registerEvents()
 
     fetch('/api/video-quality')
       .then(response => response.json())
-      .then((videoQuality) => this.querySelector('#video-quality').value = +videoQuality)
+      .then((videoQuality) => {
+        this.querySelector('#video-quality').value = +videoQuality
+      })
       .catch(error => console.error('Error:', error))
   }
 

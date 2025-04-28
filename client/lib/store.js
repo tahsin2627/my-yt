@@ -1,3 +1,4 @@
+/* global localStorage */
 export default class Store {
   showThumbnailsKey = 'showThumbnails'
   showBigPlayerKey = 'showBigPlayer'

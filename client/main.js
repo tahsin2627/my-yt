@@ -1,3 +1,4 @@
+/* global EventSource, MutationObserver */
 import Store from '../../../../../lib/store.js'
 import { createVideoElement } from '../../../../../lib/utils.js'
 const store = new Store()
@@ -14,7 +15,7 @@ eventSource.onmessage = (message) => {
     console.log('[sse] message', data)
 
     if (data.type === 'state' && data.state) {
-      Object.assign(state, data.state)
+      Object.assign(window.state, data.state)
       const $state = document.querySelector('.state')
       if (!$state) { return console.warn('missing $state') }
       const $count = $state.querySelector('.count')
@@ -26,11 +27,11 @@ eventSource.onmessage = (message) => {
       $summarizing.innerText = `Summarizing: ${summarizingCount}`
 
       setTimeout(() => {
-        Object.keys(data.state.downloading || {}).map((videoId) => {
+        Object.keys(data.state.downloading || {}).forEach((videoId) => {
           const $video = document.querySelector(`video-element[data-video-id="${videoId}"]`)
           if ($video) $video.dataset.downloading = 'true'
         })
-        Object.keys(data.state.summarizing || {}).map((videoId) => {
+        Object.keys(data.state.summarizing || {}).forEach((videoId) => {
           const $video = document.querySelector(`video-element[data-video-id="${videoId}"]`)
           if ($video) $video.dataset.summarizing = 'true'
         })

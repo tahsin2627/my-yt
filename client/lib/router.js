@@ -1,3 +1,4 @@
+/* global MutationObserver, history, PopStateEvent, location, dispatchEvent */
 import { createVideoElement, applyShowBigPlayer, applyShowThumbnails } from '../../../../../../lib/utils.js'
 import Store from '../../../../../../lib/store.js'
 const store = new Store()
@@ -29,9 +30,7 @@ const routes = {
       handleEmptyState()
 
       new MutationObserver((mutationList, observer) => {
-        for (const mutation of mutationList) {
-          handleEmptyState()
-        }
+        handleEmptyState()
       }).observe($videosContainer, { attributes: false, childList: true, subtree: true })
 
       applyShowThumbnails(store.get(store.showThumbnailsKey))
@@ -94,7 +93,7 @@ const routes = {
 }
 
 handleRoute()
-addEventListener('popstate', handleRoute)
+window.addEventListener('popstate', handleRoute)
 document.querySelectorAll('[href="/"],[href="/settings"]').forEach(($el) => {
   $el.addEventListener('click', (event) => {
     event.preventDefault()

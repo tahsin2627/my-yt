@@ -1,8 +1,5 @@
+/* global HTMLElement, customElements */
 class EmptyState extends HTMLElement {
-  constructor () {
-    super()
-  }
-
   connectedCallback () {
     this.classList.add('flex')
     this.classList.add('space-between')
