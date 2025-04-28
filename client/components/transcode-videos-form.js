@@ -2,28 +2,33 @@ class TranscodeVideosForm extends HTMLElement {
   constructor () {
     super()
   }
+
   connectedCallback () {
     this.render()
     this.registerEvents()
 
     fetch('/api/transcode-videos')
-    .then(response => response.json())
-    .then((transcodeVideos) => {
-      this.querySelector('#transcode-videos').checked = transcodeVideos
-    })
-    .catch(error => console.error('Error:', error))
+      .then(response => response.json())
+      .then((transcodeVideos) => {
+        this.querySelector('#transcode-videos').checked = transcodeVideos
+      })
+      .catch(error => console.error('Error:', error))
   }
+
   disconnectedCallback () {
     this.unregisterEvents()
   }
+
   registerEvents () {
     this.querySelector('#transcode-videos').addEventListener('change', this.setTranscodeVideosHandler.bind(this))
   }
+
   unregisterEvents () {
     this.querySelector('#transcode-videos').removeEventListener('change', this.setTranscodeVideosHandler.bind(this))
   }
+
   render () {
-    this.innerHTML = /*html*/`
+    this.innerHTML = /* html */`
       <form>
         <div class="flex space-between">
           <div>

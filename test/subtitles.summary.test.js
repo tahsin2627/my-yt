@@ -1,5 +1,5 @@
-import {test} from 'node:test'
-import assert from 'assert';
+import { test } from 'node:test'
+import assert from 'assert'
 import { cleanTranscript } from '../lib/subtitles-summary.js'
 
 test('cleans transcript', () => {
@@ -38,6 +38,6 @@ Open ai writes to the
 US administration their position Well it is
 necessary that it be free from copyright from
   `.trim()
-  
+
   assert.strictEqual(cleanTranscript(transcript), expectedCleanTranscript)
 })

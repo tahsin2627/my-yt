@@ -1,49 +1,55 @@
-import { addClickListener, removeClickListener } from "/lib/utils.js"
+import { addClickListener, removeClickListener } from '../../../../../../lib/utils.js'
 class ChannelsList extends HTMLElement {
   constructor () {
     super()
     this.channels = []
   }
+
   connectedCallback () {
     this.render()
   }
+
   disconnectedCallback () {
     this.unregisterEvents()
   }
-  static get observedAttributes() {
-    return ['data-list'];
+
+  static get observedAttributes () {
+    return ['data-list']
   }
 
-  attributeChangedCallback(name, _, newValue) {
+  attributeChangedCallback (name, _, newValue) {
     if (name === 'data-list') {
-      this.channels = JSON.parse(this.dataset['list'])
+      this.channels = JSON.parse(this.dataset.list)
       this.render()
     }
   }
-  
+
   render () {
     if (this.channels.length === 0) this.classList.add('hide')
     else this.classList.remove('hide')
     this.unregisterEvents()
-    
-    this.innerHTML = /*html*/`
+
+    this.innerHTML = /* html */`
       <details class="channels-container">
         <summary>Channels</summary>
-        <div>${this.channels.map(channel => /*html*/`<span tabindex=0 data-channel="${channel}" class="channel">${channel}</span>`).join('')}</div>
+        <div>${this.channels.map(channel => /* html */`<span tabindex=0 data-channel="${channel}" class="channel">${channel}</span>`).join('')}</div>
       </details>
     `
 
     this.registerEvents()
   }
-  registerEvents() {
+
+  registerEvents () {
     const channels = this.querySelectorAll('.channel')
     channels.forEach(channel => addClickListener(channel, this.channelClick.bind(this)))
   }
-  unregisterEvents() {
+
+  unregisterEvents () {
     const channels = this.querySelectorAll('.channel')
     channels.forEach(channel => removeClickListener(channel, this.channelClick.bind(this)))
   }
-  channelClick(event) {
+
+  channelClick (event) {
     const $searchInput = document.querySelector('#search')
     if (!$searchInput) return
     const channel = `@${event.target.innerText}`

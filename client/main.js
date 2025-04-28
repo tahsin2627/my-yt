@@ -1,8 +1,8 @@
-import Store from '/lib/store.js'
-import { createVideoElement } from '/lib/utils.js'
+import Store from '../../../../../lib/store.js'
+import { createVideoElement } from '../../../../../lib/utils.js'
 const store = new Store()
 window.state = {
-  downloading: {}, 
+  downloading: {},
   summarizing: {}
 }
 
@@ -28,11 +28,11 @@ eventSource.onmessage = (message) => {
       setTimeout(() => {
         Object.keys(data.state.downloading || {}).map((videoId) => {
           const $video = document.querySelector(`video-element[data-video-id="${videoId}"]`)
-          if ($video) $video.dataset['downloading'] = "true"
+          if ($video) $video.dataset.downloading = 'true'
         })
         Object.keys(data.state.summarizing || {}).map((videoId) => {
           const $video = document.querySelector(`video-element[data-video-id="${videoId}"]`)
-          if ($video) $video.dataset['summarizing'] = "true"
+          if ($video) $video.dataset.summarizing = 'true'
         })
         const count = Object.keys(data.state.summarizing).length + Object.keys(data.state.downloading).length
         $count.innerText = count > 0 ? `(${count})` : ''
@@ -70,29 +70,29 @@ eventSource.onmessage = (message) => {
     }
     if (data.type === 'summary' && data.videoId && data.summary && data.transcript) {
       ;[...document.querySelectorAll(`[data-video-id="${data.videoId}"]`)].forEach($video => {
-        if (!$video.dataset['data']) return
-        const videoData = JSON.parse($video.dataset['data'])
+        if (!$video.dataset.data) return
+        const videoData = JSON.parse($video.dataset.data)
         Object.assign(videoData, { summary: data.summary, transcript: data.transcript })
-        $video.dataset['data'] = JSON.stringify(videoData)
+        $video.dataset.data = JSON.stringify(videoData)
       })
       return
     }
     if (data.type === 'downloaded' && data.videoId && data.downloaded !== undefined) {
       ;[...document.querySelectorAll(`[data-video-id="${data.videoId}"]`)].forEach($video => {
-        if (!$video.dataset['data']) return
-        const videoData = JSON.parse($video.dataset['data'])
+        if (!$video.dataset.data) return
+        const videoData = JSON.parse($video.dataset.data)
         videoData.downloaded = data.downloaded
         if (data.video) Object.assign(videoData, data.video)
-        $video.dataset['data'] = JSON.stringify(videoData)
+        $video.dataset.data = JSON.stringify(videoData)
       })
       return
     }
     if (data.type === 'ignored' && data.videoId && data.ignored !== undefined) {
       ;[...document.querySelectorAll(`[data-video-id="${data.videoId}"]`)].forEach($video => {
-        if (!$video.dataset['data']) return
-        const videoData = JSON.parse($video.dataset['data'])
+        if (!$video.dataset.data) return
+        const videoData = JSON.parse($video.dataset.data)
         videoData.ignored = data.ignored
-        $video.dataset['data'] = JSON.stringify(videoData)
+        $video.dataset.data = JSON.stringify(videoData)
       })
       return
     }
@@ -102,19 +102,17 @@ eventSource.onmessage = (message) => {
   }
 }
 
-
 const $summary = document.querySelector('dialog#summary')
-const $closeSummary = $summary.querySelector("button")
-$closeSummary.addEventListener("click", () => $summary.close())
+const $closeSummary = $summary.querySelector('button')
+$closeSummary.addEventListener('click', () => $summary.close())
 $summary.addEventListener('close', () => {})
-
 
 observeDialogOpenPreventScroll($summary)
 
 function observeDialogOpenPreventScroll (dialog) {
   new MutationObserver((mutationList, observer) => {
     for (const mutation of mutationList) {
-      if (mutation.type === "attributes" && mutation.attributeName === 'open') {
+      if (mutation.type === 'attributes' && mutation.attributeName === 'open') {
         document.body.classList[mutation.target.open ? 'add' : 'remove']('dialog-opened')
       }
     }

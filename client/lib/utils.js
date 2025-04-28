@@ -1,9 +1,11 @@
 export function createVideoElement (video, showOriginalThumbnail = false) {
   const $video = document.createElement('video-element')
-  $video.dataset['data'] = JSON.stringify(Object.assign(video, showOriginalThumbnail ? {
-    thumbnail: video.thumbnail.replace('mq2.jpg', 'mqdefault.jpg')
-  } : {}))
-  $video.dataset['videoId'] = video.id
+  $video.dataset.data = JSON.stringify(Object.assign(video, showOriginalThumbnail
+    ? {
+        thumbnail: video.thumbnail.replace('mq2.jpg', 'mqdefault.jpg')
+      }
+    : {}))
+  $video.dataset.videoId = video.id
   return $video
 }
 
@@ -20,7 +22,7 @@ export function addToast (text) {
   }
 }
 
-export function applyShowThumbnails(showThumbnails) {
+export function applyShowThumbnails (showThumbnails) {
   if (showThumbnails) {
     document.body.classList.remove('hide-thumbnails')
   } else {
@@ -30,7 +32,7 @@ export function applyShowThumbnails(showThumbnails) {
   if ($showThumbnailsCheckbox) $showThumbnailsCheckbox.checked = showThumbnails
 }
 
-export function applyShowBigPlayer(showBigPlayer) {
+export function applyShowBigPlayer (showBigPlayer) {
   if (showBigPlayer) {
     document.body.classList.add('show-big-player')
   } else {

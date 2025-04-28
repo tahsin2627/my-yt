@@ -1,10 +1,10 @@
-import {test, describe, mock} from 'node:test'
+import { test, describe, mock } from 'node:test'
 import fs from 'fs'
 import assert from 'assert'
 import { createServer } from '../lib/server.js'
 import Repository from '../lib/repository.js'
 
-mock.timers.enable({ apis: ['setInterval'] });
+mock.timers.enable({ apis: ['setInterval'] })
 let repo
 test.beforeEach(() => {
   if (fs.existsSync('./test/data')) {
@@ -25,19 +25,19 @@ describe('server - user flow', () => {
     server = createServer(repo)
     server.listen(3001, cb)
     console.log('listening server')
-  }, {timeout: 10000})
+  }, { timeout: 10000 })
   test.after((cb) => {
     server.close(cb)
     console.log('closed server')
-  }, {timeout: 10000})
+  }, { timeout: 10000 })
 
-  test('get channels', {timeout: 5000}, async () => {
+  test('get channels', { timeout: 5000 }, async () => {
     const res = await fetch('http://0.0.0.0:3001/api/channels')
     const data = await res.json()
     assert.equal(res.status, 200)
     assert.deepEqual(data, [])
   })
-  test('add channel', {timeout: 10000}, async () => {
+  test('add channel', { timeout: 10000 }, async () => {
     const resAddChannel = await fetch('http://0.0.0.0:3001/api/channels', {
       method: 'POST',
       body: JSON.stringify({
@@ -50,22 +50,22 @@ describe('server - user flow', () => {
     const res = await fetch('http://0.0.0.0:3001/api/channels')
     const data = await res.json()
     assert.equal(res.status, 200)
-    assert.deepEqual(data, [{name: 'veritasium'}])
+    assert.deepEqual(data, [{ name: 'veritasium' }])
   })
 
-  test('get channels again', {timeout: 5000}, async () => {
+  test('get channels again', { timeout: 5000 }, async () => {
     const res = await fetch('http://0.0.0.0:3001/api/channels')
     const data = await res.json()
     assert.equal(res.status, 200)
-    assert.deepEqual(data, [{name: 'veritasium'}])
+    assert.deepEqual(data, [{ name: 'veritasium' }])
   })
-  test('get videos', {timeout: 5000}, async () => {
+  test('get videos', { timeout: 5000 }, async () => {
     const res = await fetch('http://0.0.0.0:3001/api/videos')
     const data = await res.json()
     assert.equal(res.status, 200)
     assert.ok(data.length > 0)
   })
-  test('delete channel', {timeout: 5000}, async () => {
+  test('delete channel', { timeout: 5000 }, async () => {
     const resDeleteChannel = await fetch('http://0.0.0.0:3001/api/channels', {
       method: 'DELETE',
       headers: {
@@ -79,7 +79,7 @@ describe('server - user flow', () => {
     assert.equal(resGetChannels.status, 200)
     assert.deepEqual(dataGetChannels, [])
   })
-  test('get videos again', {timeout: 5000}, async () => {
+  test('get videos again', { timeout: 5000 }, async () => {
     const res = await fetch('http://0.0.0.0:3001/api/videos')
     const data = await res.json()
     assert.equal(res.status, 200)

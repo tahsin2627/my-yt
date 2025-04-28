@@ -7,7 +7,7 @@ export default class Store {
   lastVideosKey = 'lastVideos'
   ignoreTermsKey = 'ignoreTerms'
 
-  constructor() {
+  constructor () {
     if (!localStorage.getItem(this.showThumbnailsKey)) localStorage.setItem(this.showThumbnailsKey, 'true')
     if (!localStorage.getItem(this.showBigPlayerKey)) localStorage.setItem(this.showBigPlayerKey, 'true')
     if (!localStorage.getItem(this.showOriginalThumbnailKey)) localStorage.setItem(this.showOriginalThumbnailKey, 'false')
@@ -21,35 +21,39 @@ export default class Store {
     if (![this.showThumbnailsKey, this.showBigPlayerKey, this.showOriginalThumbnailKey, this.showCaptionsKey, this.useTLDWTubeKey].includes(key)) return console.error('invalid key', key)
     localStorage.setItem(key, localStorage.getItem(key) === 'true' ? 'false' : 'true')
   }
-  get(key) {
+
+  get (key) {
     if (![this.showThumbnailsKey, this.showBigPlayerKey, this.showOriginalThumbnailKey, this.showCaptionsKey, this.useTLDWTubeKey, this.lastVideosKey, this.ignoreTermsKey].includes(key)) return console.error('invalid key', key)
     return JSON.parse(localStorage.getItem(key))
   }
-  set(key, value) {
+
+  set (key, value) {
     if (typeof value === 'string') {
       localStorage.setItem(key, value)
     } else {
       localStorage.setItem(key, JSON.stringify(value))
     }
   }
-  push(key, item) {
+
+  push (key, item) {
     if (![this.ignoreTermsKey].includes(key)) return console.error('invalid key', key)
     const list = this.get(key)
     list.push(item)
     this.set(key, list)
     return item
   }
-  remove(key, item) {
+
+  remove (key, item) {
     if (![this.ignoreTermsKey].includes(key)) return console.error('invalid key', key)
     let list = this.get(key)
     list = list.filter(i => i !== item)
     this.set(key, list)
     return item
   }
-  includes(key, item) {
+
+  includes (key, item) {
     if (![this.ignoreTermsKey].includes(key)) return console.error('invalid key', key)
     const list = this.get(key)
     return list.includes(item)
-    
   }
 }

@@ -2,26 +2,31 @@ class VideoQualityForm extends HTMLElement {
   constructor () {
     super()
   }
+
   connectedCallback () {
     this.render()
     this.registerEvents()
 
     fetch('/api/video-quality')
-    .then(response => response.json())
-    .then((videoQuality) => this.querySelector('#video-quality').value = +videoQuality)
-    .catch(error => console.error('Error:', error))
+      .then(response => response.json())
+      .then((videoQuality) => this.querySelector('#video-quality').value = +videoQuality)
+      .catch(error => console.error('Error:', error))
   }
+
   disconnectedCallback () {
     this.unregisterEvents()
   }
+
   registerEvents () {
     this.querySelector('#video-quality').addEventListener('change', this.setVideoQualityHandler.bind(this))
   }
+
   unregisterEvents () {
     this.querySelector('#video-quality').removeEventListener('change', this.setVideoQualityHandler.bind(this))
   }
+
   render () {
-    this.innerHTML = /*html*/`
+    this.innerHTML = /* html */`
       <form>
         <div class="flex space-between">
           <div>

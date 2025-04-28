@@ -1,12 +1,12 @@
-import {test, beforeEach, afterEach} from "node:test"
-import assert from "node:assert"
+import { test, beforeEach, afterEach } from 'node:test'
+import assert from 'node:assert'
 import { MockAgent, setGlobalDispatcher } from 'undici'
 
-import { summarize } from "../../lib/llm/index.js"
-const system = "You are a helpful assistant."
-const prompt = "Just tell me something"
+import { summarize } from '../../lib/llm/index.js'
+const system = 'You are a helpful assistant.'
+const prompt = 'Just tell me something'
 
-let agent;
+let agent
 beforeEach(() => {
   agent = new MockAgent()
   setGlobalDispatcher(agent)
@@ -28,21 +28,21 @@ test('should use Anthropic provider', async () => {
       method: 'POST'
     })
     .reply(200, {
-      "content": [
+      content: [
         {
-          "text": "something",
-          "type": "text"
+          text: 'something',
+          type: 'text'
         }
       ],
-      "id": "msg_013Zva2CMHLNnXjNJJKqJ2EF",
-      "model": "claude-3-7-sonnet-20250219",
-      "role": "assistant",
-      "stop_reason": "end_turn",
-      "stop_sequence": null,
-      "type": "message",
-      "usage": {
-        "input_tokens": 2095,
-        "output_tokens": 503
+      id: 'msg_013Zva2CMHLNnXjNJJKqJ2EF',
+      model: 'claude-3-7-sonnet-20250219',
+      role: 'assistant',
+      stop_reason: 'end_turn',
+      stop_sequence: null,
+      type: 'message',
+      usage: {
+        input_tokens: 2095,
+        output_tokens: 503
       }
     })
 
@@ -68,45 +68,45 @@ test('should use OpenAI provider', async () => {
       path: '/v1/chat/completions',
       headers: {
         'Content-Type': 'application/json',
-        'Authorization': 'Bearer your-api-key'
+        Authorization: 'Bearer your-api-key'
       },
       body: '{"model":"gpt-4o","temperature":0.7,"maxTokens":1000,"messages":[{"role":"system","content":"You are a helpful assistant."},{"role":"user","content":"Just tell me something"}]}',
       method: 'POST'
     })
     .reply(200, {
-      "id": "chatcmpl-B9MBs8CjcvOU2jLn4n570S5qMJKcT",
-      "object": "chat.completion",
-      "created": 1741569952,
-      "model": "gpt-4o-2024-08-06",
-      "choices": [
+      id: 'chatcmpl-B9MBs8CjcvOU2jLn4n570S5qMJKcT',
+      object: 'chat.completion',
+      created: 1741569952,
+      model: 'gpt-4o-2024-08-06',
+      choices: [
         {
-          "index": 0,
-          "message": {
-            "role": "assistant",
-            "content": "something",
-            "refusal": null,
-            "annotations": []
+          index: 0,
+          message: {
+            role: 'assistant',
+            content: 'something',
+            refusal: null,
+            annotations: []
           },
-          "logprobs": null,
-          "finish_reason": "stop"
+          logprobs: null,
+          finish_reason: 'stop'
         }
       ],
-      "usage": {
-        "prompt_tokens": 19,
-        "completion_tokens": 10,
-        "total_tokens": 29,
-        "prompt_tokens_details": {
-          "cached_tokens": 0,
-          "audio_tokens": 0
+      usage: {
+        prompt_tokens: 19,
+        completion_tokens: 10,
+        total_tokens: 29,
+        prompt_tokens_details: {
+          cached_tokens: 0,
+          audio_tokens: 0
         },
-        "completion_tokens_details": {
-          "reasoning_tokens": 0,
-          "audio_tokens": 0,
-          "accepted_prediction_tokens": 0,
-          "rejected_prediction_tokens": 0
+        completion_tokens_details: {
+          reasoning_tokens: 0,
+          audio_tokens: 0,
+          accepted_prediction_tokens: 0,
+          rejected_prediction_tokens: 0
         }
       },
-      "service_tier": "default"
+      service_tier: 'default'
     })
 
   const llmSettings = {
@@ -117,7 +117,7 @@ test('should use OpenAI provider', async () => {
     temperature: 0.7,
     maxTokens: 1000
   }
-  
+
   const result = await summarize(system, prompt, llmSettings)
   assert.equal(result, 'something')
   agent.assertNoPendingInterceptors()

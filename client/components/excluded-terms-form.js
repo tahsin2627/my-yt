@@ -2,23 +2,28 @@ class ExcludedTermsForm extends HTMLElement {
   constructor () {
     super()
   }
+
   connectedCallback () {
     this.render()
     this.registerEvents()
 
     this.fetchExcludedTermsHandler()
   }
+
   disconnectedCallback () {
     this.unregisterEvents()
   }
+
   registerEvents () {
     this.querySelector('#add-excluded-term').addEventListener('keyup', this.addExcludedTermHandler.bind(this))
   }
+
   unregisterEvents () {
     this.querySelector('#add-excluded-term').removeEventListener('keyup', this.addExcludedTermHandler.bind(this))
   }
+
   render () {
-    this.innerHTML = /*html*/`
+    this.innerHTML = /* html */`
       <div>
         <div class="flex space-between">
           <div>
@@ -44,15 +49,16 @@ class ExcludedTermsForm extends HTMLElement {
       fetch('/api/excluded-terms', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({term})
+        body: JSON.stringify({ term })
       })
-      .then(() => {
-        event.target.value = ''
-      })
-      .catch(console.error)
-      .finally(this.fetchExcludedTermsHandler.bind(this))
+        .then(() => {
+          event.target.value = ''
+        })
+        .catch(console.error)
+        .finally(this.fetchExcludedTermsHandler.bind(this))
     }
   }
+
   fetchExcludedTermsHandler () {
     fetch('/api/excluded-terms')
       .then(response => response.json())
@@ -66,15 +72,15 @@ class ExcludedTermsForm extends HTMLElement {
           $excludedTerms.appendChild($li)
           $li.addEventListener('click', () => {
             if (!confirm('Remove "' + term + '" from excluded terms?')) return
-            fetch(`/api/excluded-terms`, {
+            fetch('/api/excluded-terms', {
               method: 'DELETE',
               headers: { 'Content-Type': 'application/json' },
               body: JSON.stringify({ term })
             })
-            .then(() => $li.remove())
-            .catch(error => {
-              console.error(error)
-            })
+              .then(() => $li.remove())
+              .catch(error => {
+                console.error(error)
+              })
           })
         })
       })
