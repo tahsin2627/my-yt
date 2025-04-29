@@ -42,16 +42,16 @@ class SearchVideos extends HTMLElement {
       <input type="search" incremental="incremental" id="search" placeholder="🔍 Search videos or paste video url" autofocus>
       <div class="flex">
         <div class="flex-1">
-          <label for="ignored">ignored</label>
-          <input type="checkbox" id="ignored"/>
-        </div>
-        <div class="flex-1">
           <label for="downloaded">downloaded</label>
           <input type="checkbox" id="downloaded"/>
         </div>
         <div class="flex-1">
           <label for="summarized">summarized</label>
           <input type="checkbox" id="summarized"/>
+        </div>
+        <div class="flex-1">
+          <label for="ignored">ignored</label>
+          <input type="checkbox" id="ignored"/>
         </div>
         <div class="flex-1">
           <label for="excluded">excluded</label>
