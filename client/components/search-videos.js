@@ -96,7 +96,7 @@ class SearchVideos extends HTMLElement {
       this.querySelector('#excluded').disabled = false
     }
 
-    fetch(`/api/videos?filter=${encodeURIComponent(searchTerm)}${excluded ? '&excluded=true' : ''}${downloaded ? '&downloaded=true' : ''}`)
+    fetch(`/api/videos?filter=${encodeURIComponent(searchTerm)}${excluded ? '&excluded=true' : ''}${downloaded ? '&downloaded=true' : ''}${ignored ? '&ignored=true' : ''}`)
       .then(res => res.json())
       .then((videos) => {
         const $videosContainer = document.querySelector('.main-videos-container')
