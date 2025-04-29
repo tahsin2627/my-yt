@@ -24,12 +24,14 @@ class SearchVideos extends HTMLElement {
   registerEvents () {
     this.querySelector('#search').addEventListener('input', this.searchHandler.bind(this))
     this.querySelector('#excluded').addEventListener('change', this.searchHandler.bind(this))
+    this.querySelector('#ignored').addEventListener('change', this.searchHandler.bind(this))
     this.querySelector('#downloaded').addEventListener('change', this.searchHandler.bind(this))
   }
 
   unregisterEvents () {
     this.querySelector('#search').removeEventListener('input', this.searchHandler.bind(this))
     this.querySelector('#excluded').removeEventListener('change', this.searchHandler.bind(this))
+    this.querySelector('#ignored').removeEventListener('change', this.searchHandler.bind(this))
     this.querySelector('#downloaded').removeEventListener('change', this.searchHandler.bind(this))
   }
 
@@ -40,6 +42,10 @@ class SearchVideos extends HTMLElement {
         <div class="flex-1">
           <label for="excluded">excluded</label>
           <input type="checkbox" id="excluded"/>
+        </div>
+        <div class="flex-1">
+          <label for="ignored">ignored</label>
+          <input type="checkbox" id="ignored"/>
         </div>
         <div class="flex-1">
           <label for="downloaded">downloaded</label>
@@ -74,14 +80,17 @@ class SearchVideos extends HTMLElement {
     searchTerm = searchTerm.toLowerCase()
     document.body.classList.add('searching')
     const excluded = this.querySelector('#excluded').checked
+    const ignored = this.querySelector('#ignored').checked
     const downloaded = this.querySelector('#downloaded').checked
 
     if (excluded) {
       this.querySelector('#downloaded').disabled = true
+      this.querySelector('#ignored').disabled = true
     } else {
       this.querySelector('#downloaded').disabled = false
+      this.querySelector('#ignored').disabled = false
     }
-    if (downloaded) {
+    if (downloaded || ignored) {
       this.querySelector('#excluded').disabled = true
     } else {
       this.querySelector('#excluded').disabled = false
