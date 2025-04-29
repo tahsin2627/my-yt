@@ -26,6 +26,7 @@ class SearchVideos extends HTMLElement {
     this.querySelector('#excluded').addEventListener('change', this.searchHandler.bind(this))
     this.querySelector('#ignored').addEventListener('change', this.searchHandler.bind(this))
     this.querySelector('#downloaded').addEventListener('change', this.searchHandler.bind(this))
+    this.querySelector('#summarized').addEventListener('change', this.searchHandler.bind(this))
   }
 
   unregisterEvents () {
@@ -33,6 +34,7 @@ class SearchVideos extends HTMLElement {
     this.querySelector('#excluded').removeEventListener('change', this.searchHandler.bind(this))
     this.querySelector('#ignored').removeEventListener('change', this.searchHandler.bind(this))
     this.querySelector('#downloaded').removeEventListener('change', this.searchHandler.bind(this))
+    this.querySelector('#summarized').removeEventListener('change', this.searchHandler.bind(this))
   }
 
   render () {
@@ -50,6 +52,10 @@ class SearchVideos extends HTMLElement {
         <div class="flex-1">
           <label for="downloaded">downloaded</label>
           <input type="checkbox" id="downloaded"/>
+        </div>
+        <div class="flex-1">
+          <label for="summarized">summarized</label>
+          <input type="checkbox" id="summarized"/>
         </div>
       </div>
     `
@@ -82,21 +88,24 @@ class SearchVideos extends HTMLElement {
     const excluded = this.querySelector('#excluded').checked
     const ignored = this.querySelector('#ignored').checked
     const downloaded = this.querySelector('#downloaded').checked
+    const summarized = this.querySelector('#summarized').checked
 
     if (excluded) {
       this.querySelector('#downloaded').disabled = true
       this.querySelector('#ignored').disabled = true
+      this.querySelector('#summarized').disabled = true
     } else {
       this.querySelector('#downloaded').disabled = false
       this.querySelector('#ignored').disabled = false
+      this.querySelector('#summarized').disabled = false
     }
-    if (downloaded || ignored) {
+    if (downloaded || ignored || summarized) {
       this.querySelector('#excluded').disabled = true
     } else {
       this.querySelector('#excluded').disabled = false
     }
 
-    fetch(`/api/videos?filter=${encodeURIComponent(searchTerm)}${excluded ? '&excluded=true' : ''}${downloaded ? '&downloaded=true' : ''}${ignored ? '&ignored=true' : ''}`)
+    fetch(`/api/videos?filter=${encodeURIComponent(searchTerm)}${excluded ? '&excluded=true' : ''}${downloaded ? '&downloaded=true' : ''}${ignored ? '&ignored=true' : ''}${summarized ? '&summarized=true' : ''}`)
       .then(res => res.json())
       .then((videos) => {
         const $videosContainer = document.querySelector('.main-videos-container')
