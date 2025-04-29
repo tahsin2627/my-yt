@@ -472,6 +472,19 @@ search-videos {
   padding-bottom: 1rem;
 }
 
+#search-filters {
+  user-select: none;
+  flex-wrap: wrap;
+}
+#search-filters > * {
+  min-width: 50%;
+}
+
+@media all and (max-width: 30em) {
+  #search-filters > * {
+    min-width: 100%;
+  }
+}
 @media all and (max-width: 50em) {
   body > header {
     margin-bottom: 0;
