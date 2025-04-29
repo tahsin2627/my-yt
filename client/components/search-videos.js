@@ -40,24 +40,27 @@ class SearchVideos extends HTMLElement {
   render () {
     this.innerHTML = /* html */`
       <input type="search" incremental="incremental" id="search" placeholder="🔍 Search videos or paste video url" autofocus>
-      <div class="flex">
-        <div class="flex-1">
-          <label for="downloaded">downloaded</label>
-          <input type="checkbox" id="downloaded"/>
+      <details>
+        <summary>Additional filters</summary>
+        <div class="flex " id="search-filters">
+          <div class="flex-1">
+            <label for="downloaded">downloaded</label>
+            <input type="checkbox" id="downloaded"/>
+          </div>
+          <div class="flex-1">
+            <label for="summarized">summarized</label>
+            <input type="checkbox" id="summarized"/>
+          </div>
+          <div class="flex-1">
+            <label for="ignored">ignored</label>
+            <input type="checkbox" id="ignored"/>
+          </div>
+          <div class="flex-1">
+            <label for="excluded">excluded</label>
+            <input type="checkbox" id="excluded"/>
+          </div>
         </div>
-        <div class="flex-1">
-          <label for="summarized">summarized</label>
-          <input type="checkbox" id="summarized"/>
-        </div>
-        <div class="flex-1">
-          <label for="ignored">ignored</label>
-          <input type="checkbox" id="ignored"/>
-        </div>
-        <div class="flex-1">
-          <label for="excluded">excluded</label>
-          <input type="checkbox" id="excluded"/>
-        </div>
-      </div>
+      </details>
     `
   }
 
@@ -91,15 +94,11 @@ class SearchVideos extends HTMLElement {
     const summarized = this.querySelector('#summarized').checked
 
     if (excluded) {
-      this.querySelector('#downloaded').disabled = true
       this.querySelector('#ignored').disabled = true
-      this.querySelector('#summarized').disabled = true
     } else {
-      this.querySelector('#downloaded').disabled = false
       this.querySelector('#ignored').disabled = false
-      this.querySelector('#summarized').disabled = false
     }
-    if (downloaded || ignored || summarized) {
+    if (ignored) {
       this.querySelector('#excluded').disabled = true
     } else {
       this.querySelector('#excluded').disabled = false
