@@ -23,14 +23,14 @@ class SearchVideos extends HTMLElement {
 
   registerEvents () {
     this.querySelector('#search').addEventListener('input', this.searchHandler.bind(this))
-    this.querySelector('#with-excluded').addEventListener('change', this.searchHandler.bind(this))
-    this.querySelector('#only-downloaded').addEventListener('change', this.searchHandler.bind(this))
+    this.querySelector('#excluded').addEventListener('change', this.searchHandler.bind(this))
+    this.querySelector('#downloaded').addEventListener('change', this.searchHandler.bind(this))
   }
 
   unregisterEvents () {
     this.querySelector('#search').removeEventListener('input', this.searchHandler.bind(this))
-    this.querySelector('#with-excluded').removeEventListener('change', this.searchHandler.bind(this))
-    this.querySelector('#only-downloaded').removeEventListener('change', this.searchHandler.bind(this))
+    this.querySelector('#excluded').removeEventListener('change', this.searchHandler.bind(this))
+    this.querySelector('#downloaded').removeEventListener('change', this.searchHandler.bind(this))
   }
 
   render () {
@@ -38,12 +38,12 @@ class SearchVideos extends HTMLElement {
       <input type="search" incremental="incremental" id="search" placeholder="🔍 Search videos or paste video url" autofocus>
       <div class="flex">
         <div class="flex-1">
-          <label for="with-excluded">Show excluded</label>
-          <input type="checkbox" id="with-excluded"/>
+          <label for="excluded">excluded</label>
+          <input type="checkbox" id="excluded"/>
         </div>
         <div class="flex-1">
-          <label for="only-downloaded">Only downloaded</label>
-          <input type="checkbox" id="only-downloaded"/>
+          <label for="downloaded">downloaded</label>
+          <input type="checkbox" id="downloaded"/>
         </div>
       </div>
     `
@@ -73,21 +73,21 @@ class SearchVideos extends HTMLElement {
 
     searchTerm = searchTerm.toLowerCase()
     document.body.classList.add('searching')
-    const withExcluded = this.querySelector('#with-excluded').checked
-    const onlyDownloaded = this.querySelector('#only-downloaded').checked
+    const excluded = this.querySelector('#excluded').checked
+    const downloaded = this.querySelector('#downloaded').checked
 
-    if (withExcluded) {
-      this.querySelector('#only-downloaded').disabled = true
+    if (excluded) {
+      this.querySelector('#downloaded').disabled = true
     } else {
-      this.querySelector('#only-downloaded').disabled = false
+      this.querySelector('#downloaded').disabled = false
     }
-    if (onlyDownloaded) {
-      this.querySelector('#with-excluded').disabled = true
+    if (downloaded) {
+      this.querySelector('#excluded').disabled = true
     } else {
-      this.querySelector('#with-excluded').disabled = false
+      this.querySelector('#excluded').disabled = false
     }
 
-    fetch(`/api/videos?filter=${encodeURIComponent(searchTerm)}${withExcluded ? '&excluded=true' : ''}${onlyDownloaded ? '&downloaded=true' : ''}`)
+    fetch(`/api/videos?filter=${encodeURIComponent(searchTerm)}${excluded ? '&excluded=true' : ''}${downloaded ? '&downloaded=true' : ''}`)
       .then(res => res.json())
       .then((videos) => {
         const $videosContainer = document.querySelector('.main-videos-container')
