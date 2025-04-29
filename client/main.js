@@ -35,7 +35,7 @@ eventSource.onmessage = (message) => {
           const $video = document.querySelector(`video-element[data-video-id="${videoId}"]`)
           if ($video) $video.dataset.summarizing = 'true'
         })
-        const count = Object.keys(data.state.summarizing).length + Object.keys(data.state.downloading).length
+        const count = Object.keys(data.state.summarizing || {}).length + Object.keys(data.state.downloading || {}).length
         $count.innerText = count > 0 ? `(${count})` : ''
       }, 500)
       return
