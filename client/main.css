@@ -638,3 +638,24 @@ empty-state {
   padding: 2px 3px;
   opacity: 0.8;
 }
+
+
+sse-connection {
+  position: fixed;
+  top: 5rem;
+  left: 2rem;
+  width: 1rem;
+  height: 1rem;
+  z-index: 9999;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+sse-connection[data-connected='true'] {
+  background: green;
+}
+sse-connection[data-connected='false'] {
+  background: red;
+}

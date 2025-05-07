@@ -4,11 +4,24 @@ import { createVideoElement } from '../../../../../lib/utils.js'
 const store = new Store()
 window.state = {
   downloading: {},
-  summarizing: {}
+  summarizing: {},
+  sseConnected: false
 }
 
-const eventSource = new EventSource('/')
-eventSource.onmessage = (message) => {
+window.eventSource = new EventSource('/')
+window.eventSource.onopen = () => {
+  console.log('[sse] connection opened')
+  window.state.sseConnected = true
+  if (document.querySelector('sse-connection')) document.querySelector('sse-connection').dataset.connected = true
+}
+window.eventSource.onerror = (err) => {
+  console.log('[sse] connection error', err)
+  window.state.sseConnected = false
+  if (document.querySelector('sse-connection')) document.querySelector('sse-connection').dataset.connected = false
+}
+window.eventSource.onmessage = (message) => {
+  if (document.querySelector('sse-connection')) document.querySelector('sse-connection').dataset.connected = true
+  window.state.sseConnected = true
   if (!message || !message.data) return console.error('skipping empty message')
   try {
     const data = JSON.parse(message.data, {})
