@@ -72,7 +72,6 @@ class SearchVideos extends HTMLElement {
     if (event.target === $search) this.previousSearchTerm = searchTerm
 
     const $status = document.querySelector('#filter-results-status')
-    $status.innerText = ''
 
     if (searchTerm.match('https?://')) {
       addToast('Downloading video...')
