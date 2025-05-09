@@ -61,6 +61,7 @@ class SearchVideos extends HTMLElement {
           </div>
         </div>
       </details>
+      <div id="filter-results-status"></div>
     `
   }
 
@@ -71,7 +72,7 @@ class SearchVideos extends HTMLElement {
     if (this.previousSearchTerm === searchTerm && event.target === $search) return
     if (event.target === $search) this.previousSearchTerm = searchTerm
 
-    const $status = document.querySelector('#filter-results-status')
+    const $status = this.querySelector('#filter-results-status')
 
     if (searchTerm.match('https?://')) {
       addToast('Downloading video...')

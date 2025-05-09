@@ -458,7 +458,6 @@ body > header > * {
 
 search-videos {
   flex: 2;
-  padding-bottom: 1em;
 }
 
 #search {
@@ -544,7 +543,7 @@ summary:hover {
   color: var(--filter-button-text);
 }
 #filter-results-status {
-  height: 2em;
+  height: 1em;
   padding: 0.5rem;
 }
 
