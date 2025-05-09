@@ -1,5 +1,5 @@
 /* global MutationObserver, history, PopStateEvent, location, dispatchEvent */
-import { createVideoElement, applyShowBigPlayer, applyShowThumbnails } from '../../../../../../lib/utils.js'
+import { applyShowBigPlayer, applyShowThumbnails } from '../../../../../../lib/utils.js'
 import Store from '../../../../../../lib/store.js'
 const store = new Store()
 
