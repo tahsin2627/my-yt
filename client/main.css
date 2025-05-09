@@ -546,10 +546,6 @@ summary:hover {
   padding: 0.5rem;
 }
 
-#filter-results-status:empty {
-  display: none;
-}
-
 body.searching [data-ignored="true"] {
   display: block;
 }
