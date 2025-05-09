@@ -44,20 +44,20 @@ class SearchVideos extends HTMLElement {
         <summary>Additional filters</summary>
         <div class="flex " id="search-filters">
           <div class="flex-1">
-            <label for="downloaded">downloaded</label>
             <input type="checkbox" id="downloaded"/>
+            <label for="downloaded">downloaded</label>
           </div>
           <div class="flex-1">
-            <label for="summarized">summarized</label>
             <input type="checkbox" id="summarized"/>
+            <label for="summarized">summarized</label>
           </div>
           <div class="flex-1">
-            <label for="ignored">ignored</label>
             <input type="checkbox" id="ignored"/>
+            <label for="ignored">ignored</label>
           </div>
           <div class="flex-1">
-            <label for="excluded">excluded</label>
             <input type="checkbox" id="excluded"/>
+            <label for="excluded">excluded</label>
           </div>
         </div>
       </details>
