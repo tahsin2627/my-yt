@@ -15,6 +15,20 @@ class SearchVideos extends HTMLElement {
   connectedCallback () {
     this.render()
     this.registerEvents()
+
+    const searchParams = new URLSearchParams(window.location.search)
+    const excluded = searchParams.get('excluded') || ''
+    const ignored = searchParams.get('ignored') || ''
+    const downloaded = searchParams.get('downloaded') || ''
+    const summarized = searchParams.get('summarized') || ''
+    const searchTerm = searchParams.get('filter') || ''
+    this.querySelector('#search').value = searchTerm
+    this.querySelector('#excluded').checked = excluded === 'true'
+    this.querySelector('#ignored').checked = ignored === 'true'
+    this.querySelector('#downloaded').checked = downloaded === 'true'
+    this.querySelector('#summarized').checked = summarized === 'true'
+
+    this.searchHandler()
   }
 
   disconnectedCallback () {
@@ -66,11 +80,11 @@ class SearchVideos extends HTMLElement {
   }
 
   searchHandler (event) {
-    event.preventDefault()
+    if (event) event.preventDefault()
     const $search = this.querySelector('#search')
     let searchTerm = $search.value.trim()
-    if (this.previousSearchTerm === searchTerm && event.target === $search) return
-    if (event.target === $search) this.previousSearchTerm = searchTerm
+    if (event && this.previousSearchTerm === searchTerm && event.target === $search) return
+    if (event && event.target === $search) this.previousSearchTerm = searchTerm
 
     const $status = this.querySelector('#filter-results-status')
 
@@ -103,6 +117,8 @@ class SearchVideos extends HTMLElement {
     } else {
       this.querySelector('#excluded').disabled = false
     }
+
+    window.history.pushState({}, '', `?filter=${encodeURIComponent(searchTerm)}${excluded ? '&excluded=true' : ''}${downloaded ? '&downloaded=true' : ''}${ignored ? '&ignored=true' : ''}${summarized ? '&summarized=true' : ''}`)
 
     fetch(`/api/videos?filter=${encodeURIComponent(searchTerm)}${excluded ? '&excluded=true' : ''}${downloaded ? '&downloaded=true' : ''}${ignored ? '&ignored=true' : ''}${summarized ? '&summarized=true' : ''}`)
       .then(res => res.json())

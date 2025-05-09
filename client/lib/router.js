@@ -9,19 +9,17 @@ const routes = {
     async initialize () {
       document.getElementById('home-link').classList.add('hide')
 
-      const $videosContainer = document.querySelector('.main-videos-container')
-      let videos = await fetch('/api/videos').then(res => res.json())
-
       document.querySelector('search-videos #search').removeAttribute('disabled', 'disabled')
       document.querySelector('search-videos').classList.remove('hide')
 
+      // const showOriginalThumbnail = store.get(store.showOriginalThumbnailKey)
+      const $videosContainer = document.querySelector('.main-videos-container')
       $videosContainer.innerHTML = ''
-      const showOriginalThumbnail = store.get(store.showOriginalThumbnailKey)
 
-      videos = videos
-        .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
-
-      videos.forEach(video => $videosContainer.appendChild(createVideoElement(video, showOriginalThumbnail)))
+      // let videos = await fetch('/api/videos').then(res => res.json())
+      // videos = videos
+      //   .sort((a, b) => +new Date(b.publishedAt) - +new Date(a.publishedAt))
+      // videos.forEach(video => $videosContainer.appendChild(createVideoElement(video, showOriginalThumbnail)))
 
       const channels = await fetch('/api/channels').then(res => res.json())
       document.querySelector('channels-list').dataset.list = JSON.stringify(channels.map(c => c.name).filter(Boolean))
