@@ -439,11 +439,13 @@ body > header {
   position: sticky;
   top: 0;
   z-index: 9000;
-  padding: 1em 0.5em;
+  padding: 1em 0.5em 0;
   margin-bottom: 1rem;
   overflow: hidden;
   background-color: inherit;
   font-size: 1.15rem;
+  /* fade out from bottom outside */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
 }
 .align-start {
   align-items: flex-start;
