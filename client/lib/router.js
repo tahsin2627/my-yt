@@ -12,9 +12,7 @@ const routes = {
       document.querySelector('search-videos #search').removeAttribute('disabled', 'disabled')
       document.querySelector('search-videos').classList.remove('hide')
 
-      if (document.querySelector('search-videos')) {
-        document.querySelector('search-videos').searchHandler()
-      }
+      document.querySelector('search-videos').searchHandler()
 
       const channels = await fetch('/api/channels').then(res => res.json())
       document.querySelector('channels-list').dataset.list = JSON.stringify(channels.map(c => c.name).filter(Boolean))
