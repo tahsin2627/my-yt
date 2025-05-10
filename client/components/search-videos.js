@@ -116,9 +116,10 @@ class SearchVideos extends HTMLElement {
       this.querySelector('#excluded').disabled = false
     }
 
-    window.history.pushState({}, '', `?filter=${encodeURIComponent(searchTerm)}${excluded ? '&excluded=true' : ''}${downloaded ? '&downloaded=true' : ''}${ignored ? '&ignored=true' : ''}${summarized ? '&summarized=true' : ''}`)
+    const query = `?filter=${encodeURIComponent(searchTerm)}${excluded ? '&excluded=true' : ''}${downloaded ? '&downloaded=true' : ''}${ignored ? '&ignored=true' : ''}${summarized ? '&summarized=true' : ''}`
+    window.history.pushState({}, '', query)
 
-    fetch(`/api/videos?filter=${encodeURIComponent(searchTerm)}${excluded ? '&excluded=true' : ''}${downloaded ? '&downloaded=true' : ''}${ignored ? '&ignored=true' : ''}${summarized ? '&summarized=true' : ''}`)
+    fetch(`/api/videos${query}`)
       .then(res => res.json())
       .then((videos) => {
         const $videosContainer = document.querySelector(this.dataset.videosContainer || '.main-videos-container')
