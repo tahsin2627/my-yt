@@ -121,7 +121,7 @@ class SearchVideos extends HTMLElement {
     fetch(`/api/videos?filter=${encodeURIComponent(searchTerm)}${excluded ? '&excluded=true' : ''}${downloaded ? '&downloaded=true' : ''}${ignored ? '&ignored=true' : ''}${summarized ? '&summarized=true' : ''}`)
       .then(res => res.json())
       .then((videos) => {
-        const $videosContainer = document.querySelector('.main-videos-container')
+        const $videosContainer = document.querySelector(this.dataset.videosContainer || '.main-videos-container')
         if (!$videosContainer) return
         $videosContainer.innerHTML = ''
         const showOriginalThumbnail = store.get(store.showOriginalThumbnailKey)
