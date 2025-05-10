@@ -28,7 +28,7 @@ class SearchVideos extends HTMLElement {
     this.querySelector('#downloaded').checked = downloaded === 'true'
     this.querySelector('#summarized').checked = summarized === 'true'
 
-    this.searchHandler()
+    // this.searchHandler()
   }
 
   disconnectedCallback () {
