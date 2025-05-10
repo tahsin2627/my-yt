@@ -1,6 +1,6 @@
 /* global HTMLElement, customElements */
-import { createVideoElement, addToast } from '../../../../../../lib/utils.js'
-import Store from '../../../../../../lib/store.js'
+import { createVideoElement, addToast } from '/lib/utils.js' /* eslint-disable-line */
+import Store from '/lib/store.js' /* eslint-disable-line */
 const store = new Store()
 
 const searchEventSupported = 'search' in document.createElement('input')

@@ -1,6 +1,6 @@
 /* global EventSource, MutationObserver */
-import Store from '../../../../../lib/store.js'
-import { createVideoElement } from '../../../../../lib/utils.js'
+import Store from '/lib/store.js' /* eslint-disable-line */
+import { createVideoElement } from '/lib/utils.js' /* eslint-disable-line */
 const store = new Store()
 window.state = {
   downloading: {},
