@@ -14,6 +14,7 @@ class SSEConnection extends HTMLElement {
 
   render (connected = false) {
     if (connected) this.classList.add('connected')
+    else this.classList.remove('connected')
     console.log('SSE Connection: ', window.eventSource)
     this.innerHTML = /* html */''
   }
