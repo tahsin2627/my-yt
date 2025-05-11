@@ -79,6 +79,7 @@ const routes = {
     async initialize () {
       document.querySelector('search-videos #search').setAttribute('disabled', 'disabled')
       document.querySelector('search-videos').classList.add('hide')
+      window.alert(window.location.pathname + ' not found')
     }
   }
 }
@@ -96,7 +97,8 @@ document.querySelectorAll('[href="/"],[href="/settings"]').forEach(($el) => {
 })
 
 function handleRoute () {
-  const route = location.pathname
+  let route = location.pathname
+  if (route === '/index.html') route = '/'
   if (routes[route]) {
     document.querySelector('main').replaceChildren(routes[route].template.content.cloneNode(true))
     routes[route].initialize && routes[route].initialize()
