@@ -129,8 +129,10 @@ class SearchVideos extends HTMLElement {
         videos.forEach(video =>
           $videosContainer.appendChild(createVideoElement(video, showOriginalThumbnail))
         )
-        if (videos.length > 0) $status.innerText = `Found ${videos.length} video${videos.length === 1 ? '' : 's'}`
-        else $status.innerText = 'No videos found'
+        if (event) {
+          if (videos.length > 0) $status.innerText = `Found ${videos.length} video${videos.length === 1 ? '' : 's'}`
+          else $status.innerText = 'No videos found'
+        }
       })
       .catch(err => {
         console.error(err)
