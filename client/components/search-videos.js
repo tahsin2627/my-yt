@@ -133,8 +133,7 @@ class SearchVideos extends HTMLElement {
         if (event) {
           if (videos.length > 0) {
             $status.innerText = `Found ${videos.length} video${videos.length === 1 ? '' : 's'}`
-          }
-          else $status.innerText = 'No videos found'
+          } else $status.innerText = 'No videos found'
         }
       })
       .catch(err => {
