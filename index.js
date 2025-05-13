@@ -1,6 +1,6 @@
 import os from 'os'
-import Repository from './lib/repository.js'
-import { createServer } from './lib/server.js'
+import Repository from './server/repository.js'
+import { createServer } from './server/http.js'
 
 async function main ({ port = 3000 } = {}) {
   createServer(new Repository())

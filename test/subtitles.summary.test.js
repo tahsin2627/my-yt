@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'assert'
-import { cleanTranscript } from '../lib/subtitles-summary.js'
+import { cleanTranscript } from '../server/subtitles-summary.js'
 
 test('cleans transcript', () => {
   const transcript = `

@@ -1,7 +1,7 @@
 import { test, describe } from 'node:test'
 import fs from 'fs'
 import assert from 'assert'
-import Repository from '../lib/repository.js'
+import Repository from '../server/repository.js'
 
 let repo
 test.beforeEach(() => {

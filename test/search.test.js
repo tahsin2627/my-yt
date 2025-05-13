@@ -1,8 +1,8 @@
 import { test } from 'node:test'
 import fs from 'fs'
 import assert from 'assert'
-import { searchVideosHandler } from '../lib/router/api.js'
-import Repository from '../lib/repository.js'
+import { searchVideosHandler } from '../server/router/api.js'
+import Repository from '../server/repository.js'
 
 const req = {}
 const assertRes = (assertionCb) => ({

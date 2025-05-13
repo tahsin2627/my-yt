@@ -2,7 +2,7 @@ import { test, beforeEach } from 'node:test'
 import assert from 'node:assert'
 import { MockAgent, setGlobalDispatcher } from 'undici'
 
-import { summarize } from '../../lib/llm/index.js'
+import { summarize } from '../../server/llm/index.js'
 const system = 'You are a helpful assistant.'
 const prompt = 'Just tell me something'
 
