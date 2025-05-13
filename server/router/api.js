@@ -1,10 +1,10 @@
 import fs from 'fs'
 import { URL } from 'url'
 import querystring from 'querystring'
-import { summarizeVideo } from '../subtitles-summary.js'
+import { summarizeVideo } from '../../lib/subtitles-summary.js'
 import { broadcastSSE } from '../sse.js'
-import { downloadVideo, extractIdFromUrl, isUnsupportedUrl, isYouTubeUrl } from '../youtube.js'
-import { updateAndPersistVideosForChannel } from '../update-videos.js'
+import { downloadVideo, extractIdFromUrl, isUnsupportedUrl, isYouTubeUrl } from '../../lib/youtube.js'
+import { updateAndPersistVideosForChannel } from '../../lib/update-videos.js'
 
 const llmDefaults = {
   model: 'meta-llama-3.1-8b-instruct',

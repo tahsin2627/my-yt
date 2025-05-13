@@ -1,6 +1,6 @@
 import { test } from 'node:test'
 import assert from 'assert'
-import { getVideosFor, getVideo, extractIdFromUrl, isYouTubeUrl, isUnsupportedUrl, isVideoId } from '../server/youtube.js'
+import { getVideosFor, getVideo, extractIdFromUrl, isYouTubeUrl, isUnsupportedUrl, isVideoId } from '../lib/youtube.js'
 
 if (!process.env.CI) {
   test('gets videos for channel', async () => {

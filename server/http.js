@@ -1,10 +1,10 @@
 import http from 'http'
 import { URL } from 'url'
 import { handleSSE, broadcastSSE } from './sse.js'
-import { updateAndPersistVideos } from './update-videos.js'
+import { updateAndPersistVideos } from '../lib/update-videos.js'
 import apiHandler from './router/api.js'
 import appHandler from './router/app.js'
-import Repository from './repository.js'
+import Repository from '../lib/repository.js'
 
 export function createServer (repo = new Repository()) {
   const stateChangeHandler = {
