@@ -1,4 +1,4 @@
-/* global HTMLElement, customElements */
+/* global HTMLElement, customElements, document */
 import { createVideoElement, addToast } from '/lib/utils.js' /* eslint-disable-line */
 import Store from '/lib/store.js' /* eslint-disable-line */
 const store = new Store()
@@ -131,7 +131,9 @@ class SearchVideos extends HTMLElement {
         )
         document.title = `my-yt - (${videos.length})`
         if (event) {
-          if (videos.length > 0) $status.innerText = `Found ${videos.length} video${videos.length === 1 ? '' : 's'}`
+          if (videos.length > 0) {
+            $status.innerText = `Found ${videos.length} video${videos.length === 1 ? '' : 's'}`
+          }
           else $status.innerText = 'No videos found'
         }
       })
