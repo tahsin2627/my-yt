@@ -124,3 +124,11 @@ if ($state) {
     }
   }).observe($state, { attributes: true, childList: false, subtree: false })
 }
+
+if ('serviceWorker' in navigator) {
+  console.log('Installing Service Worker')
+  navigator.serviceWorker
+    .register('/sw.js')
+    .then((reg) => console.log('Service Worker registered'))
+    .catch((err) => console.error('Service Worker registration failed', err))
+}

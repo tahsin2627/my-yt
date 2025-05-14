@@ -3,10 +3,16 @@ import { URL } from 'url'
 
 export default function apiHandler (req, res) {
   const url = new URL(req.url, `http://${req.headers.host}`)
+  // res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; img-src * data:; worker-src 'self'")
 
   if (url.pathname === '/main.css') { return fileHandler('client/main.css', 'text/css')(req, res) }
   if (url.pathname === '/normalize.css') { return fileHandler('client/normalize.css', 'text/css')(req, res) }
   if (url.pathname === '/main.js') { return fileHandler('client/main.js', 'application/javascript')(req, res) }
+  if (url.pathname === '/sw.js') {
+    return fileHandler('client/sw.js', 'application/javascript', (req, res) => {
+      // // res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; img-src * data:; worker-src 'self'")
+    })(req, res)
+  }
   if (url.pathname === '/lib/store.js') { return fileHandler('client/lib/store.js', 'application/javascript')(req, res) }
   if (url.pathname === '/lib/router.js') { return fileHandler('client/lib/router.js', 'application/javascript')(req, res) }
   if (url.pathname === '/lib/utils.js') { return fileHandler('client/lib/utils.js', 'application/javascript')(req, res) }
@@ -26,13 +32,15 @@ export default function apiHandler (req, res) {
   if (url.pathname === '/favicon.ico') { return fileHandler('client/favicon.ico', 'image/x-icon')(req, res) }
   if (url.pathname === '/favicon.svg') { return fileHandler('client/favicon.svg', 'image/svg+xml')(req, res) }
   if (url.pathname === '/apple-touch-icon.png') { return fileHandler('client/apple-touch-icon.png', 'image/png')(req, res) }
+  if (url.pathname === '/web-app-manifest-192x192.png') { return fileHandler('client/web-app-manifest-192x192.png', 'image/png')(req, res) }
 
   return fileHandler('client/index.html', 'text/html')(req, res)
 }
 
-function fileHandler (filePath, contentType) {
+function fileHandler (filePath, contentType, cb = () => {}) {
   return (req, res) => {
     res.writeHead(200, { 'Content-Type': contentType })
+    cb(req, res)
     res.end(fs.readFileSync(filePath, 'utf8'))
   }
 }
