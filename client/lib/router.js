@@ -22,7 +22,7 @@ const routes = {
 
       new MutationObserver((mutationList, observer) => {
         handleEmptyState()
-      }).observe(document.querySelector('.main-videos-container'), { attributes: false, childList: true, subtree: true })
+      }).observe(document.querySelector('videos-container'), { attributes: false, childList: true, subtree: true })
 
       applyShowThumbnails(store.get(store.showThumbnailsKey))
       applyShowBigPlayer(store.get(store.showBigPlayerKey))

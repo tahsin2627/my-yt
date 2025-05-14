@@ -1,7 +1,4 @@
 /* global EventSource, MutationObserver */
-import Store from '/lib/store.js' /* eslint-disable-line */
-import { createVideoElement } from '/lib/utils.js' /* eslint-disable-line */
-const store = new Store()
 window.state = {
   downloading: {},
   summarizing: {},
@@ -56,15 +53,11 @@ window.eventSource.onmessage = (message) => {
       return
     }
     if (data.type === 'new-videos' && data.videos) {
-      const $videosContainer = document.querySelector('.main-videos-container')
+      const $videosContainer = document.querySelector('videos-container')
       if (!$videosContainer) return
-      const showOriginalThumbnail = store.get(store.showOriginalThumbnailKey)
-
-      data.videos.forEach(video => {
-        const $videoElement = $videosContainer.querySelector('video-element')
-        if (!$videoElement) return $videosContainer.appendChild(createVideoElement(video, showOriginalThumbnail))
-        $videoElement.parentNode.insertBefore(createVideoElement(video, showOriginalThumbnail), $videoElement)
-      })
+      let videos = JSON.parse($videosContainer.dataset.videos || '[]')
+      videos = data.videos.concat(videos)
+      $videosContainer.dataset.videos = JSON.stringify(videos)
       return
     }
     if (data.type === 'summary-error' && data.videoId) {

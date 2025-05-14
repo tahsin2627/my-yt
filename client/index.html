@@ -17,7 +17,7 @@
     <div class="flex space-between align-start p-1">
       <a id="home-link" class="hide p-v-2" href="/">go back home</a></h1>
       <div class="flex-1 header-spacer"></div>
-      <search-videos data-videos-container=".main-videos-container"></search-videos>
+      <search-videos data-videos-container="videos-container"></search-videos>
       <div class="flex-1 tar p-v-2">
         <a href="/settings">Settings</a>
         <a tabindex="-1" href="https://github.com/christian-fei/my-yt" target="_blank">📖</a>
@@ -42,7 +42,7 @@
 
   <template id="main-template">
     <channels-list></channels-list>
-    <div class="main-videos-container"></div>
+    <videos-container></videos-container>
     <empty-state style="display:none"></empty-state>
   </template>
 
@@ -131,6 +131,7 @@
   <script type="module" src="/components/channels-list.js"></script>
   <script type="module" src="/components/video-element.js"></script>
   <script type="module" src="/components/sse-connection.js"></script>
+  <script type="module" src="/components/videos-container.js"></script>
   <script type="module" src="/components/forms/add-channel-form.js"></script>
   <script type="module" src="/components/forms/manage-channels-form.js"></script>
   <script type="module" src="/components/forms/video-quality-form.js"></script>

@@ -262,7 +262,7 @@ button:disabled, select:disabled, input[type="checkbox"]:disabled, input[type="r
   color: var(--active-channel);
 }
 
-.videos-container, .main-videos-container {
+.videos-container, videos-container {
   display: flex;
   justify-content: space-around;
   flex-wrap: wrap;

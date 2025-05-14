@@ -17,6 +17,7 @@ export default function apiHandler (req, res) {
   if (url.pathname === '/components/forms/manage-disk-space-form.js') { return fileHandler('client/components/forms/manage-disk-space-form.js', 'application/javascript')(req, res) }
   if (url.pathname === '/components/forms/transcode-videos-form.js') { return fileHandler('client/components/forms/transcode-videos-form.js', 'application/javascript')(req, res) }
   if (url.pathname === '/components/forms/excluded-terms-form.js') { return fileHandler('client/components/forms/excluded-terms-form.js', 'application/javascript')(req, res) }
+  if (url.pathname === '/components/videos-container.js') { return fileHandler('client/components/videos-container.js', 'application/javascript')(req, res) }
   if (url.pathname === '/components/sse-connection.js') { return fileHandler('client/components/sse-connection.js', 'application/javascript')(req, res) }
   if (url.pathname === '/components/search-videos.js') { return fileHandler('client/components/search-videos.js', 'application/javascript')(req, res) }
   if (url.pathname === '/components/channels-list.js') { return fileHandler('client/components/channels-list.js', 'application/javascript')(req, res) }

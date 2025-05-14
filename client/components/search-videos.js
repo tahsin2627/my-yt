@@ -1,7 +1,5 @@
 /* global HTMLElement, customElements, document */
 import { createVideoElement, addToast } from '/lib/utils.js' /* eslint-disable-line */
-import Store from '/lib/store.js' /* eslint-disable-line */
-const store = new Store()
 
 const searchEventSupported = 'search' in document.createElement('input')
 console.log({ searchEventSupported })
@@ -122,13 +120,11 @@ class SearchVideos extends HTMLElement {
     fetch(`/api/videos${query}`)
       .then(res => res.json())
       .then((videos) => {
-        const $videosContainer = document.querySelector(this.dataset.videosContainer || '.main-videos-container')
+        const $videosContainer = document.querySelector('videos-container')
         if (!$videosContainer) return
-        $videosContainer.innerHTML = ''
-        const showOriginalThumbnail = store.get(store.showOriginalThumbnailKey)
-        videos.forEach(video =>
-          $videosContainer.appendChild(createVideoElement(video, showOriginalThumbnail))
-        )
+        $videosContainer.dataset.videos = JSON.stringify(videos)
+        console.log('updated videos attribute')
+
         document.title = `(${videos.length}) my-yt`
         if (event) {
           if (videos.length > 0) {
