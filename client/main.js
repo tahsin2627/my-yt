@@ -32,24 +32,12 @@ window.eventSource.onmessage = (message) => {
       const $state = document.querySelector('.state')
       if (!$state) { return console.warn('missing $state') }
       const $count = $state.querySelector('.count')
-      const $downloading = $state.querySelector('.downloading')
-      const $summarizing = $state.querySelector('.summarizing')
       const downloadingCount = Object.keys(data.state.downloading || {}).length
-      $downloading.innerText = `Downloading: ${downloadingCount}`
       const summarizingCount = Object.keys(data.state.summarizing || {}).length
-      $summarizing.innerText = `Summarizing: ${summarizingCount}`
 
       setTimeout(() => {
-        Object.keys(data.state.downloading || {}).forEach((videoId) => {
-          const $video = document.querySelector(`video-element[data-video-id="${videoId}"]`)
-          if ($video) $video.dataset.downloading = 'true'
-        })
-        Object.keys(data.state.summarizing || {}).forEach((videoId) => {
-          const $video = document.querySelector(`video-element[data-video-id="${videoId}"]`)
-          if ($video) $video.dataset.summarizing = 'true'
-        })
-        const count = Object.keys(data.state.summarizing || {}).length + Object.keys(data.state.downloading || {}).length
-        $count.innerText = count > 0 ? `(${count})` : ''
+        const count = downloadingCount + summarizingCount
+        if ($count) $count.innerText = count > 0 ? `(${count})` : ''
       }, 500)
       return
     }
@@ -57,7 +45,7 @@ window.eventSource.onmessage = (message) => {
       const $state = document.querySelector('.state')
       if (!$state) { return console.warn('missing $state') }
       $state.classList.add('updated')
-      setTimeout(() => $state.classList.remove('updated'), 5000)
+      setTimeout(() => $state.classList.remove('updated'), 30000)
 
       const $downloadLogLines = $state.querySelector(' .lines')
       const text = $downloadLogLines.innerText
@@ -123,6 +111,7 @@ const $closeSummary = $summary.querySelector('button')
 $closeSummary.addEventListener('click', () => $summary.close())
 $summary.addEventListener('close', () => {})
 
+
 observeDialogOpenPreventScroll($summary)
 
 function observeDialogOpenPreventScroll (dialog) {
@@ -133,4 +122,13 @@ function observeDialogOpenPreventScroll (dialog) {
       }
     }
   }).observe(dialog, { attributes: true, childList: true, subtree: true })
+}
+
+const $state = document.querySelector('details.state')
+if ($state) {
+  new MutationObserver((mutationList, observer) => {
+    for (const mutation of mutationList) {
+      if (mutation.type === 'attributes' && mutation.attributeName === 'open') $state.classList.remove('updated')
+    }
+  }).observe($state, { attributes: true, childList: false, subtree: false })
 }
