@@ -411,7 +411,15 @@ video-element, video-element video {
 .state > div {
   margin-top: 0.5rem;
 }
-
+.state.updated .indicator {
+  background-color: #3498db;
+  border-radius: 50%;
+  width: .4rem;
+  height: .4rem;
+  margin-bottom: .1rem;
+  display: inline-block;
+  margin-left: 0.5rem;
+}
 
 .state .lines {
   font-size: 1rem;

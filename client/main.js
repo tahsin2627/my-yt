@@ -56,6 +56,8 @@ window.eventSource.onmessage = (message) => {
     if (data.type === 'download-log-line' && data.line) {
       const $state = document.querySelector('.state')
       if (!$state) { return console.warn('missing $state') }
+      $state.classList.add('updated')
+      setTimeout(() => $state.classList.remove('updated'), 5000)
 
       const $downloadLogLines = $state.querySelector(' .lines')
       const text = $downloadLogLines.innerText
