@@ -129,7 +129,7 @@ class SearchVideos extends HTMLElement {
         videos.forEach(video =>
           $videosContainer.appendChild(createVideoElement(video, showOriginalThumbnail))
         )
-        document.title = `my-yt - (${videos.length})`
+        document.title = `(${videos.length}) my-yt`
         if (event) {
           if (videos.length > 0) {
             $status.innerText = `Found ${videos.length} video${videos.length === 1 ? '' : 's'}`
