@@ -111,7 +111,6 @@ const $closeSummary = $summary.querySelector('button')
 $closeSummary.addEventListener('click', () => $summary.close())
 $summary.addEventListener('close', () => {})
 
-
 observeDialogOpenPreventScroll($summary)
 
 function observeDialogOpenPreventScroll (dialog) {
