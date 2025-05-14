@@ -16,22 +16,50 @@ class VideosContainer extends HTMLElement {
     this.render()
   }
 
-  render () {
-    const videos = JSON.parse(this.dataset.videos || '[]')
-    console.log('videos', videos)
-
-    this.innerHTML = ''
-
-    for (const video of videos) {
-      const $video = document.createElement('video-element')
-      $video.dataset.data = JSON.stringify(Object.assign(video, store.get(store.showOriginalThumbnailKey)
-        ? {
-            thumbnail: video.thumbnail.replace('mq2.jpg', 'mqdefault.jpg')
-          }
-        : {}))
-      $video.dataset.videoId = video.id
-      this.appendChild($video)
+  _prepareVideoElementData (videoData, showOriginalThumbnail) {
+    const dataForChild = { ...videoData }
+    if (showOriginalThumbnail && dataForChild.thumbnail && typeof dataForChild.thumbnail === 'string') {
+      dataForChild.thumbnail = dataForChild.thumbnail.replace('mq2.jpg', 'mqdefault.jpg')
     }
+    return JSON.stringify(dataForChild)
+  }
+
+  render () {
+    const newVideos = JSON.parse(this.dataset.videos || '[]')
+    const showOriginalThumbnail = store && store.get(store.showOriginalThumbnailKey)
+    const existingVideoElementsMap = new Map()
+    for (const child of this.children) {
+      if (child.tagName === 'VIDEO-ELEMENT' && child.dataset.videoId) {
+        existingVideoElementsMap.set(child.dataset.videoId, child)
+      }
+    }
+    const fragment = document.createDocumentFragment()
+    const newVideoIds = new Set()
+
+    for (const videoData of newVideos) {
+      newVideoIds.add(videoData.id)
+      let videoElement = existingVideoElementsMap.get(videoData.id)
+
+      const preparedData = this._prepareVideoElementData(videoData, showOriginalThumbnail)
+
+      if (videoElement) {
+        if (videoElement.dataset.data !== preparedData) {
+          videoElement.dataset.data = preparedData
+        }
+        existingVideoElementsMap.delete(videoData.id)
+      } else {
+        videoElement = document.createElement('video-element')
+        videoElement.dataset.videoId = videoData.id
+        videoElement.dataset.data = preparedData
+      }
+      fragment.appendChild(videoElement)
+    }
+
+    for (const oldVideoElement of existingVideoElementsMap.values()) {
+      oldVideoElement.remove()
+    }
+
+    this.replaceChildren(fragment)
   }
 }
 customElements.define('videos-container', VideosContainer)
