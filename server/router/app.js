@@ -3,16 +3,9 @@ import { URL } from 'url'
 
 export default function apiHandler (req, res) {
   const url = new URL(req.url, `http://${req.headers.host}`)
-  // res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; img-src * data:; worker-src 'self'")
-
   if (url.pathname === '/main.css') { return fileHandler('client/main.css', 'text/css')(req, res) }
   if (url.pathname === '/normalize.css') { return fileHandler('client/normalize.css', 'text/css')(req, res) }
   if (url.pathname === '/main.js') { return fileHandler('client/main.js', 'application/javascript')(req, res) }
-  if (url.pathname === '/sw.js') {
-    return fileHandler('client/sw.js', 'application/javascript', (req, res) => {
-      // // res.setHeader('Content-Security-Policy', "default-src 'self'; script-src 'self'; style-src 'self'; img-src * data:; worker-src 'self'")
-    })(req, res)
-  }
   if (url.pathname === '/lib/store.js') { return fileHandler('client/lib/store.js', 'application/javascript')(req, res) }
   if (url.pathname === '/lib/router.js') { return fileHandler('client/lib/router.js', 'application/javascript')(req, res) }
   if (url.pathname === '/lib/utils.js') { return fileHandler('client/lib/utils.js', 'application/javascript')(req, res) }
