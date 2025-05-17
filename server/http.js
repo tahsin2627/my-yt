@@ -41,6 +41,9 @@ export function createServer (repo = new Repository()) {
       if (newVideos.length > 0) {
         console.log('new videos for channel', name, newVideos.length)
         broadcastSSE(JSON.stringify({ type: 'new-videos', name, videos: newVideos }), connections)
+        broadcastSSE(JSON.stringify({ type: 'download-log-line', line: `new videos for channel ${name} ${newVideos.length}` }), connections)
+      } else {
+        broadcastSSE(JSON.stringify({ type: 'download-log-line', line: `no new videos for channel ${name}` }), connections)
       }
     })
   }
