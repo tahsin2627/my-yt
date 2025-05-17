@@ -140,6 +140,7 @@ data
 data.old
 data.bkp
 cookies.txt
+cookies.txt*
 
 *.clbin
 .DS_Store
