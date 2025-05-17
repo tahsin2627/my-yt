@@ -42,7 +42,7 @@ export default function apiHandler (req, res, repo, connections = [], state = {}
   if (url.pathname === '/api/excluded-terms' && req.method === 'GET') { return getExcludedTermsHandler(req, res, repo) }
   if (url.pathname === '/api/excluded-terms' && req.method === 'POST') { return addExcludedTermHandler(req, res, repo) }
   if (url.pathname === '/api/excluded-terms' && req.method === 'DELETE') { return removeExcludedTermHandler(req, res, repo) }
-  if (url.pathname.match(/\/api\/videos\/.*/) && req.method === 'GET') { return watchVideoHandler(req, res, repo) }
+  if (url.pathname.match(/\/api\/videos\/.*/) && req.method === 'GET') { return watchVideoHandler(req, res, repo, connections) }
   if (url.pathname.match(/\/api\/captions\/.*/) && req.method === 'GET') { return captionsHandler(req, res, repo) }
 
   res.writeHead(404)
@@ -290,7 +290,7 @@ async function setTranscodeVideosHandler (req, res, repo) {
   res.end()
 }
 
-function watchVideoHandler (req, res, repo) {
+function watchVideoHandler (req, res, repo, connections = []) {
   const id = req.url.replace('/api/videos/', '').replace(/\.(webm|mp4)$/, '')
   const video = repo.getVideo(id)
   const location = video.location || `./data/videos/${id}.mp4`
@@ -298,6 +298,7 @@ function watchVideoHandler (req, res, repo) {
   if (!fs.existsSync(location)) {
     res.writeHead(404, { 'Content-Type': 'text/plain' })
     res.end('Video not found')
+    broadcastSSE(JSON.stringify({ type: 'download-log-line', line: `video does not exist ${location}` }), connections)
     return
   }
 
@@ -356,9 +357,13 @@ function watchVideoHandler (req, res, repo) {
     res.setHeader('content-range', `bytes ${start || 0}-${end || (contentLength - 1)}/${contentLength}`)
   }
 
+  broadcastSSE(JSON.stringify({ type: 'download-log-line', line: `video range requested ${location} ${start || 0}-${end || (contentLength - 1)}/${contentLength}` }), connections)
+
   const fileStream = fs.createReadStream(location, options)
   fileStream.on('error', error => {
     console.error(`Error reading file ${location}.`, error)
+    broadcastSSE(JSON.stringify({ type: 'download-log-line', line: `video stream error ${location}: ${error.message}` }), connections)
+
     res.writeHead(500)
     res.end()
   })
