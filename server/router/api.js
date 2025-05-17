@@ -25,23 +25,23 @@ const llmSettings = {
 export default function apiHandler (req, res, repo, connections = [], state = {}) {
   const url = new URL(req.url, `http://${req.headers.host}`)
 
-  if (url.pathname === '/api/channels' && req.method === 'GET') { return getChannelHandler(req, res, repo, connections) }
+  if (url.pathname === '/api/channels' && req.method === 'GET') { return getChannelHandler(req, res, repo) }
   if (url.pathname === '/api/channels' && req.method === 'POST') { return addChannelHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/channels' && req.method === 'DELETE') { return deleteChannelHandler(req, res, repo, connections) }
+  if (url.pathname === '/api/channels' && req.method === 'DELETE') { return deleteChannelHandler(req, res, repo) }
   if (url.pathname === '/api/download-video' && req.method === 'POST') { return downloadVideoHandler(req, res, repo, connections, state) }
   if (url.pathname === '/api/summarize-video' && req.method === 'POST') { return summarizeVideoHandler(req, res, repo, connections, state, llmSettings) }
   if (url.pathname === '/api/ignore-video' && req.method === 'POST') { return ignoreVideoHandler(req, res, repo, connections) }
   if (url.pathname === '/api/delete-video' && req.method === 'POST') { return deleteVideoHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/videos' && req.method === 'GET') { return searchVideosHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/video-quality' && req.method === 'GET') { return getVideoQualityHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/video-quality' && req.method === 'POST') { return setVideoQualityHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/disk-usage' && req.method === 'GET') { return diskUsageHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/reclaim-disk-space' && req.method === 'POST') { return reclaimDiskSpaceHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/transcode-videos' && req.method === 'GET') { return getTranscodeVideosHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/transcode-videos' && req.method === 'POST') { return setTranscodeVideosHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/excluded-terms' && req.method === 'GET') { return getExcludedTermsHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/excluded-terms' && req.method === 'POST') { return addExcludedTermHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/excluded-terms' && req.method === 'DELETE') { return removeExcludedTermHandler(req, res, repo, connections) }
+  if (url.pathname === '/api/videos' && req.method === 'GET') { return searchVideosHandler(req, res, repo) }
+  if (url.pathname === '/api/video-quality' && req.method === 'GET') { return getVideoQualityHandler(req, res, repo) }
+  if (url.pathname === '/api/video-quality' && req.method === 'POST') { return setVideoQualityHandler(req, res, repo) }
+  if (url.pathname === '/api/disk-usage' && req.method === 'GET') { return diskUsageHandler(req, res, repo) }
+  if (url.pathname === '/api/reclaim-disk-space' && req.method === 'POST') { return reclaimDiskSpaceHandler(req, res, repo) }
+  if (url.pathname === '/api/transcode-videos' && req.method === 'GET') { return getTranscodeVideosHandler(req, res, repo) }
+  if (url.pathname === '/api/transcode-videos' && req.method === 'POST') { return setTranscodeVideosHandler(req, res, repo) }
+  if (url.pathname === '/api/excluded-terms' && req.method === 'GET') { return getExcludedTermsHandler(req, res, repo) }
+  if (url.pathname === '/api/excluded-terms' && req.method === 'POST') { return addExcludedTermHandler(req, res, repo) }
+  if (url.pathname === '/api/excluded-terms' && req.method === 'DELETE') { return removeExcludedTermHandler(req, res, repo) }
   if (url.pathname.match(/\/api\/videos\/.*/) && req.method === 'GET') { return watchVideoHandler(req, res, repo) }
   if (url.pathname.match(/\/api\/captions\/.*/) && req.method === 'GET') { return captionsHandler(req, res, repo) }
 
@@ -49,7 +49,7 @@ export default function apiHandler (req, res, repo, connections = [], state = {}
   return res.end()
 }
 
-async function getChannelHandler (req, res, repo, connections = []) {
+async function getChannelHandler (req, res, repo) {
   const channels = repo.getChannels()
   res.writeHead(200, { 'Content-Type': 'application/json' })
   return res.end(JSON.stringify(channels))
@@ -78,7 +78,7 @@ async function addChannelHandler (req, res, repo, connections = []) {
   return res.end('Channel not found')
 }
 
-async function deleteChannelHandler (req, res, repo, connections = []) {
+async function deleteChannelHandler (req, res, repo) {
   const body = await getBody(req)
   let { name } = JSON.parse(body)
   name = name.trim()
