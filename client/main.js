@@ -4,6 +4,7 @@ window.state = {
   summarizing: {},
   sseConnected: false
 }
+let downloadLogTimeoutHandle
 
 window.eventSource = new EventSource('/')
 window.eventSource.onopen = () => {
@@ -41,8 +42,10 @@ window.eventSource.onmessage = (message) => {
     if (data.type === 'download-log-line' && data.line) {
       const $state = document.querySelector('.state')
       if (!$state) { return console.warn('missing $state') }
+      if (downloadLogTimeoutHandle) clearTimeout(downloadLogTimeoutHandle)
+
       $state.classList.add('updated')
-      setTimeout(() => $state.classList.remove('updated'), 30000)
+      downloadLogTimeoutHandle = setTimeout(() => $state.classList.remove('updated'), 10000)
 
       const $downloadLogLines = $state.querySelector(' .lines')
       const text = $downloadLogLines.innerText
