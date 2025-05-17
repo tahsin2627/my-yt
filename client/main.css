@@ -399,9 +399,9 @@ video-element, video-element video {
   /* width: fit-content;
   max-width: 90%; */
   overflow: hidden;
-  overflow-y: auto;
+  overflow-y: hidden;
   z-index: 9000;
-  max-height: 10rem;
+  max-height: 50%;
   font-size: 1rem;
   padding: 0.5rem;
   background-color: var(--bg-primary);
@@ -423,7 +423,7 @@ video-element, video-element video {
 
 .state .lines {
   font-size: 1rem;
-  max-height: 5rem;
+  max-height: 25rem;
   overflow-y: scroll;
 }
 

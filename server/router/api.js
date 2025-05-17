@@ -25,31 +25,31 @@ const llmSettings = {
 export default function apiHandler (req, res, repo, connections = [], state = {}) {
   const url = new URL(req.url, `http://${req.headers.host}`)
 
-  if (url.pathname === '/api/channels' && req.method === 'GET') { return getChannelHandler(req, res, repo, connections) }
+  if (url.pathname === '/api/channels' && req.method === 'GET') { return getChannelHandler(req, res, repo) }
   if (url.pathname === '/api/channels' && req.method === 'POST') { return addChannelHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/channels' && req.method === 'DELETE') { return deleteChannelHandler(req, res, repo, connections) }
+  if (url.pathname === '/api/channels' && req.method === 'DELETE') { return deleteChannelHandler(req, res, repo) }
   if (url.pathname === '/api/download-video' && req.method === 'POST') { return downloadVideoHandler(req, res, repo, connections, state) }
   if (url.pathname === '/api/summarize-video' && req.method === 'POST') { return summarizeVideoHandler(req, res, repo, connections, state, llmSettings) }
   if (url.pathname === '/api/ignore-video' && req.method === 'POST') { return ignoreVideoHandler(req, res, repo, connections) }
   if (url.pathname === '/api/delete-video' && req.method === 'POST') { return deleteVideoHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/videos' && req.method === 'GET') { return searchVideosHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/video-quality' && req.method === 'GET') { return getVideoQualityHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/video-quality' && req.method === 'POST') { return setVideoQualityHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/disk-usage' && req.method === 'GET') { return diskUsageHandler(req, res, repo, connections) }
+  if (url.pathname === '/api/videos' && req.method === 'GET') { return searchVideosHandler(req, res, repo) }
+  if (url.pathname === '/api/video-quality' && req.method === 'GET') { return getVideoQualityHandler(req, res, repo) }
+  if (url.pathname === '/api/video-quality' && req.method === 'POST') { return setVideoQualityHandler(req, res, repo) }
+  if (url.pathname === '/api/disk-usage' && req.method === 'GET') { return diskUsageHandler(req, res, repo) }
   if (url.pathname === '/api/reclaim-disk-space' && req.method === 'POST') { return reclaimDiskSpaceHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/transcode-videos' && req.method === 'GET') { return getTranscodeVideosHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/transcode-videos' && req.method === 'POST') { return setTranscodeVideosHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/excluded-terms' && req.method === 'GET') { return getExcludedTermsHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/excluded-terms' && req.method === 'POST') { return addExcludedTermHandler(req, res, repo, connections) }
-  if (url.pathname === '/api/excluded-terms' && req.method === 'DELETE') { return removeExcludedTermHandler(req, res, repo, connections) }
-  if (url.pathname.match(/\/api\/videos\/.*/) && req.method === 'GET') { return watchVideoHandler(req, res, repo) }
+  if (url.pathname === '/api/transcode-videos' && req.method === 'GET') { return getTranscodeVideosHandler(req, res, repo) }
+  if (url.pathname === '/api/transcode-videos' && req.method === 'POST') { return setTranscodeVideosHandler(req, res, repo) }
+  if (url.pathname === '/api/excluded-terms' && req.method === 'GET') { return getExcludedTermsHandler(req, res, repo) }
+  if (url.pathname === '/api/excluded-terms' && req.method === 'POST') { return addExcludedTermHandler(req, res, repo) }
+  if (url.pathname === '/api/excluded-terms' && req.method === 'DELETE') { return removeExcludedTermHandler(req, res, repo) }
+  if (url.pathname.match(/\/api\/videos\/.*/) && req.method === 'GET') { return watchVideoHandler(req, res, repo, connections) }
   if (url.pathname.match(/\/api\/captions\/.*/) && req.method === 'GET') { return captionsHandler(req, res, repo) }
 
   res.writeHead(404)
   return res.end()
 }
 
-async function getChannelHandler (req, res, repo, connections = []) {
+async function getChannelHandler (req, res, repo) {
   const channels = repo.getChannels()
   res.writeHead(200, { 'Content-Type': 'application/json' })
   return res.end(JSON.stringify(channels))
@@ -78,7 +78,7 @@ async function addChannelHandler (req, res, repo, connections = []) {
   return res.end('Channel not found')
 }
 
-async function deleteChannelHandler (req, res, repo, connections = []) {
+async function deleteChannelHandler (req, res, repo) {
   const body = await getBody(req)
   let { name } = JSON.parse(body)
   name = name.trim()
@@ -218,7 +218,7 @@ function diskUsageHandler (req, res, repo) {
   res.end(diskSpaceUsed.toFixed(3) + 'GB')
 }
 
-async function reclaimDiskSpaceHandler (req, res, repo) {
+async function reclaimDiskSpaceHandler (req, res, repo, connections = []) {
   const body = await getBody(req)
   const { onlyIgnored } = JSON.parse(body)
   const videos = repo.getAllVideos()
@@ -229,16 +229,24 @@ async function reclaimDiskSpaceHandler (req, res, repo) {
     .forEach((video) => {
       try {
         fs.readdir('./data/videos', (err, filenames) => {
-          if (err) { return console.error(err) }
-          filenames
-            .filter(f => f.startsWith(video.id))
-            .forEach(filename => fs.unlink(`./data/videos/${filename}`, err => {
-              if (err) console.error(err)
-              else {
-                console.log('unlinked', filename)
-                repo.updateVideo(video.id, { downloaded: false })
-              }
-            }))
+          if (err) {
+            broadcastSSE(JSON.stringify({ type: 'download-log-line', line: `error reading dir data/video: ${err.message}` }), connections)
+            return console.error(err)
+          }
+          for (const filename of filenames) {
+            if (filename.startsWith(video.id)) {
+              fs.unlink(`./data/videos/${filename}`, err => {
+                if (err) {
+                  console.error(err)
+                  broadcastSSE(JSON.stringify({ type: 'download-log-line', line: `error deleting ${filename}: ${err.message}` }), connections)
+                } else {
+                  console.log('deleted', filename)
+                  repo.updateVideo(video.id, { downloaded: false })
+                  broadcastSSE(JSON.stringify({ type: 'download-log-line', line: `deleted ${filename}` }), connections)
+                }
+              })
+            }
+          }
         })
       } catch (err) {
         console.error(err.message)
@@ -282,7 +290,7 @@ async function setTranscodeVideosHandler (req, res, repo) {
   res.end()
 }
 
-function watchVideoHandler (req, res, repo) {
+function watchVideoHandler (req, res, repo, connections = []) {
   const id = req.url.replace('/api/videos/', '').replace(/\.(webm|mp4)$/, '')
   const video = repo.getVideo(id)
   const location = video.location || `./data/videos/${id}.mp4`
@@ -290,6 +298,7 @@ function watchVideoHandler (req, res, repo) {
   if (!fs.existsSync(location)) {
     res.writeHead(404, { 'Content-Type': 'text/plain' })
     res.end('Video not found')
+    broadcastSSE(JSON.stringify({ type: 'download-log-line', line: `video does not exist ${location}` }), connections)
     return
   }
 
@@ -348,9 +357,13 @@ function watchVideoHandler (req, res, repo) {
     res.setHeader('content-range', `bytes ${start || 0}-${end || (contentLength - 1)}/${contentLength}`)
   }
 
+  broadcastSSE(JSON.stringify({ type: 'download-log-line', line: `video range requested ${location} ${start || 0}-${end || (contentLength - 1)}/${contentLength}` }), connections)
+
   const fileStream = fs.createReadStream(location, options)
   fileStream.on('error', error => {
     console.error(`Error reading file ${location}.`, error)
+    broadcastSSE(JSON.stringify({ type: 'download-log-line', line: `video stream error ${location}: ${error.message}` }), connections)
+
     res.writeHead(500)
     res.end()
   })

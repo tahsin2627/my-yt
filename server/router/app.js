@@ -29,10 +29,9 @@ export default function apiHandler (req, res) {
   return fileHandler('client/index.html', 'text/html')(req, res)
 }
 
-function fileHandler (filePath, contentType, cb = () => {}) {
+function fileHandler (filePath, contentType) {
   return (req, res) => {
     res.writeHead(200, { 'Content-Type': contentType })
-    cb(req, res)
     res.end(fs.readFileSync(filePath, 'utf8'))
   }
 }
