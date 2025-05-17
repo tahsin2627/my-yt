@@ -33,7 +33,11 @@ export function createServer (repo = new Repository()) {
   setInterval(runUpdateVideos, 1000 * 60 * 30, repo, connections)
   function runUpdateVideos (repo, connections) {
     console.log('update videos')
-    updateAndPersistVideos(repo, ({ name, videos }) => {
+    updateAndPersistVideos(repo, (err, { name, videos }) => {
+      if (err) {
+        console.error('Error updating videos', name, err.message)
+        return
+      }
       const newVideos = videos
         .filter(v => v.addedAt > lastAdded)
         .filter(v => repo.filterByExcludedTerms(v))
