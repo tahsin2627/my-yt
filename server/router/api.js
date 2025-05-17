@@ -36,7 +36,7 @@ export default function apiHandler (req, res, repo, connections = [], state = {}
   if (url.pathname === '/api/video-quality' && req.method === 'GET') { return getVideoQualityHandler(req, res, repo) }
   if (url.pathname === '/api/video-quality' && req.method === 'POST') { return setVideoQualityHandler(req, res, repo) }
   if (url.pathname === '/api/disk-usage' && req.method === 'GET') { return diskUsageHandler(req, res, repo) }
-  if (url.pathname === '/api/reclaim-disk-space' && req.method === 'POST') { return reclaimDiskSpaceHandler(req, res, repo) }
+  if (url.pathname === '/api/reclaim-disk-space' && req.method === 'POST') { return reclaimDiskSpaceHandler(req, res, repo, connections) }
   if (url.pathname === '/api/transcode-videos' && req.method === 'GET') { return getTranscodeVideosHandler(req, res, repo) }
   if (url.pathname === '/api/transcode-videos' && req.method === 'POST') { return setTranscodeVideosHandler(req, res, repo) }
   if (url.pathname === '/api/excluded-terms' && req.method === 'GET') { return getExcludedTermsHandler(req, res, repo) }
@@ -218,7 +218,7 @@ function diskUsageHandler (req, res, repo) {
   res.end(diskSpaceUsed.toFixed(3) + 'GB')
 }
 
-async function reclaimDiskSpaceHandler (req, res, repo) {
+async function reclaimDiskSpaceHandler (req, res, repo, connections = []) {
   const body = await getBody(req)
   const { onlyIgnored } = JSON.parse(body)
   const videos = repo.getAllVideos()
@@ -229,16 +229,24 @@ async function reclaimDiskSpaceHandler (req, res, repo) {
     .forEach((video) => {
       try {
         fs.readdir('./data/videos', (err, filenames) => {
-          if (err) { return console.error(err) }
-          filenames
-            .filter(f => f.startsWith(video.id))
-            .forEach(filename => fs.unlink(`./data/videos/${filename}`, err => {
-              if (err) console.error(err)
-              else {
-                console.log('unlinked', filename)
-                repo.updateVideo(video.id, { downloaded: false })
-              }
-            }))
+          if (err) {
+            broadcastSSE(JSON.stringify({ type: 'download-log-line', line: `error reading dir data/video: ${err.message}` }), connections)
+            return console.error(err)
+          }
+          for (const filename of filenames) {
+            if (filename.startsWith(video.id)) {
+              fs.unlink(`./data/videos/${filename}`, err => {
+                if (err) {
+                  console.error(err)
+                  broadcastSSE(JSON.stringify({ type: 'download-log-line', line: `error deleting ${filename}: ${err.message}` }), connections)
+                } else {
+                  console.log('deleted', filename)
+                  repo.updateVideo(video.id, { downloaded: false })
+                  broadcastSSE(JSON.stringify({ type: 'download-log-line', line: `deleted ${filename}` }), connections)
+                }
+              })
+            }
+          }
         })
       } catch (err) {
         console.error(err.message)
