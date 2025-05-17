@@ -137,8 +137,13 @@ async function summarizeVideoHandler (req, res, repo, connections = [], state = 
   state.summarizing = state.summarizing || {}
   state.summarizing[id] = { lines: [] }
 
-  summarizeVideo(id, repo, llmSettings, (line) => {
-    broadcastSSE(JSON.stringify({ type: 'download-log-line', line }), connections)
+  summarizeVideo(id, repo, llmSettings, (err, line) => {
+    if (err) {
+      console.error(err)
+      broadcastSSE(JSON.stringify({ type: 'download-log-line', line: `Error summarizing video ${id}: ${err.message}` }), connections)
+    } else {
+      broadcastSSE(JSON.stringify({ type: 'download-log-line', line }), connections)
+    }
   })
     .then(({ summary, transcript }) =>
       broadcastSSE(JSON.stringify({ type: 'summary', summary, transcript, videoId: id }), connections))
