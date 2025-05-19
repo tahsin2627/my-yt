@@ -27,16 +27,6 @@ window.eventSource.onmessage = (message) => {
 
     if (data.type === 'state' && data.state) {
       Object.assign(window.state, data.state)
-      const $state = document.querySelector('.state')
-      if (!$state) { return console.warn('missing $state') }
-      const $count = $state.querySelector('.count')
-      const downloadingCount = Object.keys(data.state.downloading || {}).length
-      const summarizingCount = Object.keys(data.state.summarizing || {}).length
-
-      setTimeout(() => {
-        const count = downloadingCount + summarizingCount
-        if ($count) $count.innerText = count > 0 ? `(${count})` : ''
-      }, 500)
       return
     }
     if (data.type === 'download-log-line' && data.line) {
@@ -48,10 +38,7 @@ window.eventSource.onmessage = (message) => {
       downloadLogTimeoutHandle = setTimeout(() => $state.classList.remove('updated'), 10000)
 
       const $downloadLogLines = $state.querySelector(' .lines')
-      const text = $downloadLogLines.innerText
-      let lines = text.split('\n')
-      lines = lines.join('\n') + '\n' + data.line
-      $downloadLogLines.innerText = lines
+      $downloadLogLines.innerText += '\n' + data.line
       $downloadLogLines.scrollTop = $downloadLogLines.scrollHeight
       return
     }
