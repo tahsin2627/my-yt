@@ -26,40 +26,94 @@ class VideosContainer extends HTMLElement {
 
   render () {
     const newVideos = JSON.parse(this.dataset.videos || '[]')
-    const showOriginalThumbnail = store && store.get(store.showOriginalThumbnailKey)
-    const existingVideoElementsMap = new Map()
-    for (const child of this.children) {
-      if (child.tagName === 'VIDEO-ELEMENT' && child.dataset.videoId) {
-        existingVideoElementsMap.set(child.dataset.videoId, child)
-      }
-    }
-    const fragment = document.createDocumentFragment()
-    const newVideoIds = new Set()
+    const showOriginalThumbnail = store.get(store.showOriginalThumbnailKey)
 
+    const existingElementsMap = new Map()
+    let currentChild = this.firstElementChild
+    while (currentChild) {
+      if (currentChild.tagName === 'VIDEO-ELEMENT' && currentChild.dataset.videoId) {
+        existingElementsMap.set(currentChild.dataset.videoId, currentChild)
+      }
+      currentChild = currentChild.nextElementSibling
+    }
+
+    const newElementOrder = [] // To keep track of the desired order of elements
+
+    // Process new videos: update existing, create new, and determine order
     for (const videoData of newVideos) {
-      newVideoIds.add(videoData.id)
-      let videoElement = existingVideoElementsMap.get(videoData.id)
+      const videoId = videoData.id
+      if (!videoId) {
+        console.warn('Video data is missing an ID:', videoData)
+        continue
+      }
 
       const preparedData = this._prepareVideoElementData(videoData, showOriginalThumbnail)
+      let videoElement = existingElementsMap.get(videoId)
 
       if (videoElement) {
+        // Element exists
         if (videoElement.dataset.data !== preparedData) {
+          console.log(`Video ${videoId}: Data changed, updating dataset.`)
           videoElement.dataset.data = preparedData
+        } else {
+          // console.log(`Video ${videoId}: Data unchanged.`);
         }
-        existingVideoElementsMap.delete(videoData.id)
+        existingElementsMap.delete(videoId) // Mark as processed/kept
       } else {
+        // Element is new, create it
+        console.log(`Video ${videoId}: Creating new element.`)
         videoElement = document.createElement('video-element')
-        videoElement.dataset.videoId = videoData.id
+        videoElement.dataset.videoId = videoId
         videoElement.dataset.data = preparedData
       }
-      fragment.appendChild(videoElement)
+      newElementOrder.push(videoElement)
     }
 
-    for (const oldVideoElement of existingVideoElementsMap.values()) {
-      oldVideoElement.remove()
+    // Remove old elements that are no longer in newVideos
+    for (const [id, oldElement] of existingElementsMap) {
+      console.log(`Video ${id}: Removing old element.`)
+      oldElement.remove()
     }
 
-    this.replaceChildren(fragment)
+    // Reconcile the DOM children with the newElementOrder
+    // This ensures elements are in the correct order and new ones are added,
+    // while minimizing direct DOM manipulation for elements already in place.
+
+    let nextExpectedChild = this.firstElementChild
+    for (let i = 0; i < newElementOrder.length; i++) {
+      const desiredElement = newElementOrder[i]
+
+      if (nextExpectedChild === desiredElement) {
+        // Element is already in the correct position
+        nextExpectedChild = nextExpectedChild.nextElementSibling
+      } else {
+        // Element is new, or needs to be moved
+        // If desiredElement is already in the DOM (but wrong place), insertBefore will move it.
+        // If desiredElement is new, insertBefore will add it.
+        this.insertBefore(desiredElement, nextExpectedChild)
+      }
+    }
+
+    // Simpler Reconcile Logic for Step 4 (More robust for reordering):
+    // Ensure all elements from newElementOrder are children and in the correct sequence.
+    for (let i = 0; i < newElementOrder.length; i++) {
+      const desiredElement = newElementOrder[i]
+      const currentElementAtIndex = this.children[i]
+
+      if (currentElementAtIndex !== desiredElement) {
+        // If desiredElement is already a child elsewhere, insertBefore will move it.
+        // If it's not a child, it will be inserted.
+        // If currentElementAtIndex is undefined (we're adding to the end),
+        // insertBefore(desired, null) acts like appendChild.
+        this.insertBefore(desiredElement, currentElementAtIndex || null)
+      }
+    }
+
+    // Remove any extra children at the end if newElementOrder is shorter than current children
+    while (this.children.length > newElementOrder.length) {
+      console.log('Removing trailing element:', this.lastElementChild.dataset.videoId)
+      this.lastElementChild.remove()
+    }
   }
 }
 customElements.define('videos-container', VideosContainer)
