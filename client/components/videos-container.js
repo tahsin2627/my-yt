@@ -80,9 +80,7 @@ class VideosContainer extends HTMLElement {
     // while minimizing direct DOM manipulation for elements already in place.
 
     let nextExpectedChild = this.firstElementChild
-    for (let i = 0; i < newElementOrder.length; i++) {
-      const desiredElement = newElementOrder[i]
-
+    for (const desiredElement of newElementOrder) {
       if (nextExpectedChild === desiredElement) {
         // Element is already in the correct position
         nextExpectedChild = nextExpectedChild.nextElementSibling
@@ -91,21 +89,6 @@ class VideosContainer extends HTMLElement {
         // If desiredElement is already in the DOM (but wrong place), insertBefore will move it.
         // If desiredElement is new, insertBefore will add it.
         this.insertBefore(desiredElement, nextExpectedChild)
-      }
-    }
-
-    // Simpler Reconcile Logic for Step 4 (More robust for reordering):
-    // Ensure all elements from newElementOrder are children and in the correct sequence.
-    for (let i = 0; i < newElementOrder.length; i++) {
-      const desiredElement = newElementOrder[i]
-      const currentElementAtIndex = this.children[i]
-
-      if (currentElementAtIndex !== desiredElement) {
-        // If desiredElement is already a child elsewhere, insertBefore will move it.
-        // If it's not a child, it will be inserted.
-        // If currentElementAtIndex is undefined (we're adding to the end),
-        // insertBefore(desired, null) acts like appendChild.
-        this.insertBefore(desiredElement, currentElementAtIndex || null)
       }
     }
 
