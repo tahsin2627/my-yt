@@ -347,15 +347,15 @@ video-element, video-element video {
     width: 50%;
   }
   .show-big-player video-element.big video {
-    width: 100%;
+    width: 99%;
   }
 }
 @media all and (max-width: 60em) {
   .show-big-player video-element.big {
-    width: 100%;
+    width: 99%;
   }
   .show-big-player video-element.big video {
-    width: 100%;
+    width: 99%;
   }
 }
 
