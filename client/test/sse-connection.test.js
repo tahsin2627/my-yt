@@ -1,6 +1,5 @@
 /* global describe, it */
-import { fixture, html } from '@open-wc/testing'
-import { expect } from '@esm-bundle/chai'
+import { fixture, html, assert } from '@open-wc/testing'
 
 import '../components/sse-connection.js'
 
@@ -10,7 +9,7 @@ describe('sse-connection', () => {
       <sse-connection></sse-connection>
     `)
 
-    expect(el.classList.contains('connected')).eq(false)
+    assert.equal(el.classList.contains('connected'), false)
   })
   it('connected', async () => {
     window.eventSource = { readyState: 'OPEN' }
@@ -18,6 +17,6 @@ describe('sse-connection', () => {
       <sse-connection></sse-connection>
     `)
 
-    expect(el.classList.contains('connected')).eq(true)
+    assert.equal(el.classList.contains('connected'), true)
   })
 })

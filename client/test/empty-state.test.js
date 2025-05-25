@@ -1,6 +1,5 @@
 /* global describe, it */
-import { fixture, html } from '@open-wc/testing'
-import { expect } from '@esm-bundle/chai'
+import { fixture, html, assert } from '@open-wc/testing'
 
 import '../components/empty-state.js'
 
@@ -10,12 +9,13 @@ describe('empty-state', () => {
       <empty-state></empty-state>
     `)
 
-    expect(el.innerHTML).to.contain('Nothing to show...')
+    assert.include(el.innerHTML, 'Nothing to show...')
   })
   it('shows empty state message when channels are present', async () => {
     const el = await fixture(html`
       <empty-state data-has-channels="true"></empty-state>
     `)
-    expect(el.innerHTML).to.contain('All caught up!')
+
+    assert.include(el.innerHTML, 'All caught up!')
   })
 })
