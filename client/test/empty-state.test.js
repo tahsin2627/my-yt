@@ -4,7 +4,7 @@ import { expect } from '@esm-bundle/chai'
 
 import '../components/empty-state.js'
 
-describe('my-test', () => {
+describe('empty-state', () => {
   it('shows empty state message when no channels are present', async () => {
     const el = await fixture(html`
       <empty-state></empty-state>
