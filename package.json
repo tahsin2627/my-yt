@@ -6,6 +6,7 @@
   "scripts": {
     "start": "node --env-file-if-exists=.env index.js",
     "test": "npm run lint && node --test --test-concurrency 1",
+    "test:client": "web-test-runner client/test/**/*.test.js --node-resolve",
     "lint": "standard"
   },
   "keywords": [],
@@ -16,6 +17,9 @@
     "nano-spawn": "^1.0.2"
   },
   "devDependencies": {
+    "@esm-bundle/chai": "^4.3.4",
+    "@open-wc/testing": "^3.0.0-next.5",
+    "@web/test-runner": "^0.20.2",
     "standard": "^17.1.2",
     "undici": "^7.9.0"
   }
