@@ -1,5 +1,5 @@
 /* global HTMLElement, customElements, document */
-import { addToast } from '/lib/utils.js' /* eslint-disable-line */
+import { addToast } from '../lib/utils.js'
 
 const searchEventSupported = 'search' in document.createElement('input')
 console.log({ searchEventSupported })

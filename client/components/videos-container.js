@@ -1,5 +1,5 @@
 /* global HTMLElement, customElements */
-import Store from '/lib/store.js' /* eslint-disable-line */
+import Store from '../lib/store.js'
 const store = new Store()
 
 class VideosContainer extends HTMLElement {

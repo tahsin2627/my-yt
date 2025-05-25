@@ -1,5 +1,5 @@
 /* global HTMLElement, customElements */
-import { addClickListener, removeClickListener } from '/lib/utils.js' /* eslint-disable-line */
+import { addClickListener, removeClickListener } from '../lib/utils.js'
 class ChannelsList extends HTMLElement {
   constructor () {
     super()
