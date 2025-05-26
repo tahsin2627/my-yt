@@ -1,5 +1,5 @@
 /* global HTMLElement, customElements, alert, confirm */
-import { addClickListener, removeClickListener } from '/lib/utils.js' /* eslint-disable-line */
+import { addClickListener, removeClickListener } from '../../lib/utils.js'
 class ManageChannelsForm extends HTMLElement {
   connectedCallback () {
     this.render()

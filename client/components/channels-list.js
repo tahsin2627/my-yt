@@ -1,5 +1,5 @@
 /* global HTMLElement, customElements */
-import { addClickListener, removeClickListener } from '/lib/utils.js' /* eslint-disable-line */
+import { addClickListener, removeClickListener } from '../lib/utils.js'
 class ChannelsList extends HTMLElement {
   constructor () {
     super()
@@ -53,7 +53,8 @@ class ChannelsList extends HTMLElement {
   channelClick (event) {
     const $searchInput = document.querySelector('#search')
     if (!$searchInput) return
-    const channel = `@${event.target.innerText}`
+    const channel = `@${event.target.innerText || event.target.innerHTML}`
+    console.log(event.target)
 
     const channels = this.querySelectorAll('.channel')
     if ($searchInput.value === channel) {

@@ -1,6 +1,6 @@
 /* global HTMLElement, customElements, confirm */
-import { addClickListener, removeClickListener, addToast } from '/lib/utils.js' /* eslint-disable-line */
-import Store from '/lib/store.js' /* eslint-disable-line */
+import { addClickListener, removeClickListener, addToast } from '../lib/utils.js'
+import Store from '../lib/store.js'
 const store = new Store()
 
 class VideoElement extends HTMLElement {

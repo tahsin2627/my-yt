@@ -1,6 +1,6 @@
 /* global MutationObserver, history, PopStateEvent, location, dispatchEvent */
-import { applyShowBigPlayer, applyShowThumbnails } from '/lib/utils.js' /* eslint-disable-line */
-import Store from '/lib/store.js' /* eslint-disable-line */
+import { applyShowBigPlayer, applyShowThumbnails } from '../lib/utils.js'
+import Store from '../lib/store.js'
 const store = new Store()
 
 const routes = {

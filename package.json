@@ -5,7 +5,8 @@
   "main": "index.js",
   "scripts": {
     "start": "node --env-file-if-exists=.env index.js",
-    "test": "npm run lint && node --test --test-concurrency 1",
+    "test": "npm run lint && node --test --test-concurrency 1 test/*.test.js",
+    "test:client": "web-test-runner client/test/**/*.test.js --node-resolve --concurrency 1",
     "lint": "standard"
   },
   "keywords": [],
@@ -16,6 +17,9 @@
     "nano-spawn": "^1.0.2"
   },
   "devDependencies": {
+    "@open-wc/testing": "^3.0.0-next.5",
+    "@web/test-runner": "^0.20.2",
+    "sinon": "^20.0.0",
     "standard": "^17.1.2",
     "undici": "^7.9.0"
   }
