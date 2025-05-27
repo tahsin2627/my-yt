@@ -139,7 +139,6 @@ async function summarizeVideoHandler (req, res, repo, connections = [], state = 
 
   summarizeVideo(id, repo, llmSettings, (err, line) => {
     if (err) {
-      console.error(err)
       broadcastSSE(JSON.stringify({ type: 'download-log-line', line: `Error summarizing video ${id}: ${err.message}` }), connections)
     } else {
       broadcastSSE(JSON.stringify({ type: 'download-log-line', line }), connections)
