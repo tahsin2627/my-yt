@@ -27,6 +27,14 @@ window.eventSource.onmessage = (message) => {
 
     if (data.type === 'state' && data.state) {
       Object.assign(window.state, data.state)
+      Object.keys(data.state.summarizing || {}).forEach((id) => {
+        const videoElement = document.querySelector(`[data-id="${id}"]`)
+        if (videoElement) videoElement.dataset.summarizing = 'true'
+      })
+      Object.keys(data.state.downloading || {}).forEach((id) => {
+        const videoElement = document.querySelector(`[data-id="${id}"]`)
+        if (videoElement) videoElement.dataset.downloading = 'true'
+      })
       return
     }
     if (data.type === 'download-log-line' && data.line) {
