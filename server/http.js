@@ -40,6 +40,7 @@ export function createServer (repo = new Repository()) {
       }
       const { name, videos } = data
       const newVideos = videos
+        .filter(v => !v.ignored)
         .filter(v => v.addedAt > lastAdded)
         .filter(v => repo.filterByExcludedTerms(v))
       lastAdded = Date.now()
