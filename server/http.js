@@ -39,10 +39,7 @@ export function createServer (repo = new Repository()) {
         return
       }
       const { name, videos } = data
-      const newVideos = videos
-        .filter(v => !v.ignored)
-        .filter(v => v.addedAt > lastAdded)
-        .filter(v => repo.filterByExcludedTerms(v))
+      const newVideos = videos.filter(v => v.addedAt > lastAdded)
       lastAdded = Date.now()
       if (newVideos.length > 0) {
         console.log('new videos for channel', name, newVideos.length)
