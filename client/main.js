@@ -22,7 +22,7 @@ window.eventSource.onmessage = (message) => {
   window.state.sseConnected = true
   if (!message || !message.data) return console.error('skipping empty message')
   try {
-    const data = JSON.parse(message.data, {})
+    const data = JSON.parse(message.data)
     console.log('[sse] message', data)
 
     if (data.type === 'state' && data.state) {
