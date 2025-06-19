@@ -215,7 +215,11 @@ class VideoElement extends HTMLElement {
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ id: this.video.id })
     })
-      .then(() => this.remove())
+      .then(() => {
+        this.remove()
+        const videoElementCount = document.querySelectorAll('video-element').length
+        document.title = `(${videoElementCount}) my-yt`
+      })
       .catch((error) => {
         console.error('Error ignoring video:', error)
         this.classList.remove('hide')
