@@ -1,7 +1,7 @@
 import fs from 'fs'
 import { URL } from 'url'
 
-export default function apiHandler (req, res) {
+export default function appHandler (req, res) {
   const url = new URL(req.url, `http://${req.headers.host}`)
   // console.log(req.method, url.pathname)
   if (url.pathname === '/main.css') { return fileHandler('client/main.css', 'text/css')(req, res) }
