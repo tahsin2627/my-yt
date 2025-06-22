@@ -5,28 +5,12 @@ import { updateAndPersistVideos } from '../lib/update-videos.js'
 import apiHandler from './router/api.js'
 import appHandler from './router/app.js'
 import Repository from '../lib/repository.js'
+import stateFactory from './state-factory.js'
 
 export function createServer (repo = new Repository()) {
-  const stateChangeHandler = {
-    get (target, key) {
-      if (typeof target[key] === 'object' && target[key] !== null) {
-        return new Proxy(target[key], stateChangeHandler)
-      }
-      return target[key]
-    },
-    set (target, prop, value) {
-      if (target[prop] !== value) broadcastSSE(JSON.stringify({ type: 'state', state: target }), connections)
-      target[prop] = value
-      return true
-    }
-  }
-
-  const state = new Proxy({
-    downloading: {},
-    summarizing: {}
-  }, stateChangeHandler)
-
   const connections = []
+  const state = stateFactory((updatedState) =>
+    broadcastSSE(JSON.stringify({ type: 'state', state: updatedState }), connections))
 
   let lastAdded = Date.now()
   runUpdateVideos(repo, connections)
