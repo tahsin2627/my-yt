@@ -18,7 +18,7 @@ class VideosContainer extends HTMLElement {
 
   _prepareVideoElementData (videoData, showOriginalThumbnail) {
     const dataForChild = { ...videoData }
-    if (showOriginalThumbnail && dataForChild.thumbnail && typeof dataForChild.thumbnail === 'string') {
+    if (!showOriginalThumbnail && dataForChild.thumbnail && typeof dataForChild.thumbnail === 'string') {
       dataForChild.thumbnail = dataForChild.thumbnail.replace('mq2.jpg', 'mqdefault.jpg')
     }
     return JSON.stringify(dataForChild)
