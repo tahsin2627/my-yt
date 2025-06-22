@@ -3,7 +3,7 @@ import { URL } from 'url'
 
 export default function apiHandler (req, res) {
   const url = new URL(req.url, `http://${req.headers.host}`)
-  console.log(req.method, url.pathname)
+  // console.log(req.method, url.pathname)
   if (url.pathname === '/main.css') { return fileHandler('client/main.css', 'text/css')(req, res) }
   if (url.pathname === '/normalize.css') { return fileHandler('client/normalize.css', 'text/css')(req, res) }
   if (url.pathname === '/main.js') { return fileHandler('client/main.js', 'application/javascript')(req, res) }
