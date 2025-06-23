@@ -6,6 +6,8 @@ import Repository from '../lib/repository.js'
 
 mock.timers.enable({ apis: ['setInterval'] })
 let repo
+const state = {}
+const connections = []
 test.beforeEach(() => {
   if (fs.existsSync('./test/data')) {
     fs.rmSync('./test/data', { recursive: true })
@@ -13,7 +15,7 @@ test.beforeEach(() => {
   repo = new Repository('./test/data')
 })
 test('starts server', async () => {
-  const server = createServer(repo)
+  const server = createServer({ repo, state, connections })
   await new Promise(resolve => server.listen(3001, resolve))
   assert.equal(server.address().port, 3001)
   await new Promise(resolve => server.close(resolve))
@@ -22,7 +24,7 @@ test('starts server', async () => {
 describe('server - user flow', () => {
   let server
   test.before((cb) => {
-    server = createServer(repo)
+    server = createServer({ repo, state, connections })
     server.listen(3001, cb)
     console.log('listening server')
   }, { timeout: 10000 })
