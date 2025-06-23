@@ -39,7 +39,7 @@ class VideosContainer extends HTMLElement {
         continue
       }
 
-      if (!showOriginalThumbnail && videoData.thumbnail && typeof videoData.thumbnail === 'string') {
+      if (showOriginalThumbnail && videoData.thumbnail && typeof videoData.thumbnail === 'string') {
         videoData.thumbnail = videoData.thumbnail.replace('mq2.jpg', 'mqdefault.jpg')
       }
 
