@@ -1,12 +1,44 @@
 import os from 'os'
 import Repository from './lib/repository.js'
 import { createServer } from './server/http.js'
+import stateFactory from './server/state-factory.js'
+import { broadcastSSE } from './server/sse.js'
+import { updateAndPersistVideos } from './lib/update-videos.js'
 
 async function main ({ port = 3000 } = {}) {
-  createServer(new Repository())
+  const repo = new Repository()
+  const connections = []
+  const state = stateFactory((updatedState) =>
+    broadcastSSE(JSON.stringify({ type: 'state', state: updatedState }), connections))
+
+  let lastAdded = Date.now()
+  runUpdateVideos(repo, connections)
+  setInterval(runUpdateVideos, 1000 * 60 * 30, repo, connections)
+
+  createServer({ repo, state, connections })
     .listen(port, () => {
       console.log(`Server running at http://${os.hostname()}:${port} (or http://localhost:${port})`)
     })
+
+  function runUpdateVideos (repo, connections) {
+    console.log('update videos')
+    updateAndPersistVideos(repo, (err, data) => {
+      if (err) {
+        console.error(err)
+        return
+      }
+      const { name, videos } = data
+      const newVideos = videos.filter(v => v.addedAt > lastAdded)
+      lastAdded = Date.now()
+      if (newVideos.length > 0) {
+        console.log('new videos for channel', name, newVideos.length)
+        broadcastSSE(JSON.stringify({ type: 'new-videos', name, videos: newVideos }), connections)
+        broadcastSSE(JSON.stringify({ type: 'download-log-line', line: `new videos for channel ${name} ${newVideos.length}` }), connections)
+      } else {
+        broadcastSSE(JSON.stringify({ type: 'download-log-line', line: `no new videos for channel ${name}` }), connections)
+      }
+    })
+  }
 }
 
 if (import.meta.url.endsWith('index.js')) {
