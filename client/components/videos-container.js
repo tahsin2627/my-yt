@@ -16,14 +16,6 @@ class VideosContainer extends HTMLElement {
     this.render()
   }
 
-  _prepareVideoElementData (videoData, showOriginalThumbnail) {
-    const dataForChild = { ...videoData }
-    if (!showOriginalThumbnail && dataForChild.thumbnail && typeof dataForChild.thumbnail === 'string') {
-      dataForChild.thumbnail = dataForChild.thumbnail.replace('mq2.jpg', 'mqdefault.jpg')
-    }
-    return JSON.stringify(dataForChild)
-  }
-
   render () {
     const newVideos = JSON.parse(this.dataset.videos || '[]')
     const showOriginalThumbnail = store.get(store.showOriginalThumbnailKey)
@@ -47,14 +39,17 @@ class VideosContainer extends HTMLElement {
         continue
       }
 
-      const preparedData = this._prepareVideoElementData(videoData, showOriginalThumbnail)
+      if (!showOriginalThumbnail && videoData.thumbnail && typeof videoData.thumbnail === 'string') {
+        videoData.thumbnail = videoData.thumbnail.replace('mq2.jpg', 'mqdefault.jpg')
+      }
+
       let videoElement = existingElementsMap.get(videoId)
 
       if (videoElement) {
         // Element exists
-        if (videoElement.dataset.data !== preparedData) {
+        if (videoElement.dataset.data !== videoData) {
           console.log(`Video ${videoId}: Data changed, updating dataset.`)
-          videoElement.dataset.data = preparedData
+          videoElement.dataset.data = videoData
         } else {
           // console.log(`Video ${videoId}: Data unchanged.`);
         }
@@ -64,7 +59,7 @@ class VideosContainer extends HTMLElement {
         console.log(`Video ${videoId}: Creating new element.`)
         videoElement = document.createElement('video-element')
         videoElement.dataset.videoId = videoId
-        videoElement.dataset.data = preparedData
+        videoElement.dataset.data = videoData
       }
       newElementOrder.push(videoElement)
     }
