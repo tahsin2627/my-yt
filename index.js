@@ -23,10 +23,7 @@ async function main ({ port = 3000 } = {}) {
   function runUpdateVideos (repo, connections) {
     console.log('update videos')
     updateAndPersistVideos(repo, (err, data) => {
-      if (err) {
-        console.error(err)
-        return
-      }
+      if (err) return console.error(err)
       const { name, videos } = data
       const newVideos = videos.filter(v => v.addedAt > lastAdded)
       lastAdded = Date.now()
