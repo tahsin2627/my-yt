@@ -44,12 +44,13 @@ class VideosContainer extends HTMLElement {
       }
 
       let videoElement = existingElementsMap.get(videoId)
+      const stringifiedData = JSON.stringify(videoData)
 
       if (videoElement) {
         // Element exists
-        if (videoElement.dataset.data !== videoData) {
+        if (videoElement.dataset.data !== stringifiedData) {
           console.log(`Video ${videoId}: Data changed, updating dataset.`)
-          videoElement.dataset.data = JSON.stringify(videoData)
+          videoElement.dataset.data = stringifiedData
         } else {
           // console.log(`Video ${videoId}: Data unchanged.`);
         }
@@ -59,7 +60,7 @@ class VideosContainer extends HTMLElement {
         console.log(`Video ${videoId}: Creating new element.`)
         videoElement = document.createElement('video-element')
         videoElement.dataset.videoId = videoId
-        videoElement.dataset.data = JSON.stringify(videoData)
+        videoElement.dataset.data = stringifiedData
       }
       newElementOrder.push(videoElement)
     }
