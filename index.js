@@ -25,7 +25,7 @@ async function main ({ port = 3000 } = {}) {
     updateAndPersistVideos(repo, (err, data) => {
       if (err) return console.error(err)
       const { name, videos } = data
-      const newVideos = videos.filter(v => v.addedAt > lastAdded)
+      const newVideos = videos.filter(v => v.addedAt > lastAdded).filter(v => !v.ignored)
       lastAdded = Date.now()
       if (newVideos.length > 0) {
         console.log('new videos for channel', name, newVideos.length)
