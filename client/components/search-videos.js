@@ -49,28 +49,30 @@ class SearchVideos extends HTMLElement {
 
   render () {
     this.innerHTML = /* html */`
-      <input type="search" incremental="incremental" id="search" placeholder="🔍 Search videos or paste video url" autofocus>
-      <details>
-        <summary>Additional filters</summary>
-        <div class="flex " id="search-filters">
-          <div class="flex-1">
-            <input type="checkbox" id="downloaded"/>
-            <label for="downloaded">downloaded</label>
+      <div class="flex align-start">
+        <input type="search" incremental="incremental" id="search" placeholder="🔍 Search videos or paste video url" autofocus>
+        <details>
+          <summary>Filters</summary>
+          <div class="flex " id="search-filters">
+            <div class="flex-1">
+              <input type="checkbox" id="downloaded"/>
+              <label for="downloaded">downloaded</label>
+            </div>
+            <div class="flex-1">
+              <input type="checkbox" id="summarized"/>
+              <label for="summarized">summarized</label>
+            </div>
+            <div class="flex-1">
+              <input type="checkbox" id="ignored"/>
+              <label for="ignored">ignored</label>
+            </div>
+            <div class="flex-1">
+              <input type="checkbox" id="excluded"/>
+              <label for="excluded">excluded</label>
+            </div>
           </div>
-          <div class="flex-1">
-            <input type="checkbox" id="summarized"/>
-            <label for="summarized">summarized</label>
-          </div>
-          <div class="flex-1">
-            <input type="checkbox" id="ignored"/>
-            <label for="ignored">ignored</label>
-          </div>
-          <div class="flex-1">
-            <input type="checkbox" id="excluded"/>
-            <label for="excluded">excluded</label>
-          </div>
-        </div>
-      </details>
+        </details>
+      </div>
       <div id="filter-results-status"></div>
     `
   }
