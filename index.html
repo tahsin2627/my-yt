@@ -1,0 +1,364 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>MyTube</title>
+<!-- Material Icons for icons -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/icon?family=Material+Icons" />
+<!-- Google Fonts -->
+<link href="https://fonts.googleapis.com/css2?family=Jost&display=swap" rel="stylesheet" />
+
+<style>
+body {
+  margin:0; font-family:'Jost',sans-serif; background:#fff; color:#222; transition:background 0.4s,color 0.4s;
+}
+body.dark-mode {
+  background:#121212; color:#ccc;
+}
+
+/* Header */
+header {
+  position:fixed; top:0; width:100%; height:70px;
+  display:flex; align-items:center; padding:0 20px;
+  background:linear-gradient(135deg, #fff, #f9f9f9);
+  box-shadow:0 2px 8px rgba(0,0,0,0.1);
+  z-index:999; transition:background 0.3s, box-shadow 0.3s;
+}
+body.dark-mode header {
+  background:linear-gradient(135deg, #222, #121212);
+}
+#menuBtn { font-size:28px; cursor:pointer; margin-right:15px; color:#555; transition:color 0.3s; }
+#menuBtn:hover { color:#111; }
+h1 { font-weight:700; font-size:1.4em; margin:0; flex:1; }
+#searchBox {
+  max-width:150px; width:100%; padding:4px 10px; border-radius:20px; border:none; outline:none; font-size:0.85em; background:#eee; box-shadow:inset 0 2px 4px rgba(0,0,0,0.1); transition:background 0.3s;
+}
+body.dark-mode #searchBox { background:#333; color:#ccc; }
+
+/* Sidebar */
+#sidebar {
+  position:fixed; top:70px; left:-300px; width:300px; height:calc(100%-70px);
+  background:#fff; border-radius:0 10px 10px 0; box-shadow:2px 0 12px rgba(0,0,0,0.1);
+  padding-top:20px; overflow-y:auto; transition:left 0.5s cubic-bezier(.25,.8,.25,1);
+  z-index:998; backdrop-filter:blur(5px);
+}
+body.dark-mode #sidebar { background:#222; }
+#sidebar.show { left:0; }
+#sidebar ul { list-style:none; padding:0; margin:0; }
+#sidebar li {
+  padding:15px 20px; cursor:pointer; display:flex; align-items:center; font-weight:500; transition:background 0.2s, transform 0.2s;
+  border-radius:8px; margin-bottom:5px; box-shadow: inset 0 0 0 transparent;
+}
+#sidebar li:hover { background:#f0f0f0; transform:translateX(2px); box-shadow: inset 0 0 8px rgba(0,0,0,0.05);}
+body.dark-mode #sidebar li:hover { background:#444; }
+
+main {
+  margin-top:70px; padding:20px; display:flex; flex-direction:column; gap:20px;
+}
+#categoryTabs {
+  display:flex; gap:10px; overflow-x:auto;
+}
+.categoryBtn {
+  padding:8px 14px; border-radius:20px; background:#eee; border:none; cursor:pointer; font-weight:500; font-size:0.85em; transition:background 0.2s, transform 0.2s;
+}
+body.dark-mode .categoryBtn { background:#444; }
+body.dark-mode .categoryBtn:hover { background:#555; transform: scale(1.02); }
+
+#playlistUI {
+  background:#f7f7f7; padding:10px; border-radius:10px; max-height:250px; overflow-y:auto;
+  box-shadow:0 4px 12px rgba(0,0,0,0.1);
+}
+body.dark-mode #playlistUI { background:#222; }
+#playlistItems { list-style:none; padding:0; margin:0; }
+.playlist-item {
+  padding:10px; background:#fff; border-radius:8px; display:flex; align-items:center; justify-content:space-between; cursor:grab; box-shadow:0 1px 4px rgba(0,0,0,0.1);
+  margin-bottom:8px; transition: background 0.2s, transform 0.2s;
+}
+body.dark-mode .playlist-item { background:#333; border-color:#555; }
+.playlist-item:hover { background:#eee; transform:translateY(-2px); box-shadow:0 2px 5px rgba(0,0,0,0.2); }
+
+/* Video grid styles */
+.videos {
+  display:grid; grid-template-columns:repeat(auto-fit,minmax(250px,1fr)); gap:20px;
+}
+.video-card {
+  background:#fff; border-radius:12px; overflow:hidden; cursor:pointer; box-shadow:0 2px 8px var(--shadow-color);
+  transition:transform 0.2s, box-shadow 0.2s, scale 0.2s;
+}
+body.dark-mode .video-card { background:#222; }
+.video-card:hover { box-shadow:0 8px 18px rgba(0,0,0,0.2); transform:translateY(-4px); }
+.thumb { width:100%; aspect-ratio:16/9; object-fit:cover; }
+.details { padding:10px 15px; }
+.details h3 { margin:0 0 8px; font-weight:700; font-size:1em; }
+.stats { display:flex; flex-wrap:wrap; gap:10px; font-size:0.75em; color:#555; }
+.stats span { display:flex; align-items:center; gap:4px; }
+
+/* Popup video with fancy slide & scale */
+#videoOverlay {
+  position:fixed; top:0; left:0; right:0; bottom:0; background:rgba(0,0,0,0.9);
+  display:flex; justify-content:center; align-items:center; display:none; z-index:9999; padding:20px;
+}
+#videoOverlay.show { display:flex; animation:slideFadeIn 0.4s forwards; }
+@keyframes slideFadeIn {
+  from { opacity:0; transform:translateY(20px) scale(0.9); }
+  to { opacity:1; transform:translateY(0) scale(1); }
+}
+#videoPlayerContainer {
+  width:95%; max-width:900px; background:#000; border-radius:10px; overflow:hidden; display:flex; flex-direction:column; padding:10px; box-shadow:0 4px 20px rgba(0,0,0,0.3);
+  transform:scale(0.9); opacity:0;
+}
+#videoOverlay.show #videoPlayerContainer { animation:scaleIn 0.5s forwards; }
+@keyframes scaleIn {
+  from { transform:scale(0.9); opacity:0; }
+  to { transform:scale(1); opacity:1; }
+}
+#closeVideo { position:absolute; top:10px; right:10px; font-size:2em; color:#fff; background:none; border:none; cursor:pointer; z-index:10; }
+#videoFrame { width:100%; height:70vh; }
+#autoplayBtn { margin:10px auto; display:block; padding:8px 20px; background:#3b82f6; border:none; border-radius:20px; color:#fff; cursor:pointer; font-size:0.85em; transition:bg 0.2s; }
+#autoplayBtn:hover { background:#60a5fa; }
+/* Round toggle theme button, fixed bottom right */
+#themeBtn {
+  position:fixed; right:20px; bottom:20px; width:70px; height:70px; background:#222; border-radius:50%; display:flex; align-items:center; justify-content:center; font-size:30px; color:#fff; box-shadow:0 4px 12px rgba(0,0,0,0.2); cursor:pointer; transition:background 0.3s, transform 0.2s;
+}
+#themeBtn:hover { background:#555; transform: scale(1.05); }
+</style>
+</head>
+<body>
+
+<header>
+<i class="material-icons" id="menuBtn">menu</i>
+<h1 style="margin-left:10px;">MyTube</h1>
+<input type="text" id="searchBox" placeholder="Search..."/>
+</header>
+
+<div id="sidebar">
+<ul>
+<li data-filter="All"><i class="material-icons">done</i> All</li>
+<li data-filter="Trending"><i class="material-icons">local_fire_department</i> Trending</li>
+<li data-filter="Subscriptions"><i class="material-icons">subscriptions</i> Subscriptions</li>
+<li data-filter="Liked"><i class="material-icons">favorite</i> Liked</li>
+<li style="margin-top:10px;"><button id="managePlaylistBtn" style="width:100%; padding:8px; border:none; border-radius:10px; background:#3b82f6; color:#fff;">Manage Playlists</button></li>
+</ul>
+</div>
+
+<main>
+<div id="categoryTabs" style="display:flex; gap:10px;">
+<button class="categoryBtn" data-filter="Trending">Trending</button>
+<button class="categoryBtn" data-filter="Subscriptions">Subscriptions</button>
+<button class="categoryBtn" data-filter="Liked">Liked</button>
+</div>
+<div class="videos" id="videoContainer"></div>
+
+<!-- Playlist UI -->
+<div id="playlistUI" style="display:none;">
+<h3>Playlists</h3>
+<input type="text" id="newPlaylistName" placeholder="New Playlist" style="width:50%; padding:8px; border:none; border-radius:10px; outline:none;"/>
+<button id="savePlaylistBtn" style="padding:8px; border:none; border-radius:10px; background:#3b82f6; color:#fff;">Save</button>
+<div id="playlistsContainer" style="margin-top:10px;"></div>
+</div>
+</main>
+
+<!-- Video embed popup with animations -->
+<div id="videoOverlay">
+<div id="videoPlayerContainer">
+<button id="closeVideo">&times;</button>
+<iframe id="videoFrame" src="" allowfullscreen></iframe>
+<button id="autoplayBtn">Autoplay Next</button>
+</div>
+</div>
+
+<!-- Theme toggle round button fixed bottom right -->
+<div id="themeBtn" title="Toggle Theme"><i class="material-icons">brightness_4</i></div>
+
+<script>
+// CONFIG & STUFF
+const API_KEY='YOUR_API_KEY'; // Insert your key
+let allVideos=[], likedVideos=JSON.parse(localStorage.getItem('likedVideos'))||[], playlists=JSON.parse(localStorage.getItem('playlists'))||{};
+let currentFilter='Trending';
+let searchTerm='';
+let currentIdx=0;
+let autoplayNext=false;
+
+// Toggle sidebar
+document.getElementById('menuBtn').onclick= ()=> { document.getElementById('sidebar').classList.toggle('show'); }
+
+// Theme toggle round button
+if(localStorage.getItem('theme')==='dark') document.body.classList.add('dark-mode');
+document.getElementById('themeBtn').onclick=()=>{
+  document.body.classList.toggle('dark-mode');
+  localStorage.setItem('theme', document.body.classList.contains('dark-mode')?'dark':'light');
+}
+
+// Fetch videos
+fetchVideos();
+
+async function fetchVideos(query='') {
+  let url= query ? `https://youtube.googleapis.com/youtube/v3/search?part=snippet&q=${encodeURIComponent(query)}&type=video&maxResults=50&key=${API_KEY}` : `https://youtube.googleapis.com/youtube/v3/videos?part=snippet,statistics&id=&chart=mostPopular&regionCode=US&maxResults=50&key=${API_KEY}`;
+  const res=await fetch(url);
+  const data=await res.json();
+  if(!data.items){ alert('API limit or error'); return; }
+  allVideos.length=0;
+  data.items.forEach(v=>{ if(v.id){ v.snippet.id=v.id.videoId || v.id; allVideos.push(v);} });
+  filterAndDisplay();
+}
+
+function filterAndDisplay() {
+  let filtered=[];
+  if(currentFilter==='Liked') {
+    filtered=likedVideos.map(id=>allVideos.find(v=>v.snippet.id===id)).filter(Boolean);
+  }else{
+    filtered=allVideos;
+  }
+  if(searchTerm) {
+    filtered=filtered.filter(v=>v.snippet.title.toLowerCase().includes(searchTerm));
+  }
+  displayVideos(filtered);
+}
+
+function displayVideos(videos){
+  document.getElementById('videoContainer').innerHTML='';
+  videos.forEach(v=>{
+    const id=v.snippet.id;
+    const thumb=`https://img.youtube.com/vi/${id}/hqdefault.jpg`;
+    const title=v.snippet.title;
+    const channel=v.snippet.channelTitle;
+    const date=new Date(v.snippet.publishedAt).toLocaleDateString();
+
+    const card=document.createElement('div');
+    card.className='video-card';
+    card.onclick=()=>playVideo(id);
+    card.innerHTML=`
+      <img class="thumb" src="${thumb}" />
+      <div class="details">
+        <h3>${title}</h3>
+        <div class="stats" id="stats-${id}">Loading...</div>
+        <div style="font-size:0.75em;opacity:0.7;">${channel} • ${date}</div>
+      </div>
+    `;
+    // Like toggle
+    const likeBtn=document.createElement('div');
+    likeBtn.innerHTML=`<span style="cursor:pointer; color:#c33;">&#10084;</span>`;
+    likeBtn.onclick=(e)=>{ e.stopPropagation(); toggleLike(id); };
+    card.appendChild(likeBtn);
+    // Add to playlist
+    const plBtn=document.createElement('div');
+    plBtn.innerHTML=`<span style="cursor:pointer; color:#3b82f6;">&#9776; List</span>`;
+    plBtn.onclick=(e)=>{ e.stopPropagation(); addToPlaylist(id); };
+    card.appendChild(plBtn);
+
+    document.getElementById('videoContainer').appendChild(card);
+    fetchVideoStats(id);
+  });
+}
+
+async function fetchVideoStats(id) {
+  const res=await fetch(`https://youtube.googleapis.com/youtube/v3/videos?part=statistics&id=${id}&key=${API_KEY}`);
+  const data=await res.json();
+  if(data.items.length>0){
+    const s=data.items[0].statistics;
+    document.getElementById(`stats-${id}`).innerHTML=`👁️ ${s.viewCount} 👍 ${s.likeCount} 💬 ${s.commentCount || 0}`;
+  }
+}
+
+// Play video with animated modal
+function playVideo(id){
+  document.getElementById('videoOverlay').style.display='flex';
+  document.getElementById('videoFrame').src=`https://www.youtube.com/embed/${id}?cc_load_policy=1&autoplay=1`;
+  currentIdx=allVideos.findIndex(v=>v.snippet.id===id);
+}
+document.getElementById('closeVideo').onclick=()=>{ 
+  document.getElementById('videoOverlay').style.display='none'; 
+  document.getElementById('videoFrame').src=''; 
+}
+document.getElementById('autoplayBtn').onclick=()=>{ autoplayNext=!autoplayNext; alert('Auto Next '+(autoplayNext?'ON':'OFF')); }
+document.getElementById('videoFrame').onended=()=>{
+  if(autoplayNext){
+    currentIdx=(currentIdx+1)%allVideos.length;
+    const nextId=allVideos[currentIdx].snippet.id;
+    playVideo(nextId);
+  }
+}
+
+// **Like & playlist functions**
+function toggleLike(id){
+  const i=likedVideos.indexOf(id);
+  if(i===-1) { likedVideos.push(id); } else { likedVideos.splice(i,1); }
+  localStorage.setItem('likedVideos', JSON.stringify(likedVideos));
+}
+function addToPlaylist(id){
+  const pname=prompt('Enter playlist name:', Object.keys(playlists)[0] || 'My Playlist');
+  if(pname){
+    if(!playlists[pname]) playlists[pname]=[];
+    playlists[pname].push(id);
+    localStorage.setItem('playlists',JSON.stringify(playlists));
+    alert('Added to playlist ' + pname);
+  }
+}
+
+// Category & Search
+document.querySelectorAll('.categoryBtn').forEach(b=>{ b.onclick=()=>{ currentFilter=b.dataset.filter; filterAndDisplay(); } });
+document.querySelectorAll('#sidebar li').forEach(li=>{ li.onclick=()=>{ currentFilter=li.dataset.filter; filterAndDisplay(); }});
+document.getElementById('searchBox').oninput=function(){ searchTerm=this.value.toLowerCase(); filterAndDisplay(); }
+
+// --------- Playlist management UI ---------
+const playlistDiv=document.getElementById('playlistUI');
+const playlistList=document.getElementById('playlistsContainer');
+const newPlaylistInput=document.getElementById('newPlaylistName');
+const saveBtn=document.getElementById('savePlaylistBtn');
+const manageBtn=document.getElementById('managePlaylistBtn');
+
+manageBtn.onclick=()=>{ playlistDiv.style.display='block'; renderPlaylists(); }
+document.getElementById('createPlaylist').onclick=()=>{
+  const pname=newPlaylistInput.value.trim();
+  if(pname){
+    if(!playlists[pname]){ playlists[pname]=[]; localStorage.setItem('playlists',JSON.stringify(playlists)); }
+    alert('Playlist "'+pname+'" created!');
+    newPlaylistInput.value='';
+    renderPlaylists();
+  } else { alert('Enter name!'); }
+}
+function renderPlaylists(){
+  playlistList.innerHTML='';
+  for(const p in playlists){
+    const pdiv=document.createElement('div');
+    pdiv.innerHTML=`<strong>${p}</strong>`;
+    playlists[p].forEach((vid,i)=> {
+      const v=allVideos.find(v=>v.snippet.id===vid);
+      const item=document.createElement('div');
+      item.style.padding='4px'; item.style.border='1px solid #ccc'; item.style.borderRadius='6px'; 
+      item.style.margin='2px 0'; item.innerHTML=`${v?v.snippet.title:'Unknown'} <span style="color:#c33; cursor:pointer;" onclick="removeFromPlaylist('${p}',${i})">X</span>`;
+      // Drag and drop
+      item.draggable=true;
+      item.ondragstart=e=>{ e.dataTransfer.setData('text/plain', JSON.stringify({pname:p,index:i})); }
+      playlistList.appendChild(item);
+    });
+  }
+}
+function removeFromPlaylist(p,i){ playlists[p].splice(i,1); localStorage.setItem('playlists',JSON.stringify(playlists)); renderPlaylists(); }
+function addToPlaylist(id){ 
+  const p=prompt('Enter playlist name:', Object.keys(playlists)[0] || 'My Playlist');
+  if(p) {
+    if(!playlists[p]) playlists[p]=[];
+    playlists[p].push(id);
+    localStorage.setItem('playlists',JSON.stringify(playlists));
+    alert('Added');
+  }
+}
+
+// --------- Google Login ---------
+function gsi_callback(token) {
+  fetch(`https://oauth2.googleapis.com/tokeninfo?id_token=${token}`)
+  .then(res => res.json())
+  .then(data => { alert('Welcome, '+data.name); localStorage.setItem('user', JSON.stringify({name:data.name, email:data.email})); });
+}
+window.onload=()=> {
+  google.accounts.id.initialize({client_id:'YOUR_CLIENT_ID', callback:gsi_callback});
+  const div=document.createElement('div');
+  google.accounts.id.renderButton(div, { theme:'outline', size:'large', text:'signin_with' });
+  document.body.appendChild(div);
+}
+
+</script>
+</body>
+</html>
